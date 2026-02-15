@@ -78,6 +78,11 @@ export default function PlayPage() {
       return;
     }
 
+    if (!session.user.accessToken) {
+      // Token missing; user should re-authenticate
+      return;
+    }
+
     if (session.user.isAdmin) {
       return;
     }
@@ -88,7 +93,7 @@ export default function PlayPage() {
 
     const socket = io(process.env.NEXT_PUBLIC_API_BASE!, {
       auth: {
-        email: session.user.email,
+        token: session.user.accessToken,
       },
     });
 

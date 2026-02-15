@@ -2,7 +2,7 @@ import { Server as SocketIOServer } from 'socket.io';
 import { redis, RedisKeys } from './redis.js';
 import { getSocketIO } from './socket.js';
 import type { MinorityQuestion, RoomState, PlayerGameState } from '../types/index.js';
-import { upsertLatestSnapshot, saveGameResult, getRolesForEmail, type RoundSnapshotData, type GameResultData } from './database.js';
+import { upsertLatestSnapshot, saveGameResult, type RoundSnapshotData, type GameResultData } from './database.js';
 import { ROOM_ID } from './room.js';
 
 export type { MinorityQuestion };
@@ -195,17 +195,22 @@ export class GameManager {
     }
 
     this.countdownInterval = setInterval(async () => {
-      timeLeft--;
-      this.currentTimeLeft = timeLeft;
+      try {
+        timeLeft--;
+        this.currentTimeLeft = timeLeft;
 
-      // 实时更新Redis中的时间
-      // await redis.hSet(RedisKeys.gameState(), 'timeLeft', timeLeft.toString());
+        // 实时更新Redis中的时间
+        // await redis.hSet(RedisKeys.gameState(), 'timeLeft', timeLeft.toString());
 
-      if (timeLeft <= 0) {
-        clearInterval(this.countdownInterval!);
-        this.countdownInterval = null;
-        this.currentTimeLeft = 0;
-        await this.endRound();
+        if (timeLeft <= 0) {
+          clearInterval(this.countdownInterval!);
+          this.countdownInterval = null;
+          this.currentTimeLeft = 0;
+          await this.endRound();
+        }
+      } catch (err) {
+        // Never crash the server from timer callbacks
+        console.error('Countdown tick error (non-blocking):', err);
       }
     }, 1000);
   }
@@ -241,7 +246,7 @@ export class GameManager {
     if (!currentQuestion || !currentQuestion.id) return;
 
     const survivors = await redis.sMembers(RedisKeys.roomSurvivors());
-    if (!survivors) return;
+    if (!survivors || survivors.length === 0) return;
 
     const answersFromRedis = await redis.hGetAll(RedisKeys.gameAnswers()) as { [key: string]: string };
     const answersCount = {
@@ -251,6 +256,8 @@ export class GameManager {
 
     // 批量查答案：一次 mGet 替代 2*N 次 GET
     const answerKeys = survivors.map((u) => RedisKeys.userAnswer(u, currentQuestion.id.toString()));
+    // Guard: node-redis will error on MGET with no keys
+    if (answerKeys.length === 0) return;
     const answerValues = await redis.mGet(answerKeys);
 
     let eliminatedUsers: { userEmail: string, eliminatedReason: 'no_answer' | 'majority_choice' }[] = [];
@@ -485,9 +492,11 @@ export class GameManager {
     if (!this.io) return;
     const sockets = await this.io.in(ROOM_ID).fetchSockets();
     for (const s of sockets) {
-      const email = (s.data as { user?: { email: string } }).user?.email;
+      const userData = (s.data as { user?: { email: string; isAdmin?: boolean; isDisplay?: boolean } }).user;
+      const email = userData?.email;
       if (!email) continue;
-      const { isAdmin, isDisplay } = await getRolesForEmail(email);
+      const isAdmin = Boolean(userData?.isAdmin);
+      const isDisplay = Boolean(userData?.isDisplay);
       const payload = isAdmin || isDisplay ? adminPayload(roomState) : await this.getPlayerGameState(roomState, email);
       s.emit(event, payload);
     }

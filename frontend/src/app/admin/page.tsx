@@ -149,6 +149,10 @@ export default function AdminPage() {
       return;
     }
 
+    if (!session.user.accessToken) {
+      return;
+    }
+
     if (!session.user.isAdmin) {
       return;
     }
@@ -159,7 +163,7 @@ export default function AdminPage() {
 
     const socket = io(process.env.NEXT_PUBLIC_API_BASE!, {
       auth: {
-        email: session.user.email,
+        token: session.user.accessToken,
       },
     });
     socketRef.current = socket;

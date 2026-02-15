@@ -64,6 +64,6 @@ export interface SubmitAnswerBody {
 // Socket.IO 扩展：socket.data.user
 declare module 'socket.io' {
   interface SocketData {
-    user: { email: string };
+    user: { email: string; isAdmin?: boolean; isDisplay?: boolean };
   }
 }

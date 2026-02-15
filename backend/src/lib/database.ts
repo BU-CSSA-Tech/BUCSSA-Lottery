@@ -12,24 +12,6 @@ if (process.env.NODE_ENV !== 'production') {
 
 export { prisma };
 
-/** 从 PostgreSQL User.role 列按邮箱查 admin/display 角色 */
-export async function getRolesForEmail(email: string): Promise<{ isAdmin: boolean; isDisplay: boolean }> {
-  if (!email) {
-    return { isAdmin: false, isDisplay: false };
-  }
-
-  const user = await prisma.user.findUnique({
-    where: { email },
-    select: { role: true },
-  });
-
-  const role = user?.role ?? 'player';
-  return {
-    isAdmin: role === 'admin',
-    isDisplay: role === 'display',
-  };
-}
-
 // Round Snapshot（最新快照，用于 Redis 崩溃恢复）数据接口
 export interface RoundSnapshotData {
   /** 上一轮结束后仍存活的邮箱列表（恢复核心） */

@@ -45,3 +45,5 @@ backend/dist/
 flood-test/gameState.json
 
 frontend/prisma/migrations
+
+*/.npm-cache/

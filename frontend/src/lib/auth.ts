@@ -1,14 +1,8 @@
 import { AuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import AzureADProvider from "next-auth/providers/azure-ad";
-import { PrismaAdapter } from "@auth/prisma-adapter";
-import { PrismaClient } from "@prisma/client";
 import jwt from 'jsonwebtoken';
-
-// Avoid exhausting your database connection limit in development (HMR).
-const globalForPrisma = globalThis as unknown as { prisma?: PrismaClient };
-const prisma = globalForPrisma.prisma ?? new PrismaClient();
-if (process.env.NODE_ENV !== "production") globalForPrisma.prisma = prisma;
+import { RedisAdapter } from "./redis-adapter";
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -22,9 +16,7 @@ export const authOptions: AuthOptions = {
       tenantId: process.env.AZURE_AD_TENANT_ID!,
     })
   ],
-  // Persist users + linked OAuth accounts in Postgres (Railway).
-  // Admin/display roles are in User.role column (Postgres).
-  adapter: PrismaAdapter(prisma),
+  // No DB adapter: use JWT session + Redis whitelist for roles.
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
@@ -64,18 +56,9 @@ export const authOptions: AuthOptions = {
 
           // console.log("🔍 Checking admin and display status for:", user.email);
 
-          // Roles from PostgreSQL User.role column (default: player)
           const email = user.email || "";
-          const dbUser = email
-            ? await prisma.user.findUnique({
-                where: { email },
-                select: { role: true },
-              })
-            : null;
-
-          const role = dbUser?.role || "player";
-          const isAdmin = role === "admin";
-          const isDisplay = role === "display";
+          const isAdmin = email ? await RedisAdapter.isAdminEmail(email) : false;
+          const isDisplay = email ? await RedisAdapter.isDisplayEmail(email) : false;
           token.isAdmin = isAdmin;
           token.isDisplay = isDisplay;
 

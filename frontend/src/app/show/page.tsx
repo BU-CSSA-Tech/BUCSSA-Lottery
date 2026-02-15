@@ -92,9 +92,13 @@ export default function ShowPage() {
       return;
     }
 
+    if (!session.user.accessToken) {
+      return;
+    }
+
     const socket = io(process.env.NEXT_PUBLIC_API_BASE!, {
       auth: {
-        email: session.user.email,
+        token: session.user.accessToken,
       },
     });
     socketRef.current = socket;

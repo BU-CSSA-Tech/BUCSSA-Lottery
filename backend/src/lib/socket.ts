@@ -1,10 +1,11 @@
 import { Server as SocketIOServer } from 'socket.io';
 import { Server as HTTPServer } from 'http';
 import { redis, RedisKeys } from './redis.js';
-import { getRolesForEmail } from './database.js';
 import { getGameManager } from './game.js';
 import { ROOM_ID } from './room.js';
 import { ensureRecovered } from './recovery.js';
+import jwt from 'jsonwebtoken';
+import type { JWTPayload } from '../types/index.js';
 
 
 // 全局Socket.IO服务器实例
@@ -23,17 +24,24 @@ export function initializeSocketIO(httpServer: HTTPServer): SocketIOServer {
     },
   });
 
-  // 中间件：验证用户邮箱
+  // 中间件：验证用户身份（必须携带 accessToken，后端验签后获取 email/role）
   io.use(async (socket, next) => {
     try {
-      const email = socket.handshake.auth.email;
-      if (!email) {
-        return next(new Error('未提供邮箱'));
+      const token = socket.handshake.auth?.token;
+      if (!token || typeof token !== 'string') {
+        return next(new Error('未提供 token'));
       }
 
-      socket.data.user = {
-        email,
-      };
+      const decoded = jwt.verify(token, process.env.JWT_SECRET!, {
+        issuer: 'lottery-frontend',
+        audience: 'lottery-backend',
+      }) as JWTPayload;
+
+      if (!decoded?.email) {
+        return next(new Error('token 缺少邮箱'));
+      }
+
+      socket.data.user = { email: decoded.email, isAdmin: decoded.isAdmin, isDisplay: decoded.isDisplay };
 
       next();
     } catch (error) {
@@ -53,7 +61,8 @@ export function initializeSocketIO(httpServer: HTTPServer): SocketIOServer {
     socket.join(ROOM_ID);
 
     const gameStarted = await redis.get(RedisKeys.gameStarted()) === '1';
-    const { isAdmin, isDisplay } = await getRolesForEmail(user.email);
+    const isAdmin = Boolean(user?.isAdmin);
+    const isDisplay = Boolean(user?.isDisplay);
     const isSurviving = await redis.sIsMember(RedisKeys.roomSurvivors(), user.email);
     const isEliminated = await redis.sIsMember(RedisKeys.roomEliminated(), user.email);
     const tieSet = await redis.sMembers(RedisKeys.gameTie());
