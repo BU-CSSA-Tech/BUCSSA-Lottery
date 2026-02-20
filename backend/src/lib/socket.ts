@@ -16,6 +16,8 @@ export function initializeSocketIO(httpServer: HTTPServer): SocketIOServer {
     return io;
   }
 
+  console.log("Socket origin:", process.env.FRONTEND_URL);
+
   io = new SocketIOServer(httpServer, {
     cors: {
       origin: process.env.FRONTEND_URL || 'http://localhost:3000',
