@@ -106,6 +106,11 @@ export default function PlayPage() {
 
     socket.on("connect", () => {
       setConnected(true);
+      // Debug: Check which transport is being used
+      console.log("🔌 Connected via:", socket.io.engine.transport.name);
+      socket.io.engine.on("upgrade", (transport) => {
+        console.log("⬆️ Upgraded to:", transport.name);
+      });
     });
 
     socket.on("disconnect", () => {
