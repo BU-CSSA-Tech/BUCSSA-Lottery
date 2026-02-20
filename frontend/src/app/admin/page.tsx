@@ -165,6 +165,11 @@ export default function AdminPage() {
       auth: {
         token: session.user.accessToken,
       },
+      transports: ['websocket', 'polling'], // Try WebSocket first, fallback to polling
+      upgrade: true, // Allow transport upgrade
+      reconnection: true,
+      reconnectionAttempts: 5,
+      reconnectionDelay: 1000,
     });
     socketRef.current = socket;
 
