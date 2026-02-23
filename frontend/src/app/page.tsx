@@ -1,9 +1,9 @@
 "use client";
 
 import { useRouter } from "next/navigation";
-import HeroSection from "@/components/game/HeroSection";
-import Navbar from "@/components/game/Navbar";
-import BackgroundImage from "@/components/game/BackgroundImage";
+import HeroSection from "@/components/game/misc/HeroSection";
+import Navbar from "@/components/game/misc/Navbar";
+import BackgroundImage from "@/components/game/misc/BackgroundImage";
 
 export default function Home() {
   const router = useRouter();
