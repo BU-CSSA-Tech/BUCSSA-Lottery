@@ -4,7 +4,7 @@ import AzureADProvider from "next-auth/providers/azure-ad";
 import jwt from 'jsonwebtoken';
 
 const ADMIN_EMAILS: string[] = ['bucssatech@gmail.com'];
-const DISPLAY_EMAILS: string[] = ['jijicandlehouse@gmail.com', 'mhyan@bu.edu'];
+const DISPLAY_EMAILS: string[] = ['jijicandlehouse@gmail.com', 'notm477h3w@gmail.com'];
 
 export const authOptions: AuthOptions = {
   providers: [

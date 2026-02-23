@@ -5,7 +5,7 @@ import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { io, Socket } from "socket.io-client";
 import { GameState, hasWinner, hasTie } from "@/types";
-import BackgroundImage from "@/components/game/misc/BackgroundImage";
+import BackgroundImage from "@/components/ui/BackgroundImage";
 import ConnectionFailedScreen from "@/components/game/show/ConnectionFailedScreen";
 import WinnerModal from "@/components/game/show/WinnerModal";
 import TieModal from "@/components/game/show/TieModal";

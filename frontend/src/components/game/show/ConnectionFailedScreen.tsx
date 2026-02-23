@@ -2,7 +2,7 @@
 
 import { motion } from "framer-motion";
 import { WifiOff } from "lucide-react";
-import BackgroundImage from "@/components/game/misc/BackgroundImage";
+import BackgroundImage from "@/components/ui/BackgroundImage";
 
 export default function ConnectionFailedScreen() {
   return (
