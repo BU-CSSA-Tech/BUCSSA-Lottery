@@ -98,7 +98,7 @@ export default function PlayPage() {
       transports: ['websocket', 'polling'], // Try WebSocket first, fallback to polling
       upgrade: true, // Allow transport upgrade
       reconnection: true,
-      reconnectionAttempts: 5,
+      reconnectionAttempts: 3,
       reconnectionDelay: 1000,
     });
 
