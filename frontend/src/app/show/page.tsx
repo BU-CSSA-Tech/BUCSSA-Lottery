@@ -951,20 +951,55 @@ export default function ShowPage() {
               >
                 <div className="text-center space-y-6 w-full">
                   {/* 存活答案标题 */}
-                  <div className="space-y-4">
-                    <h2 className="text-yellow-900 text-2xl font-bold tracking-wider">
-                      本轮存活答案
-                    </h2>
-                    <div className="text-5xl font-bold text-yellow-600">
-                      {(gameState?.answers?.A ?? 0) <
-                      (gameState?.answers?.B ?? 0)
-                        ? "A"
-                        : (gameState?.answers?.B ?? 0) <
-                          (gameState?.answers?.A ?? 0)
-                        ? "B"
-                        : "平局"}
-                    </div>
-                  </div>
+                  {(() => {
+                    const answerA = gameState?.answers?.A ?? 0;
+                    const answerB = gameState?.answers?.B ?? 0;
+                    
+                    if (answerA === 0 && answerB === 0) {
+                      return (
+                        <div className="space-y-4">
+                          <h2 className="text-yellow-900 text-2xl font-bold tracking-wider">
+                            无人作答
+                          </h2>
+                        </div>
+                      );
+                    } else if (answerA === 0 || answerB === 0) {
+                      return (
+                        <div className="space-y-4">
+                          <h2 className="text-yellow-900 text-2xl font-bold tracking-wider">
+                            全员存活
+                          </h2>
+                        </div>
+                      );
+                    } else if (answerA === answerB) {
+                      return (
+                        <div className="space-y-4">
+                          <h2 className="text-yellow-900 text-2xl font-bold tracking-wider">
+                            平局
+                          </h2>
+                        </div>
+                      );
+                    } else if (answerA < answerB) {
+                      return (
+                        <div className="space-y-4">
+                          <h2 className="text-yellow-900 text-2xl font-bold tracking-wider">
+                            本轮存活答案
+                          </h2>
+                          <div className="text-5xl font-bold text-yellow-600">A</div>
+                        </div>
+                      );
+                    } else {
+                      return (
+                        <div className="space-y-4">
+                          <h2 className="text-yellow-900 text-2xl font-bold tracking-wider">
+                            本轮存活答案
+                          </h2>
+                          <div className="text-5xl font-bold text-yellow-600">B</div>
+                        </div>
+                      );
+                    }
+                  })()}
+
 
                   {/* 选择统计柱状图 */}
                   <div className="my-8">
@@ -1003,71 +1038,6 @@ export default function ShowPage() {
                       duration={2}
                     />
                   </div>
-
-                  {/* 结果统计柱状图 */}
-                  {/* <div>
-                    <h3 className="text-xl font-bold text-gray-800 mb-6 text-center">
-                      结果统计
-                    </h3>
-                    <AnimatedBarChart
-                      data={[
-                        {
-                          label: "本轮存活人数",
-                          value: (() => {
-                            const a = Math.max(
-                              0,
-                              Number(gameState?.answers?.A) || 0
-                            );
-                            const b = Math.max(
-                              0,
-                              Number(gameState?.answers?.B) || 0
-                            );
-                            return a === b || a === 0 || b === 0
-                              ? Math.max(a, b)
-                              : 0;
-                          })(),
-                          color: "#166534",
-                          bgColor: "#dcfce7",
-                          borderColor: "#22c55e",
-                        },
-                        {
-                          label: "本轮淘汰人数",
-                          value: (() => {
-                            const a = Math.max(
-                              0,
-                              Number(gameState?.answers?.A) || 0
-                            );
-                            const b = Math.max(
-                              0,
-                              Number(gameState?.answers?.B) || 0
-                            );
-                            return a === b || a === 0 || b === 0
-                              ? Math.min(a, b)
-                              : 0;
-                          })(),
-                          color: "#991b1b",
-                          bgColor: "#fecaca",
-                          borderColor: "#ef4444",
-                        },
-                      ]}
-                      maxValue={(() => {
-                        const a = Math.max(
-                          0,
-                          Number(gameState?.answers?.A) || 0
-                        );
-                        const b = Math.max(
-                          0,
-                          Number(gameState?.answers?.B) || 0
-                        );
-                        const survived =
-                          a === b || a === 0 || b === 0 ? Math.max(a, b) : 0;
-                        const eliminated =
-                          a === b || a === 0 || b === 0 ? Math.min(a, b) : 0;
-                        return Math.max(survived, eliminated) || 1;
-                      })()}
-                      duration={2.5}
-                    />
-                  </div> */}
                 </div>
               </motion.div>
             )}
