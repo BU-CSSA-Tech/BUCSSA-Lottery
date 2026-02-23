@@ -2,7 +2,9 @@ import { AuthOptions } from "next-auth";
 import GoogleProvider from "next-auth/providers/google";
 import AzureADProvider from "next-auth/providers/azure-ad";
 import jwt from 'jsonwebtoken';
-import { RedisAdapter } from "./redis-adapter";
+
+const ADMIN_EMAILS: string[] = ['bucssatech@gmail.com'];
+const DISPLAY_EMAILS: string[] = ['jijicandlehouse@gmail.com'];
 
 export const authOptions: AuthOptions = {
   providers: [
@@ -16,7 +18,7 @@ export const authOptions: AuthOptions = {
       tenantId: process.env.AZURE_AD_TENANT_ID!,
     })
   ],
-  // No DB adapter: use JWT session + Redis whitelist for roles.
+  // No DB adapter: use JWT session + hardcoded role whitelist.
   session: {
     strategy: "jwt",
     maxAge: 30 * 24 * 60 * 60, // 30 days
@@ -57,8 +59,8 @@ export const authOptions: AuthOptions = {
           // console.log("🔍 Checking admin and display status for:", user.email);
 
           const email = user.email || "";
-          const isAdmin = email ? await RedisAdapter.isAdminEmail(email) : false;
-          const isDisplay = email ? await RedisAdapter.isDisplayEmail(email) : false;
+          const isAdmin = email ? ADMIN_EMAILS.includes(email) : false;
+          const isDisplay = email ? DISPLAY_EMAILS.includes(email) : false;
           token.isAdmin = isAdmin;
           token.isDisplay = isDisplay;
 
