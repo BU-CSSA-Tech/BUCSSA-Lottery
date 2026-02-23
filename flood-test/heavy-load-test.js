@@ -6,13 +6,15 @@ require('dotenv').config();
 
 // 压力测试配置
 const CONFIG = {
-  wsTarget: 'ws://198.23.211.34:4000',
+  wsTarget: 'ws://23.95.184.98:4000',
   wssTarget: 'wss://lottery.bucssa.org',
-  httpTarget: 'http://198.23.211.34:4000',
+  httpTarget: 'http://23.95.184.98:4000',
   httpsTarget: 'https://lottery.bucssa.org',
-  concurrentUsers: 600,
+  concurrentUsers: 2000,
   testDuration: 600,
-  arrivalRate: 20
+  arrivalRate: 20,
+  ignorePercentage: 0.1,
+  ABSplit: 0.5
 };
 
 let connectedUsers = 0;
@@ -41,8 +43,6 @@ let stats = {
 let gameData = { winner: null, tie: [] };
 let currentRound = 1;
 
-
-
 class User {
   constructor(id) {
     this.id = id;
@@ -54,9 +54,10 @@ class User {
   initializeUser() {
     const email = this.email;
     const userStartTime = performance.now();
+    const token = generateAuthToken(email, this.id);
 
     const socket = io(CONFIG.wsTarget, {
-      auth: { email },
+      auth: { token },
       timeout: 10000
     });
 
@@ -143,13 +144,13 @@ class User {
       // 模拟回答问题
       setTimeout(async () => {
         // 30% 的用户不提交答案
-        if (Math.random() < 0.3) {
+        if (Math.random() < CONFIG.ignorePercentage) {
           console.log(`用户 ${this.id} 未提交答案`);
           gameData[currentRound].noAnswers.push(email);
           return;
         }
 
-        const userAnswer = Math.random() < 0.5 ? 'A' : 'B'; // 随机选择 A 或 B
+        const userAnswer = Math.random() < CONFIG.ABSplit ? 'A' : 'B'; // 随机选择 A 或 B
         const token = generateAuthToken(email, this.id);
 
         const response = await fetch(
@@ -204,6 +205,12 @@ class User {
         correctAnswer: data.correctAnswer,
         timestamp: Date.now()
       });
+
+      // Safety check: ensure data.answers exists
+      if (!data.answers) {
+        console.log(`⚠️  用户 ${this.id} 收到的 round_result 没有答案数据`);
+        return;
+      }
 
       gameData[currentRound].answerCounts = data.answers;
       if (data.answers.A == 0 || data.answers.B == 0) {
