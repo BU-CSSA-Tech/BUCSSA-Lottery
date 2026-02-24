@@ -12,7 +12,7 @@ interface ShowHeaderProps {
 export default function ShowHeader({ socket, onShowQRCode, onLogout }: ShowHeaderProps) {
   return (
     <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
-      <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-amber-50/95 border border-rose-200/60 shadow-sm">
+      <div className="flex items-center gap-2 px-2 py-2 rounded-lg bg-amber-50/50 border border-rose-200/60 shadow-sm">
         {socket ? (
           <Wifi className="w-5 h-5 text-green-600" />
         ) : (
@@ -21,14 +21,14 @@ export default function ShowHeader({ socket, onShowQRCode, onLogout }: ShowHeade
       </div>
       <button
         onClick={onShowQRCode}
-        className="p-2 rounded-lg bg-amber-50/95 hover:bg-amber-100/95 text-gray-700 transition-all border border-rose-200/60 shadow-sm"
+        className="p-2 rounded-lg bg-amber-50/50 hover:bg-amber-100/75 text-gray-700 transition-all border border-rose-200/60 shadow-sm"
         title="显示二维码"
       >
         <QrCode className="w-5 h-5" />
       </button>
       <button
         onClick={onLogout}
-        className="p-2 rounded-lg bg-amber-50/95 hover:bg-red-200/90 text-red-600 transition-all border border-red-200/60 shadow-sm"
+        className="p-2 rounded-lg bg-amber-50/50 hover:bg-red-200/75 text-red-600 transition-all border border-red-200/60 shadow-sm"
         title="退出"
       >
         <LogOut className="w-5 h-5" />

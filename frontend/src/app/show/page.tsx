@@ -358,7 +358,7 @@ export default function ShowPage() {
         <div className="min-h-screen flex items-center justify-center px-4 py-8">
           <div className="w-full max-w-6xl flex flex-col items-center gap-16">
             {/* 头部标题 */}
-            <h1 className="text-6xl font-bold text-red-600 drop-shadow-sm tracking-wide text-center [-webkit-text-stroke:1.5px_white] [paint-order:stroke_fill]">
+            <h1 className="text-6xl font-bold text-red-600 drop-shadow-sm tracking-wide text-center [-webkit-text-stroke:2px_white] [paint-order:stroke_fill]">
               BUCSSA 新春嘉年华 抽奖
             </h1>
 
