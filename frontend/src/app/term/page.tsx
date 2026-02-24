@@ -5,7 +5,7 @@ import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowRight, FileText } from "lucide-react";
 import Image from "next/image";
-import BackgroundImage from "@/components/game/BackgroundImage";
+import BackgroundImage from "@/components/ui/BackgroundImage";
 import { GlassText } from "@/components/ui/glass-text";
 import { Box } from "@/components/ui/box";
 

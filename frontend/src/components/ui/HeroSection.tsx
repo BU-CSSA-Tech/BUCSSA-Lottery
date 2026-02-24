@@ -1,8 +1,8 @@
 import { motion } from "framer-motion";
 import ParticleBackground from "./ParticleBackground";
 import { Button } from "@/components/ui/button";
-import { Box } from "../ui/box";
-import { GlassText } from "../ui/glass-text";
+import { Box } from "./box";
+import { GlassText } from "./glass-text";
 import Image from "next/image";
 
 interface HeroSectionProps {
