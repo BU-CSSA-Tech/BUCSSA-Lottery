@@ -3,6 +3,7 @@
 import { Clock, UserX, Crown, Trophy, CheckCircle } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { UserGameState } from "@/types";
+import Image from "next/image";
 
 interface GameStatusCardProps {
   userGameState: UserGameState;
@@ -18,30 +19,31 @@ export default function GameStatusCard({
   onSubmitAnswer,
 }: GameStatusCardProps) {
   return (
-    <main className="w-full h-auto px-8 py-8 items-center justify-center flex fixed top-[40vh] left-1/2 -translate-x-1/2 -translate-y-1/2 border border-white/50 rounded-md bg-white/25 backdrop-blur-sm">
+    <main className="w-full h-auto px-8 py-12 items-center justify-center flex fixed top-[50vh] left-1/2 -translate-x-1/2 -translate-y-1/2 bg-amber-50/25">
       {userGameState.status === "waiting" && (
-        <div className="text-center space-y-4">
-          <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Clock className="w-8 h-8 text-blue-600" />
-          </div>
-          <p className="text-blue-900 text-3xl font-bold tracking-wider">
+        <div className="text-center space-y-6">
+          <Image
+            src="/waitma.gif"
+            alt="等待中"
+            width={160}
+            height={160}
+            className="mx-auto"
+          />
+          <p className="text-gray-800 text-3xl font-bold tracking-wider">
             等待发布中...
           </p>
-          <p className="text-blue-600 text-lg">请耐心等待题目发布</p>
+          <p className="text-gray-600 text-lg">请耐心等待题目发布</p>
         </div>
       )}
 
       {/* User Status */}
       {userGameState.status === "eliminated" && (
         <div className="text-center space-y-4">
-          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <UserX className="w-8 h-8 text-red-600" />
-          </div>
-          <p className="text-red-800 text-3xl font-bold tracking-wider">
+          <p className="text-gray-800 text-3xl font-bold tracking-wider">
             您已被淘汰!
           </p>
           {eliminatedReason && (
-            <p className="text-red-600 text-lg font-semibold">
+            <p className="text-gray-600 text-lg font-semibold">
               原因：{eliminatedReason === "no_answer"
                 ? "您未在规定时间内选择"
                 : eliminatedReason === "majority_choice"
@@ -49,35 +51,32 @@ export default function GameStatusCard({
                 : eliminatedReason}
             </p>
           )}
-          <p className="text-red-600 text-lg">
+          <p className="text-gray-600 text-md">
             感谢您的参与，请继续观看其他玩家的比赛！
           </p>
         </div>
       )}
 
       {userGameState.status === "winner" && (
-        <div className="text-center space-y-4">
-          <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Crown className="w-8 h-8 text-green-600" />
+        <div className="text-center space-y-8">
+          <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <Crown className="w-8 h-8 text-red-500" />
           </div>
-          <p className="text-green-900 text-3xl font-bold tracking-wider">
+          <p className="text-red-800 text-4xl font-semibold tracking-wider">
             恭喜您！
           </p>
-          <p className="text-green-700 text-lg">
+          <p className="text-red-700 text-lg">
             您是本轮游戏的冠军，请上台领奖！
           </p>
         </div>
       )}
 
       {userGameState.status === "tie" && (
-        <div className="text-center space-y-4">
-          <div className="w-16 h-16 bg-yellow-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <Trophy className="w-8 h-8 text-yellow-600" />
-          </div>
-          <p className="text-yellow-900 text-3xl font-bold tracking-wider">
-            平局出现!
+        <div className="text-center space-y-8">
+          <p className="text-white text-4xl font-semibold tracking-wider">
+            平局! 战斗爽！
           </p>
-          <p className="text-yellow-700 text-lg">
+          <p className="text-white text-xl">
             恭喜您进入决赛圈，请上台进行最后对决！
           </p>
         </div>
@@ -85,37 +84,43 @@ export default function GameStatusCard({
 
       {/* Question Area */}
       {userGameState.status === "playing" && (
-        <div className="flex flex-col items-center justify-center space-y-8">
+        <div className="flex flex-col items-center justify-center space-y-4">
           <div className="flex items-center px-4 py-2 bg-gradient-primary text-gray-800 rounded-full text-2xl font-bold tracking-wider">
             第 {userGameState.round} 轮
           </div>
 
-          <div className="flex flex-col items-center gap-4 justify-center">
-            <Button
+          <div className="flex flex-col items-center gap-3 justify-center">
+            <button
+              type="button"
               onClick={() => onSubmitAnswer("A")}
               disabled={!!selectedOption}
-              size="lg"
-              className={`p-6 w-64 h-32 ${
-                selectedOption === "A"
-                  ? "border-green-500 border-4 bg-green-300/50 text-green-500 text-5xl font-bold"
-                  : "border-white/50 bg-green-100 hover:bg-green-200 text-green-600 text-5xl font-bold"
+              className={`relative w-48 h-48 md:w-56 md:h-56 transition-all duration-200 rounded-lg overflow-hidden ${
+                selectedOption && selectedOption !== "A" ? "opacity-50" : ""
               }`}
             >
-              A
-            </Button>
+              <Image
+                src="/aoption.png"
+                alt="选项 A"
+                fill
+                className="object-contain"
+              />
+            </button>
 
-            <Button
+            <button
+              type="button"
               onClick={() => onSubmitAnswer("B")}
               disabled={!!selectedOption}
-              size="lg"
-              className={`p-6 w-64 h-32 ${
-                selectedOption === "B"
-                  ? "border-red-500 border-4 bg-red-300/50 text-red-500 text-5xl font-bold"
-                  : "border-white/50 bg-red-100 hover:bg-red-200 text-red-600 text-5xl font-bold"
+              className={`relative w-48 h-48 md:w-56 md:h-56 transition-all duration-200 rounded-lg overflow-hidden ${
+                selectedOption && selectedOption !== "B" ? "opacity-50" : ""
               }`}
             >
-              B
-            </Button>
+              <Image
+                src="/boption.png"
+                alt="选项 B"
+                fill
+                className="object-contain"
+              />
+            </button>
           </div>
 
           {selectedOption && (

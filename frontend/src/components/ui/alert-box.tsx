@@ -36,30 +36,30 @@ export function AlertBox({
     <div className="fixed inset-0 z-50 flex items-center justify-center">
       {/* 背景遮罩 */}
       <div 
-        className="absolute inset-0 bg-black/50 backdrop-blur-sm"
+        className="absolute inset-0 bg-black/50"
         onClick={onClose}
       />
       
       {/* 弹窗内容 */}
-      <div className="relative bg-white dark:bg-gray-800 rounded-2xl shadow-2xl p-6 w-full max-w-md mx-4 transform transition-all">
+      <div className="relative bg-white/75 rounded-lg p-6 w-full max-w-md mx-4 transform transition-all">
         {/* 关闭按钮 */}
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 p-2 hover:bg-gray-100 dark:hover:bg-gray-700 rounded-full transition-colors"
+          className="absolute top-4 right-4 p-2 hover:bg-gray-100 rounded-full transition-colors"
         >
-          <X className="w-5 h-5 text-gray-500" />
+          <X className="w-4 h-4 text-gray-500" />
         </button>
         
         {/* 标题 */}
         <div className="mb-4">
-          <h3 className="text-xl font-semibold text-gray-900 dark:text-white">
+          <h3 className="text-xl font-semibold text-gray-900">
             {title}
           </h3>
         </div>
         
         {/* 消息内容 */}
         <div className="mb-6">
-          <p className="text-gray-600 dark:text-gray-300 leading-relaxed">
+          <p className="text-gray-600 leading-relaxed">
             {message}
           </p>
         </div>
@@ -69,14 +69,14 @@ export function AlertBox({
           <Button
             variant="destructive"
             onClick={onClose}
-            className="px-6 py-2 text-gray-500 bg-gray-50"
+            className="px-6 py-2 text-gray-500 bg-gray-50 rounded-lg"
           >
             {cancelText}
           </Button>
           <Button
             variant={confirmVariant}
             onClick={handleConfirm}
-            className="px-6 py-2 text-red-500 bg-gray-50"
+            className="px-6 py-2 text-red-500 bg-gray-50 rounded-lg"
           >
             {confirmText}
           </Button>

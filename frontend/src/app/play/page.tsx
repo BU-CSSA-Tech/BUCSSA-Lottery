@@ -253,7 +253,8 @@ export default function PlayPage() {
     <div
       className="min-h-screen bg-cover bg-center bg-no-repeat relatives"
       style={{
-        backgroundImage: "url(/playbgup.webp)",
+        backgroundImage: "url(/playbg.png)",
+        backgroundColor: "#c41e3a",
       }}
     >
       {/* 全屏彩带效果 */}
@@ -318,17 +319,6 @@ export default function PlayPage() {
         eliminatedReason={eliminatedReason}
         onSubmitAnswer={handleSubmitAnswer}
       />
-
-      {/* 底部图片 */}
-      <div className="fixed bottom-12 left-20 -translate-x-1/2 z-30 w-auto flex justify-center pointer-events-none">
-        <Image
-          src="/dog.webp"
-          alt="dog"
-          className="h-40 md:h-72 object-contain drop-shadow-lg"
-          width={400}
-          height={400}
-        />
-      </div>
     </div>
   );
 }
