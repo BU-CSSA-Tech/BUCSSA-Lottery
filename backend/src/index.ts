@@ -23,15 +23,14 @@ app.use(express.urlencoded({ extended: true }));
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });
 });
-
 // API routes
 app.use('/api/submit-answer', submitAnswerRoutes);
 app.use('/api/admin', adminRoutes);
 
 // Start the server
 server.listen(PORT, () => {
-  console.log(`🚀 Minority Game Backend is listening on https://${process.env.RAILWAY_PUBLIC_DOMAIN || `http://localhost:${PORT}`}`);
-  console.log(`🌐 Frontend URL: ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
+  console.log(`Backend on https://${process.env.RAILWAY_PUBLIC_DOMAIN || `http://localhost:${PORT}`}`);
+  console.log(`Frontend on: ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
 });
 
 // Optional: Add error handling

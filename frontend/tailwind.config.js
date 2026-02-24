@@ -8,6 +8,9 @@ module.exports = {
   important: true, // 添加这一行来提高样式优先级
   theme: {
     extend: {
+      fontFamily: {
+        alimama: ['"Alimama DongFang DaKai"', 'sans-serif'],
+      },
       colors: {
         primary: {
           from: '#28a7ff',
@@ -27,6 +30,10 @@ module.exports = {
           '0%, 100%': { transform: 'translateY(0)' },
           '50%': { transform: 'translateY(-10px)' },
         },
+      },
+      boxShadow: {
+        'red-down': '0 4px 8px 0 rgba(220, 38, 38, 0.25)',
+        'red-down-lg': '0 6px 12px 0 rgba(220, 38, 38, 0.3)',
       },
     },
   },

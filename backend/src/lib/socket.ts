@@ -16,12 +16,18 @@ export function initializeSocketIO(httpServer: HTTPServer): SocketIOServer {
     return io;
   }
 
+  console.log("Socket origin:", process.env.FRONTEND_URL);
+
   io = new SocketIOServer(httpServer, {
     cors: {
       origin: process.env.FRONTEND_URL || 'http://localhost:3000',
       methods: ['GET', 'POST'],
       credentials: true,
     },
+    transports: ['websocket', 'polling'], // Explicitly allow both transports
+    allowEIO3: true, // Backward compatibility
+    pingTimeout: 60000, // Increase timeout for Railway
+    pingInterval: 25000, // Keep connection alive
   });
 
   // 中间件：验证用户身份（必须携带 accessToken，后端验签后获取 email/role）

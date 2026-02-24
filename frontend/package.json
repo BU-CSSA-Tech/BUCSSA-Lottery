@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@auth/core": "^0.41.1",
     "@radix-ui/react-slot": "^1.2.3",
     "@react-spring/web": "^10.0.2",
     "@tsparticles/react": "^3.0.0",
@@ -25,7 +24,6 @@
     "react-confetti": "^6.4.0",
     "react-dom": "19.1.0",
     "react-particles": "^2.12.2",
-    "redis": "^5.8.0",
     "socket.io-client": "^4.8.1",
     "tailwind-merge": "^3.3.1",
     "tsparticles-slim": "^2.12.0"
