@@ -14,7 +14,7 @@ export default function QRCodeModal({ onClose }: QRCodeModalProps) {
           <div className="w-72 h-72 md:w-96 md:h-96 bg-white rounded-xl flex items-center justify-center mx-auto border border-rose-100">
             <Image src="/qrcode.png" alt="qrcode" width={350} height={350} className="p-2" />
           </div>
-          <p className="text-gray-800 text-center text-xl font-bold">lottery.bucssa.org</p>
+          <p className="text-white text-center text-xl font-semibold tracking-wider">lottery.bucssa.org</p>
           <button
             onClick={onClose}
             className="w-full py-2.5 bg-red-100 hover:bg-red-200 text-red-700 font-semibold rounded-xl transition-all border border-red-200/60"
