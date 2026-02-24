@@ -53,10 +53,11 @@ const HeroSection = ({
           transition={{ duration: 0.6, delay: 0.6 }}
         >
           <GlassText
-            className="text-5xl md:text-8xl tracking-wide md:tracking-wider font-normal"
-            variant="primary"
+            className="text-5xl md:text-8xl tracking-wide md:tracking-wider"
+            variant="secondary"
+            weight="light"
           >
-            BUCSSA 中秋国庆晚会
+            BUCSSA 新春嘉年华 抽奖
           </GlassText>
           <Button variant="outline" size="xl" onClick={onStartGame}>
             开始答题, 豪取大奖吧！

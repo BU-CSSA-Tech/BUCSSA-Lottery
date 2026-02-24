@@ -259,8 +259,8 @@ export default function ShowPage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="text-white text-xl">加载中...</div>
+      <div className="min-h-screen flex items-center justify-center bg-[url(/showbg.jpg)] bg-cover bg-center">
+        <div className="text-gray-800 text-xl font-medium bg-amber-50/90 px-6 py-3 rounded-xl border border-rose-200/50">加载中...</div>
       </div>
     );
   }
@@ -277,10 +277,9 @@ export default function ShowPage() {
     <>
       {/* 背景图片 */}
       <BackgroundImage
-        imageUrl="bgup.webp" // 在这里设置你的背景图片路径
-        overlayOpacity={0.05} // 整体遮罩透明度，0-1之间
-        centerMask={true} // 启用中间渐变蒙版
-        maskWidth={90} // 中间蒙版宽度，80%的屏幕宽度
+        imageUrl="/showbg.jpg"
+        overlayOpacity={0.03}
+        centerMask={false}
       />
 
       {/* 全屏获胜者模态框 */}
@@ -293,7 +292,7 @@ export default function ShowPage() {
         <TieModal tie={tie} onClose={() => setShowTieModal(false)} />
       )}
 
-      <div className="min-h-screen bg-gradient-to-br from-purple-900 via-blue-900 to-indigo-900 text-white">
+      <div className="min-h-screen relative z-10 text-gray-800">
         {/* 全屏彩带效果 */}
         {winner && (
           <Confetti
@@ -343,7 +342,7 @@ export default function ShowPage() {
           />
         )}
 
-        {/* 头部状态栏 */}
+        {/* 顶部 Header - 连接状态、二维码、退出 */}
         <ShowHeader
           socket={socket}
           onShowQRCode={() => setShowQRCode(true)}
@@ -351,9 +350,30 @@ export default function ShowPage() {
         />
 
         {/* QR码弹窗 */}
-        {showQRCode && <QRCodeModal onClose={() => setShowQRCode(false)} />}
+        {showQRCode && (
+          <QRCodeModal onClose={() => setShowQRCode(false)} />
+        )}
 
-        {/* Debug Section */}
+        {/* 主内容区 - 始终居中显示 */}
+        <div className="min-h-screen flex items-center justify-center px-4 py-8">
+          <div className="w-full max-w-6xl flex flex-col items-center gap-16">
+            {/* 头部标题 */}
+            <h1 className="text-6xl font-bold text-red-600 drop-shadow-sm tracking-wide text-center [-webkit-text-stroke:1.5px_white] [paint-order:stroke_fill]">
+              BUCSSA 新春嘉年华 抽奖
+            </h1>
+
+            {/* 内容区 */}
+            <GameContent
+              gameState={gameState}
+              frontendTimeLeft={frontendTimeLeft}
+              winner={winner}
+              tie={tie}
+              updatedWinnerTie={updatedWinnerTie}
+            />
+          </div>
+        </div>
+
+          {/* Debug Section */}
         {/* <div className="max-w-7xl mx-auto px-6 py-4">
           <div className="bg-black/20 backdrop-blur-sm border border-yellow-400/50 rounded-lg p-4 mb-4">
             <h3 className="text-yellow-400 font-bold text-lg mb-3">
@@ -429,14 +449,6 @@ export default function ShowPage() {
             </div>
           </div>
         </div> */}
-
-        <GameContent
-          gameState={gameState}
-          frontendTimeLeft={frontendTimeLeft}
-          winner={winner}
-          tie={tie}
-          updatedWinnerTie={updatedWinnerTie}
-        />
       </div>
     </>
   );

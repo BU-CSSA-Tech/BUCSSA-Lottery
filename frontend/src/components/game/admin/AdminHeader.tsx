@@ -32,7 +32,7 @@ export default function AdminHeader({
             </div>
             <div>
               <h1 className="text-lg font-semibold text-white">
-                BUCSSA 国庆晚会抽奖 - 管理控制台
+                BUCSSA 新春嘉年华 抽奖 - 管理控制台
               </h1>
               <div className="flex items-center gap-1">
                 {connected ? (

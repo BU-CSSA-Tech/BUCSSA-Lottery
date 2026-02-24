@@ -10,7 +10,7 @@ interface WinnerModalProps {
 export default function WinnerModal({ winner, onClose }: WinnerModalProps) {
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm cursor-pointer"
       onClick={onClose}
     >
       <motion.div
@@ -53,14 +53,6 @@ export default function WinnerModal({ winner, onClose }: WinnerModalProps) {
           transition={{ delay: 1, duration: 0.5 }}
         >
           <div className="w-32 h-1 bg-gradient-to-r from-yellow-400 to-orange-500 mx-auto rounded-full" />
-        </motion.div>
-        <motion.div
-          className="mt-8 text-lg text-gray-300 p-4 border border-white/50 rounded-lg"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 1.5, duration: 0.5 }}
-        >
-          点击此处关闭
         </motion.div>
       </motion.div>
     </div>

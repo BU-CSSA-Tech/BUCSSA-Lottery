@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import { Swords } from "lucide-react";
 
 interface TieModalProps {
   tie: string[];
@@ -10,26 +11,39 @@ interface TieModalProps {
 export default function TieModal({ tie, onClose }: TieModalProps) {
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm"
+      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm cursor-pointer"
       onClick={onClose}
     >
-      <motion.div
-        className="w-full h-full flex items-center justify-between px-8 cursor-pointer"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 1, ease: "easeOut" }}
+      {/* 以中间图标为基准，选手相对图标定位 */}
+      <div
+        className="relative flex flex-col items-center justify-center"
         onClick={(e) => e.stopPropagation()}
       >
-        {/* 左侧选手 */}
+        {/* 中间 V.S 符号 - 视觉中心与定位基准 */}
         <motion.div
-          className="flex-2/5 max-w-lg items-center justify-center space-y-4"
-          initial={{ x: -100, opacity: 0 }}
+          className="flex flex-col items-center gap-2"
+          initial={{ scale: 0, rotate: -180 }}
+          animate={{ scale: 1, rotate: 0 }}
+          transition={{ delay: 0.8, duration: 1, ease: "easeOut" }}
+        >
+          <Swords
+            className="w-24 h-24 lg:w-32 lg:h-32 text-amber-400/90 drop-shadow-[0_0_20px_rgba(251,191,36,0.6)]"
+            strokeWidth={1.5}
+          />
+          <span className="text-2xl lg:text-3xl font-bold text-amber-400/90 tracking-wider">
+            V.S.
+          </span>
+        </motion.div>
+
+        {/* 选手 1 - 图标左上角，距离适中 */}
+        <motion.div
+          className="absolute right-full bottom-full mr-6 mb-6 space-y-4 text-right overflow-x-auto"
+          initial={{ x: -40, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.8 }}
         >
           <motion.div
-            className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-red-500 to-red-600 break-words px-8"
+            className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-red-500 to-red-600 whitespace-nowrap overflow-x-auto"
             animate={{
               textShadow: [
                 "0 0 20px #ef4444",
@@ -42,60 +56,21 @@ export default function TieModal({ tie, onClose }: TieModalProps) {
               repeat: Infinity,
               repeatType: "reverse",
             }}
-            style={{
-              wordBreak: "break-all",
-              hyphens: "auto",
-              maxWidth: "100%",
-              overflow: "hidden",
-            }}
           >
-            {tie[0] && tie[0].length > 25
-              ? (() => {
-                  const email = tie[0];
-                  const atIndex = email.indexOf("@");
-                  if (atIndex > 0) {
-                    const username = email.substring(0, atIndex);
-                    const domain = email.substring(atIndex);
-                    return (
-                      <>
-                        {username.length > 15
-                          ? `${username.substring(0, 15)}...`
-                          : username}
-                        <br />
-                        {domain}
-                      </>
-                    );
-                  }
-                  return email.length > 25
-                    ? `${email.substring(0, 25)}...`
-                    : email;
-                })()
-              : tie[0]}
+            {tie[0] || ""}
           </motion.div>
-          <div className="text-4xl text-red-300 font-semibold text-center">
-            选手 1
-          </div>
+          <div className="text-3xl text-red-300 font-semibold">选手 1</div>
         </motion.div>
 
-        {/* 中间 VS */}
+        {/* 选手 2 - 图标右下角，距离适中 */}
         <motion.div
-          className="flex-1/5 mx-2 items-center justify-center"
-          initial={{ scale: 0, rotate: -180 }}
-          animate={{ scale: 1, rotate: 0 }}
-          transition={{ delay: 0.8, duration: 1, ease: "easeOut" }}
-        >
-          <div className="text-9xl font-bold text-center">⚔️</div>
-        </motion.div>
-
-        {/* 右侧选手 */}
-        <motion.div
-          className="flex-2/5 max-w-lg items-center justify-center space-y-4"
-          initial={{ x: 100, opacity: 0 }}
+          className="absolute left-full top-full ml-6 mt-6 space-y-4 text-left overflow-x-auto"
+          initial={{ x: 40, opacity: 0 }}
           animate={{ x: 0, opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.8 }}
         >
           <motion.div
-            className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 via-green-500 to-green-600 break-words px-8"
+            className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 via-green-500 to-green-600 whitespace-nowrap overflow-x-auto"
             animate={{
               textShadow: [
                 "0 0 20px #22c55e",
@@ -108,50 +83,12 @@ export default function TieModal({ tie, onClose }: TieModalProps) {
               repeat: Infinity,
               repeatType: "reverse",
             }}
-            style={{
-              wordBreak: "break-all",
-              hyphens: "auto",
-              maxWidth: "100%",
-              overflow: "hidden",
-            }}
           >
-            {tie[1] && tie[1].length > 25
-              ? (() => {
-                  const email = tie[1];
-                  const atIndex = email.indexOf("@");
-                  if (atIndex > 0) {
-                    const username = email.substring(0, atIndex);
-                    const domain = email.substring(atIndex);
-                    return (
-                      <>
-                        {username.length > 15
-                          ? `${username.substring(0, 15)}...`
-                          : username}
-                        <br />
-                        {domain}
-                      </>
-                    );
-                  }
-                  return email.length > 25
-                    ? `${email.substring(0, 25)}...`
-                    : email;
-                })()
-              : tie[1]}
+            {tie[1] || ""}
           </motion.div>
-          <div className="text-4xl text-green-300 font-semibold text-center">
-            选手 2
-          </div>
+          <div className="text-3xl text-green-300 font-semibold">选手 2</div>
         </motion.div>
-      </motion.div>
-
-      <motion.div
-        className="mt-8 text-lg text-gray-300 fixed bottom-12 left-1/2 -translate-x-1/2 text-center p-4 border border-white/50 rounded-lg"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ delay: 1.5, duration: 0.5 }}
-      >
-        点击此处关闭
-      </motion.div>
+      </div>
     </div>
   );
 }
