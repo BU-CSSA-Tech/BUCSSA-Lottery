@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 
 interface WinnerModalProps {
@@ -8,6 +9,20 @@ interface WinnerModalProps {
 }
 
 export default function WinnerModal({ winner, onClose }: WinnerModalProps) {
+  const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  useEffect(() => {
+    const audio = new Audio("/tujidan.mp3");
+    audio.volume = 1;
+    audio.play().catch(() => {});
+    audioRef.current = audio;
+
+    return () => {
+      audio.pause();
+      audioRef.current = null;
+    };
+  }, []);
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm cursor-pointer"

@@ -1,5 +1,6 @@
 "use client";
 
+import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Swords } from "lucide-react";
 
@@ -8,7 +9,35 @@ interface TieModalProps {
   onClose: () => void;
 }
 
+const TIE_SOUND_PLAYS = 3;
+
 export default function TieModal({ tie, onClose }: TieModalProps) {
+  const playCountRef = useRef(0);
+
+  useEffect(() => {
+    const audio = new Audio("/zhandou.mp3");
+    playCountRef.current = 0;
+    audio.volume = 1.0;
+
+    const playNext = () => {
+      if (playCountRef.current >= TIE_SOUND_PLAYS) return;
+      playCountRef.current += 1;
+      audio.play().catch(() => {});
+    };
+
+    const onEnded = () => {
+      if (playCountRef.current < TIE_SOUND_PLAYS) playNext();
+    };
+
+    audio.addEventListener("ended", onEnded);
+    playNext();
+
+    return () => {
+      audio.pause();
+      audio.removeEventListener("ended", onEnded);
+    };
+  }, []);
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm cursor-pointer"

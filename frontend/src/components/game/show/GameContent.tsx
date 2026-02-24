@@ -162,12 +162,21 @@ export default function GameContent({
           )}
 
           {winner ? (
-            <div className="space-y-16 max-w-6xl mx-auto p-16">
-              <div className="text-6xl text-yellow-500/80 font-normal mb-4">
+            <div className="space-y-8 max-w-6xl mx-auto px-16 py-8">
+              <div className="text-6xl text-yellow-500/80 font-normal">
                 恭喜一等奖获得者!
               </div>
-              <div className="bg-gradient-to-r from-yellow-400 to-orange-500 text-black px-8 py-4 rounded-2xl">
-                <div className="text-6xl font-light">🏆 {winner} 🏆</div>
+              <div className="relative flex justify-center">
+                <img
+                  src="/winbg.png"
+                  alt=""
+                  className="max-w-full h-auto object-contain"
+                />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <div className="text-6xl font-light text-center text-black">
+                    {winner}
+                  </div>
+                </div>
               </div>
             </div>
           ) : tie ? (
