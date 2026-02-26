@@ -5,8 +5,12 @@ const INTERVAL_MS = 20_000;
 async function checkHealth(url: string): Promise<boolean> {
   try {
     const res = await fetch(`${url}/health`, { signal: AbortSignal.timeout(5_000) });
+    if (res.ok) {
+      console.log("[healthcheck] Primary server is healthy");
+    }
     return res.ok;
-  } catch {
+  } catch (error) {
+    console.warn("[healthcheck] Error checking primary server health:", error);
     return false;
   }
 }
@@ -19,6 +23,5 @@ export function startHealthCheckLoop(): void {
       await ensureRecovered();
     }
   }, INTERVAL_MS);
-
   console.log(`[healthcheck] Monitoring primary server every ${INTERVAL_MS / 1000}s`);
 }
