@@ -44,25 +44,25 @@ export class GameManager {
   /** 根据房间状态和用户邮箱生成玩家端状态（单一 status） */
   async getPlayerGameState(roomState: RoomState, userEmail: string): Promise<PlayerGameState> {
     const isWinner = await redis.get(RedisKeys.gameWinner()) === userEmail;
-    
-    if (isWinner) 
+
+    if (isWinner)
       return { status: 'winner', round: roomState.round, userAnswer: null, timeLeft: roomState.timeLeft };
-    
+
     const tieSet = await redis.sMembers(RedisKeys.gameTie());
     const isTie = tieSet?.includes(userEmail) ?? false;
-    
-    if (isTie) 
+
+    if (isTie)
       return { status: 'tie', round: roomState.round, userAnswer: null, timeLeft: roomState.timeLeft };
-    
+
     const isEliminated = await redis.sIsMember(RedisKeys.roomEliminated(), userEmail);
-    
-    if (isEliminated) 
+
+    if (isEliminated)
       return { status: 'eliminated', round: roomState.round, userAnswer: null, timeLeft: roomState.timeLeft };
-    
+
     const questionId = roomState.currentQuestion?.id;
     const userAnswer = questionId ? await redis.get(RedisKeys.userAnswer(userEmail, questionId)) as 'A' | 'B' | null : null;
     const status = roomState.status === 'ended' ? 'waiting' : roomState.status;
-    
+
     return { status, round: roomState.round, userAnswer: userAnswer || null, timeLeft: roomState.timeLeft };
   }
 
@@ -86,12 +86,12 @@ export class GameManager {
     const normalizedQuestion: MinorityQuestion | null =
       currentQuestion && currentQuestion.id
         ? {
-            id: currentQuestion.id,
-            question: currentQuestion.question ?? '',
-            optionA: currentQuestion.optionA ?? '',
-            optionB: currentQuestion.optionB ?? '',
-            startTime: currentQuestion.startTime ?? '',
-          }
+          id: currentQuestion.id,
+          question: currentQuestion.question ?? '',
+          optionA: currentQuestion.optionA ?? '',
+          optionB: currentQuestion.optionB ?? '',
+          startTime: currentQuestion.startTime ?? '',
+        }
         : null;
 
     return {
@@ -362,7 +362,7 @@ export class GameManager {
       currentRound: parseInt((await redis.get(RedisKeys.currentRound())) || '0', 10),
       status: 'waiting',
       started: false,
-    }).catch(() => {});
+    }).catch(() => { });
 
     const redisEliminatedUsers = await redis.sMembers(RedisKeys.roomEliminated()) as string[];
     console.log(`Eliminated users (endGame): ${redisEliminatedUsers}`);
@@ -383,7 +383,7 @@ export class GameManager {
 
     // 同步保存 Game Result（关键数据，带 500ms 超时保护）
     const currentRound = parseInt(await redis.get(RedisKeys.currentRound()) || '0');
-    
+
     // 计算总轮数：从 RoundSnapshot 统计，如果没有则使用当前轮次
     // 注意：这里简化处理，使用当前轮次作为总轮数
     // 如果需要精确的总轮数，可以从 RoundSnapshot 表查询
@@ -413,7 +413,7 @@ export class GameManager {
 
     // Admin reset is a normal operation: disable PG-based auto-recovery briefly
     // to avoid treating this reset as a Redis crash.
-    await redis.set(RedisKeys.recoveryDisabled(), '1', { EX: 30 });
+    // await redis.set(RedisKeys.recoveryDisabled(), '1', { EX: 30 });
 
     await redis.del(RedisKeys.currentQuestion());
     await redis.del(RedisKeys.roomSurvivors());
@@ -428,7 +428,7 @@ export class GameManager {
       currentRound: 0,
       status: 'waiting',
       started: false,
-    }).catch(() => {});
+    }).catch(() => { });
 
     // 使用 SCAN 替代 KEYS，避免阻塞 Redis（高并发下 KEYS 会拖慢整个实例）
     const answerPattern = 'user:*:answer:*';

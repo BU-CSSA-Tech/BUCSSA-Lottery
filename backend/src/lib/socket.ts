@@ -58,7 +58,7 @@ export function initializeSocketIO(httpServer: HTTPServer): SocketIOServer {
   // 连接事件处理
   io.on('connection', async (socket) => {
     // If Redis lost state (restart/crash), restore minimal state from PG snapshot.
-    await ensureRecovered();
+    // await ensureRecovered();
 
     const gameManager = getGameManager();
     const user = socket.data.user;

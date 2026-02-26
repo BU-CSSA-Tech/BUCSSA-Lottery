@@ -23,11 +23,11 @@ export async function ensureRecovered(): Promise<void> {
     if (recoveryDisabled) return;
 
     // Fast path: Redis already has basic state
-    const [hasRound, hasState] = await Promise.all([
-      redis.exists(RedisKeys.currentRound()),
-      redis.exists(RedisKeys.gameState()),
-    ]);
-    if (hasRound && hasState) return;
+    // const [hasRound, hasState] = await Promise.all([
+    //   redis.exists(RedisKeys.currentRound()),
+    //   redis.exists(RedisKeys.gameState()),
+    // ]);
+    // if (hasRound && hasState) return;
   } catch (err) {
     // Redis itself is unavailable; don't block socket connections here.
     console.error('ensureRecovered: Redis not reachable (non-blocking):', err);

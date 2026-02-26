@@ -3,6 +3,7 @@ import express from 'express';
 import { createServer } from 'http';
 import cors from 'cors';
 import { initializeSocketIO } from './lib/socket.js';
+import { startHealthCheckLoop } from './lib/healthcheck.js';
 import submitAnswerRoutes from './routes/submit-answer.js';
 import adminRoutes from './routes/admin.js';
 
@@ -38,6 +39,11 @@ server.on('error', (err) => {
   console.error('Server failed to start:', err);
   process.exit(1);
 });
+
+if (process.env.IS_SECONDARY === 'true') {
+  console.log('Running in secondary mode — monitoring primary server');
+  startHealthCheckLoop();
+}
 
 // Optional: Graceful shutdown
 process.on('SIGTERM', () => {
