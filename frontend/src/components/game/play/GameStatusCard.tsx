@@ -89,42 +89,44 @@ export default function GameStatusCard({
             第 {userGameState.round} 轮
           </div>
 
-          <div className="flex flex-col items-center gap-3 justify-center">
-            <button
-              type="button"
-              onClick={() => onSubmitAnswer("A")}
-              disabled={!!selectedOption}
-              className={`relative w-48 h-48 md:w-56 md:h-56 transition-all duration-200 rounded-lg overflow-hidden ${
-                selectedOption && selectedOption !== "A" ? "opacity-50" : ""
-              }`}
-            >
-              <Image
-                src="/aoption.png"
-                alt="选项 A"
-                fill
-                className="object-contain"
-              />
-            </button>
+          {!selectedOption ? (
+            <div className="flex flex-col items-center gap-3 justify-center">
+              <button
+                type="button"
+                onClick={() => onSubmitAnswer("A")}
+                className="relative w-48 h-48 md:w-56 md:h-56 transition-all duration-200 rounded-lg overflow-hidden"
+              >
+                <Image
+                  src="/aoption.png"
+                  alt="选项 A"
+                  fill
+                  className="object-contain"
+                />
+              </button>
 
-            <button
-              type="button"
-              onClick={() => onSubmitAnswer("B")}
-              disabled={!!selectedOption}
-              className={`relative w-48 h-48 md:w-56 md:h-56 transition-all duration-200 rounded-lg overflow-hidden ${
-                selectedOption && selectedOption !== "B" ? "opacity-50" : ""
-              }`}
-            >
-              <Image
-                src="/boption.png"
-                alt="选项 B"
-                fill
-                className="object-contain"
-              />
-            </button>
-          </div>
-
-          {selectedOption && (
-            <div className="text-center">
+              <button
+                type="button"
+                onClick={() => onSubmitAnswer("B")}
+                className="relative w-48 h-48 md:w-56 md:h-56 transition-all duration-200 rounded-lg overflow-hidden"
+              >
+                <Image
+                  src="/boption.png"
+                  alt="选项 B"
+                  fill
+                  className="object-contain"
+                />
+              </button>
+            </div>
+          ) : (
+            <div className="flex flex-col items-center gap-4">
+              <div className="relative w-56 h-56 md:w-64 md:h-64">
+                <Image
+                  src={selectedOption === "A" ? "/aoption.png" : "/boption.png"}
+                  alt={`选项 ${selectedOption}`}
+                  fill
+                  className="object-contain"
+                />
+              </div>
               <div className="flex items-center justify-center gap-2 text-gray-800 bg-white/50 rounded-md p-2">
                 <CheckCircle className="w-5 h-5" />
                 <div className="font-medium text-gray-800">
