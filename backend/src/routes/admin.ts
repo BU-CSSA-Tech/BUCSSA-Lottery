@@ -92,8 +92,6 @@ router.post('/reset-game', async (req: Request, res: Response) => {
     const token = authHeader && authHeader.split(' ')[1];
     const decoded = token ? jwt.verify(token, process.env.JWT_SECRET!) as JWTPayload : null;
 
-    console.log(authHeader, token, decoded);
-
     const userEmail = decoded?.email;
     const isAdmin = decoded?.isAdmin;
     const isDisplay = decoded?.isDisplay;
