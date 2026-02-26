@@ -1,7 +1,5 @@
 import { ensureRecovered } from './recovery.js';
 
-const PRIMARY_URL = 'https://api.lottery.bucssa.org/health';
-
 const INTERVAL_MS = 20_000;
 
 async function checkHealth(url: string): Promise<boolean> {
@@ -15,9 +13,9 @@ async function checkHealth(url: string): Promise<boolean> {
 
 export function startHealthCheckLoop(): void {
   setInterval(async () => {
-    const healthy = await checkHealth(PRIMARY_URL);
+    const healthy = await checkHealth(process.env.API_BASE || 'http://localhost:4000');
     if (!healthy) {
-      console.warn(`[healthcheck] Primary server (${PRIMARY_URL}) is down — running recovery`);
+      console.warn(`[healthcheck] Primary server (${process.env.API_BASE || 'http://localhost:4000'}) is down — running recovery`);
       await ensureRecovered();
     }
   }, INTERVAL_MS);
