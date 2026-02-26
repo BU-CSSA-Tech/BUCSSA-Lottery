@@ -15,13 +15,15 @@ async function checkHealth(url: string): Promise<boolean> {
   }
 }
 
-export function startHealthCheckLoop(): void {
-  setInterval(async () => {
+export function startHealthCheckLoop(): () => void {
+  const handle = setInterval(async () => {
     const healthy = await checkHealth(process.env.API_BASE || 'http://localhost:4000');
     if (!healthy) {
       console.warn(`[healthcheck] Primary server (${process.env.API_BASE || 'http://localhost:4000'}) is down — running recovery`);
+      clearInterval(handle);
       await ensureRecovered();
     }
   }, INTERVAL_MS);
   console.log(`[healthcheck] Monitoring primary server every ${INTERVAL_MS / 1000}s`);
+  return () => clearInterval(handle);
 }
