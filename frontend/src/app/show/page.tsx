@@ -34,8 +34,14 @@ export default function ShowPage() {
   const [updatedWinnerTie, setUpdatedWinnerTie] = useState<boolean>(false);
   const [showQRCode, setShowQRCode] = useState(false);
   const [connectionFailed, setConnectionFailed] = useState(false);
+  const [soundEnabled, setSoundEnabled] = useState(false);
 
   const socketRef = useRef<Socket | null>(null);
+  const soundEnabledRef = useRef(false);
+  const bgmRef = useRef<HTMLAudioElement | null>(null);
+  const doudizhuRef = useRef<HTMLAudioElement | null>(null);
+  const gongRef = useRef<HTMLAudioElement | null>(null);
+  const currentPhaseRef = useRef<"bgm" | "doudizhu" | "none">("bgm");
 
   // 前端倒计时状态
   const [frontendTimeLeft, setFrontendTimeLeft] = useState<number>(0);
@@ -65,6 +71,37 @@ export default function ShowPage() {
       return;
     }
   }, []);
+
+  // 音频初始化
+  useEffect(() => {
+    bgmRef.current = new Audio("/bgm.mp3");
+    bgmRef.current.loop = true;
+    bgmRef.current.volume = 0.3;
+    doudizhuRef.current = new Audio("/doudizhu1.mp3");
+    doudizhuRef.current.loop = true;
+    doudizhuRef.current.volume = 0.5;
+    gongRef.current = new Audio("/gong.mp3");
+    gongRef.current.volume = 0.7;
+    return () => {
+      bgmRef.current?.pause();
+      doudizhuRef.current?.pause();
+      gongRef.current?.pause();
+    };
+  }, []);
+
+  // 声音开关
+  useEffect(() => {
+    soundEnabledRef.current = soundEnabled;
+    if (!soundEnabled) {
+      bgmRef.current?.pause();
+      doudizhuRef.current?.pause();
+      gongRef.current?.pause();
+    } else if (currentPhaseRef.current === "bgm") {
+      bgmRef.current?.play().catch(() => {});
+    } else if (currentPhaseRef.current === "doudizhu") {
+      doudizhuRef.current?.play().catch(() => {});
+    }
+  }, [soundEnabled]);
 
   // Socket.IO 连接
   useEffect(() => {
@@ -124,6 +161,10 @@ export default function ShowPage() {
       setWinner(null);
       setTie(null);
       setUpdatedWinnerTie(true);
+      doudizhuRef.current?.pause();
+      gongRef.current?.pause();
+      currentPhaseRef.current = "bgm";
+      if (soundEnabledRef.current) bgmRef.current?.play().catch(() => {});
     });
 
     socket.on("game_state", (data: GameState) => {
@@ -145,6 +186,13 @@ export default function ShowPage() {
       setGameState((prev) => (prev.status === "ended" ? prev : data));
       setFrontendTimeLeft(data.timeLeft ?? 0);
       setCountdownActive(true);
+      bgmRef.current?.pause();
+      gongRef.current?.pause();
+      currentPhaseRef.current = "doudizhu";
+      if (soundEnabledRef.current && doudizhuRef.current) {
+        doudizhuRef.current.currentTime = 0;
+        doudizhuRef.current.play().catch(() => {});
+      }
     });
 
     socket.on("round_result", (data: GameState) => {
@@ -153,6 +201,12 @@ export default function ShowPage() {
       setGameState((prev) => (prev.status === "ended" ? prev : data));
       setCountdownActive(false);
       setFrontendTimeLeft(0);
+      doudizhuRef.current?.pause();
+      currentPhaseRef.current = "none";
+      if (soundEnabledRef.current && gongRef.current) {
+        gongRef.current.currentTime = 0;
+        gongRef.current.play().catch(() => {});
+      }
     });
 
     socket.on("tie", (data: hasTie) => {
@@ -163,6 +217,9 @@ export default function ShowPage() {
         setFrontendTimeLeft(0);
       }
       setUpdatedWinnerTie(true);
+      doudizhuRef.current?.pause();
+      gongRef.current?.pause();
+      currentPhaseRef.current = "none";
     });
 
     socket.on("winner", (data: hasWinner) => {
@@ -171,6 +228,9 @@ export default function ShowPage() {
       setCountdownActive(false);
       setFrontendTimeLeft(0);
       setUpdatedWinnerTie(true);
+      doudizhuRef.current?.pause();
+      gongRef.current?.pause();
+      currentPhaseRef.current = "none";
     });
 
     socket.on("disconnect", () => {
@@ -241,6 +301,8 @@ export default function ShowPage() {
       setShowTieModal(false);
     }
   }, [tie]);
+
+  const handleToggleSound = () => setSoundEnabled((prev) => !prev);
 
   // 退出登录处理函数
   const handleLogout = async () => {
@@ -345,6 +407,8 @@ export default function ShowPage() {
         {/* 顶部 Header - 连接状态、二维码、退出 */}
         <ShowHeader
           socket={socket}
+          soundEnabled={soundEnabled}
+          onToggleSound={handleToggleSound}
           onShowQRCode={() => setShowQRCode(true)}
           onLogout={handleLogout}
         />
