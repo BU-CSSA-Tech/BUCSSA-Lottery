@@ -15,75 +15,81 @@ import CurrentQuestionDisplay from "@/components/game/admin/CurrentQuestionDispl
 const PRESET_QUESTIONS = [
   {
     id: "q1",
-    question: "玉兔怎么上天的？",
-    optionA: "被嫦娥踹上去的",
-    optionB: "喝丝瓜汤飞升了",
+    question: "饺子馅偏好",
+    optionA: "猪肉白菜",
+    optionB: "韭菜鸡蛋",
   },
   {
     id: "q2",
-    question: "嫦娥最想要？",
-    optionA: "余生哥哥给她买包包",
-    optionB: "鸡排主理人做鸡排",
+    question: "关于春节的「身材管理」",
+    optionA: "依旧自律，16+8减肥法",
+    optionB: "爽吃，16个小时吃8顿！",
   },
   {
     id: "q3",
-    question: "你是什么？",
-    optionA: "小馋猫",
-    optionB: "小奶狗",
+    question: "突降10万大红包，你会",
+    optionA: "老实攒着，未雨绸缪",
+    optionB: "反手花掉，及时行乐",
   },
   {
     id: "q4",
-    question: "月亮为什么这么圆？",
-    optionA: "吴刚用 Photoshop 修的",
-    optionB: "打了玻尿酸",
+    question: "2026年你的「暴富」信念",
+    optionA: "靠勤劳双手，做最强牛马",
+    optionB: "靠运气锦鲤，等一个天降横财",
   },
   {
     id: "q5",
-    question: "嫦娥最怕什么？",
-    optionA: "月饼过期",
-    optionB: "天上没 WiFi",
+    question: "春节社交局",
+    optionA: "打麻将",
+    optionB: "打斗地主",
   },
   {
     id: "q6",
-    question: "如果中秋月饼和国庆烟花只能留一个，你选？",
-    optionA: "吃饱了再说",
-    optionB: "看爽了再说",
+    question: "如何看待朋友圈迎财神",
+    optionA: "接接接，我要发财",
+    optionB: "呵呵呵",
   },
   {
     id: "q7",
-    question: "如果月亮突然有信号塔了，嫦娥第一句会发什么朋友圈？",
-    optionA: "终于连上网了，买了否冷",
-    optionB: "家人们十个赞今天不上班",
+    question: "新年第一天状态",
+    optionA: "早起上课",
+    optionB: "睡懒觉",
   },
   {
     id: "q8",
-    question: "为什么玉兔总跟着嫦娥走？",
-    optionA: "开团秒跟",
-    optionB: "害怕嫦娥点外卖不叫他",
+    question: "祝福语风格",
+    optionA: "骏马奔腾，前程似锦",
+    optionB: "新的一年我踏马来了",
   },
   {
     id: "q9",
-    question: "嫦娥在月球上点的一个饭团外卖是什么？",
-    optionA: "麻辣兔头",
-    optionB: "兔兔那么可爱，怎么可以吃兔兔～",
+    question: "你对2026的期待是",
+    optionA: "遇到那个对的人",
+    optionB: "遇到那份赚大钱的机会",
   },
   {
     id: "q10",
-    question: "吃了玉兔捣的药我…？",
-    optionA: "头怎么感觉尖尖的",
-    optionB: "变成火辣辣的纯情蟑螂",
+    question: "新一年的整体心情",
+    optionA: "满怀期待",
+    optionB: "随遇而安",
   },
   {
     id: "q11",
-    question: "怎样让后裔奔月？",
-    optionA: "来咯来咯后裔哥哥上车咯",
-    optionB: "堂吉柯德式的冲锋",
+    question: "听 Step.Jet 时的状态",
+    optionA: "深夜独处，emo治愈",
+    optionB: "通勤",
   },
   {
     id: "q12",
-    question: "梦幻月亮上的嫦娥为什么哭哭？",
-    optionA: "幻梦都破碎",
-    optionB: "月亮上的天气那是翻云又覆雨",
+    question: "Step.Jet的歌你更喜欢",
+    optionA: "《思念病》",
+    optionB: "《迷宫》",
+  },
+  {
+    id: "q13",
+    question: "2026 对 Step.Jet 的最大期待",
+    optionA: "高产似劳模，快发新专辑",
+    optionB: "多开巡演，我要冲去现场",
   },
 ];
 
@@ -320,7 +326,7 @@ export default function AdminPage() {
 
 
   return (
-    <div className="min-h-screen bg-gray-900/75">
+    <div className="h-screen overflow-y-auto bg-gray-900/75">
       {/* Header */}
       <AdminHeader
         connected={connected}
