@@ -5,7 +5,8 @@ import { useRouter } from "next/navigation";
 import { Button } from "@/components/ui/button";
 import Confetti from "react-confetti";
 import BattleEffect from "@/components/ui/battle-effect";
-import { io, Socket } from "socket.io-client";
+import { Socket } from "socket.io-client";
+import { connectSocket, sendAPIRequest } from "@/lib/api";
 import { useSession, signOut } from "next-auth/react";
 import {
   UserGameState,
@@ -82,117 +83,126 @@ export default function PlayPage() {
       return;
     }
 
-    const socket = io(process.env.NEXT_PUBLIC_API_BASE!, {
+    const socketOpts = {
       auth: {
         token: session.user.accessToken,
       },
-      transports: ['websocket', 'polling'], // Try WebSocket first, fallback to polling
-      upgrade: true, // Allow transport upgrade
+      transports: ['websocket', 'polling'],
+      upgrade: true,
       reconnection: true,
       reconnectionAttempts: 3,
       reconnectionDelay: 1000,
-    });
+    };
 
-    socketRef.current = socket;
-
-    socket.on("connect", () => {
-      setConnected(true);
-      // Debug: Check which transport is being used
-      console.log("🔌 Connected via:", socket.io.engine.transport.name);
-      socket.io.engine.on("upgrade", (transport) => {
-        console.log("⬆️ Upgraded to:", transport.name);
+    function setupSocket() {
+      const socket = connectSocket(socketOpts, () => {
+        // Primary server failed — switch to secondary and reconnect
+        socket.disconnect();
+        setupSocket();
       });
-    });
 
-    socket.on("disconnect", () => {
-      setConnected(false);
-    });
+      socketRef.current = socket;
 
-    socket.on("redirect", (data: { url: string; message: string }) => {
-      console.log("Redirecting:", data);
-      handleLogout();
-    });
-
-    socket.on("game_state", (data: UserGameState) => {
-      console.log("game_state received:", data);
-      // 已处于结束状态（平局/冠军/淘汰）时，不被迟到的 waiting/playing 覆盖
-      setUserGameState((prev) => {
-        const ended = ["tie", "winner", "eliminated"].includes(prev.status);
-        const dataEnded = ["tie", "winner", "eliminated"].includes(data.status);
-        if (ended && !dataEnded) return prev;
-        return data;
+      socket.on("connect", () => {
+        setConnected(true);
+        console.log("🔌 Connected via:", socket.io.engine.transport.name);
+        socket.io.engine.on("upgrade", (transport) => {
+          console.log("⬆️ Upgraded to:", transport.name);
+        });
       });
-      setSelectedOption(data.userAnswer || "");
-    });
 
-    socket.on("game_start", (data: UserGameState) => {
-      setUserGameState(data);
-      setSelectedOption(data.userAnswer || "");
-      if (data.status === "waiting") {
-        window.location.reload();
-      }
-    });
+      socket.on("disconnect", () => {
+        setConnected(false);
+      });
 
-    socket.on("new_question", (data: UserGameState) => {
-      // 已处于结束状态时，不被迟到的 new_question 覆盖
-      setUserGameState((prev) =>
-        ["tie", "winner", "eliminated"].includes(prev.status) ? prev : data
-      );
-      setSelectedOption(data.userAnswer || "");
-    });
+      socket.on("redirect", (data: { url: string; message: string }) => {
+        console.log("Redirecting:", data);
+        handleLogout();
+      });
 
-    socket.on("round_result", (data: UserGameState) => {
-      console.log("round_result received:", data);
-      // 已处于结束状态时，不被迟到的 round_result（waiting）覆盖
-      setUserGameState((prev) =>
-        ["tie", "winner", "eliminated"].includes(prev.status) ? prev : data
-      );
-      setSelectedOption(data.userAnswer || "");
-    });
+      socket.on("game_state", (data: UserGameState) => {
+        console.log("game_state received:", data);
+        // 已处于结束状态（平局/冠军/淘汰）时，不被迟到的 waiting/playing 覆盖
+        setUserGameState((prev) => {
+          const ended = ["tie", "winner", "eliminated"].includes(prev.status);
+          const dataEnded = ["tie", "winner", "eliminated"].includes(data.status);
+          if (ended && !dataEnded) return prev;
+          return data;
+        });
+        setSelectedOption(data.userAnswer || "");
+      });
 
-    socket.on("eliminated", (data: unknown) => {
-      if (!isEliminatedPayload(data)) {
-        console.warn("eliminated: invalid payload", data);
-        return;
-      }
-      const userElimination = data.eliminated.find((u) => u.userEmail === session.user?.email);
-      if (userElimination) {
-        setUserGameState((prev) => ({ ...prev, status: "eliminated" }));
-        setEliminatedReason(userElimination.eliminatedReason);
-      }
-    });
+      socket.on("game_start", (data: UserGameState) => {
+        setUserGameState(data);
+        setSelectedOption(data.userAnswer || "");
+        if (data.status === "waiting") {
+          window.location.reload();
+        }
+      });
 
-    socket.on("winner", (data: unknown) => {
-      if (!isWinnerPayload(data)) {
-        console.warn("winner: invalid payload", data);
-        return;
-      }
-      if (data.winnerEmail === session.user?.email) {
-        setUserGameState((prev) => ({ ...prev, status: "winner" }));
-      }
-    });
+      socket.on("new_question", (data: UserGameState) => {
+        // 已处于结束状态时，不被迟到的 new_question 覆盖
+        setUserGameState((prev) =>
+          ["tie", "winner", "eliminated"].includes(prev.status) ? prev : data
+        );
+        setSelectedOption(data.userAnswer || "");
+      });
 
-    socket.on("tie", (data: unknown) => {
-      if (!isTiePayload(data)) {
-        console.warn("tie: invalid payload", data);
-        return;
-      }
-      if (data.finalists.includes(session.user?.email ?? "")) {
-        setUserGameState((prev) => ({ ...prev, status: "tie" }));
-      }
-    });
+      socket.on("round_result", (data: UserGameState) => {
+        console.log("round_result received:", data);
+        // 已处于结束状态时，不被迟到的 round_result（waiting）覆盖
+        setUserGameState((prev) =>
+          ["tie", "winner", "eliminated"].includes(prev.status) ? prev : data
+        );
+        setSelectedOption(data.userAnswer || "");
+      });
 
-    socket.on("error", (data: unknown) => {
-      if (isSocketErrorPayload(data)) {
-        console.error("Socket 错误:", data.message ?? data.error, data);
-      } else {
-        console.error("Socket 错误:", data);
-      }
-    });
+      socket.on("eliminated", (data: unknown) => {
+        if (!isEliminatedPayload(data)) {
+          console.warn("eliminated: invalid payload", data);
+          return;
+        }
+        const userElimination = data.eliminated.find((u) => u.userEmail === session?.user?.email);
+        if (userElimination) {
+          setUserGameState((prev) => ({ ...prev, status: "eliminated" }));
+          setEliminatedReason(userElimination.eliminatedReason);
+        }
+      });
+
+      socket.on("winner", (data: unknown) => {
+        if (!isWinnerPayload(data)) {
+          console.warn("winner: invalid payload", data);
+          return;
+        }
+        if (data.winnerEmail === session?.user?.email) {
+          setUserGameState((prev) => ({ ...prev, status: "winner" }));
+        }
+      });
+
+      socket.on("tie", (data: unknown) => {
+        if (!isTiePayload(data)) {
+          console.warn("tie: invalid payload", data);
+          return;
+        }
+        if (data.finalists.includes(session?.user?.email ?? "")) {
+          setUserGameState((prev) => ({ ...prev, status: "tie" }));
+        }
+      });
+
+      socket.on("error", (data: unknown) => {
+        if (isSocketErrorPayload(data)) {
+          console.error("Socket 错误:", data.message ?? data.error, data);
+        } else {
+          console.error("Socket 错误:", data);
+        }
+      });
+    }
+
+    setupSocket();
 
     return () => {
       console.log("disconnecting socket");
-      socket.disconnect();
+      socketRef.current?.disconnect();
     };
   }, [session]);
 
@@ -202,18 +212,11 @@ export default function PlayPage() {
     try {
       setSelectedOption(option);
 
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE}/api/submit-answer`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session?.user?.accessToken || ""}`,
-          },
-          body: JSON.stringify({
-            answer: option,
-          }),
-        }
+      const response = await sendAPIRequest(
+        "/api/submit-answer",
+        "POST",
+        session?.user?.accessToken || "",
+        { answer: option }
       );
 
       const data = await response.json();

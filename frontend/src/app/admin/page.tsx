@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
-import { io, Socket } from "socket.io-client";
+import { Socket } from "socket.io-client";
+import { connectSocket, sendAPIRequest } from "@/lib/api";
 import { GameState, MinorityQuestion } from "@/types";
 import { AlertBox } from "@/components/ui/alert-box";
 import AdminHeader from "@/components/game/admin/AdminHeader";
@@ -149,66 +150,77 @@ export default function AdminPage() {
       return;
     }
 
-    const socket = io(process.env.NEXT_PUBLIC_API_BASE!, {
+    const socketOpts = {
       auth: {
         token: session.user.accessToken,
       },
-      transports: ['websocket', 'polling'], // Try WebSocket first, fallback to polling
-      upgrade: true, // Allow transport upgrade
+      transports: ['websocket', 'polling'],
+      upgrade: true,
       reconnection: true,
       reconnectionAttempts: 3,
       reconnectionDelay: 1000,
-    });
-    socketRef.current = socket;
+    };
 
-    socket.on("connect", () => {
-      setConnected(true);
-    });
+    function setupSocket() {
+      const socket = connectSocket(socketOpts, () => {
+        // Primary server failed — switch to secondary and reconnect
+        socket.disconnect();
+        setupSocket();
+      });
 
-    socket.on("disconnect", () => {
-      setConnected(false);
-    });
+      socketRef.current = socket;
 
-    socket.on("game_start", (data: GameState) => {
-      setGameState(data);
-    });
+      socket.on("connect", () => {
+        setConnected(true);
+      });
 
-    socket.on("game_state", (data: GameState) => {
-      setGameState(data);
-      // 从 roomState 同步 winner/tie，避免重连后只收到 game_state 而漏掉 tie/winner 事件
-      if (data.tie && data.tie.length >= 2) {
-        setTie(data.tie);
+      socket.on("disconnect", () => {
+        setConnected(false);
+      });
+
+      socket.on("game_start", (data: GameState) => {
+        setGameState(data);
+      });
+
+      socket.on("game_state", (data: GameState) => {
+        setGameState(data);
+        // 从 roomState 同步 winner/tie，避免重连后只收到 game_state 而漏掉 tie/winner 事件
+        if (data.tie && data.tie.length >= 2) {
+          setTie(data.tie);
+          setWinner(null);
+        } else if (data.winner) {
+          setWinner(data.winner);
+          setTie(null);
+        }
+      });
+
+      socket.on("new_question", (data: GameState) => {
+        setGameState(data);
+      });
+
+      socket.on("round_result", (data: GameState) => {
+        setGameState(data);
+      });
+
+      socket.on("tie", (data: any) => {
+        setTie(data.finalists);
         setWinner(null);
-      } else if (data.winner) {
-        setWinner(data.winner);
+      });
+
+      socket.on("winner", (data: any) => {
+        setWinner(data.winnerEmail);
         setTie(null);
-      }
-    });
+      });
 
-    socket.on("new_question", (data: GameState) => {
-      setGameState(data);
-    });
+      socket.on("game_reset", () => {
+        setSentQuestions(new Set());
+      });
+    }
 
-    socket.on("round_result", (data: GameState) => {
-      setGameState(data);
-    });
-
-    socket.on("tie", (data: any) => {
-      setTie(data.finalists);
-      setWinner(null);
-    });
-
-    socket.on("winner", (data: any) => {
-      setWinner(data.winnerEmail);
-      setTie(null);
-    });
-
-    socket.on("game_reset", () => {
-      setSentQuestions(new Set());
-    });
+    setupSocket();
 
     return () => {
-      socket.disconnect();
+      socketRef.current?.disconnect();
     };
   }, [status, session]); // Remove gameStats.currentRound dependency
 
@@ -222,16 +234,11 @@ export default function AdminPage() {
     setLoading(true);
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE}/api/admin/next-question`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session?.user.accessToken}`,
-          },
-          body: JSON.stringify(questionData),
-        }
+      const response = await sendAPIRequest(
+        "/api/admin/next-question",
+        "POST",
+        session?.user?.accessToken || '',
+        questionData
       );
 
       const data = await response.json();
@@ -256,15 +263,10 @@ export default function AdminPage() {
     setLoading(true);
 
     try {
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_BASE}/api/admin/reset-game`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${session?.user.accessToken}`,
-          },
-        }
+      const response = await sendAPIRequest(
+        "/api/admin/reset-game",
+        "POST",
+        session?.user?.accessToken || ''
       );
 
       const data = await response.json();

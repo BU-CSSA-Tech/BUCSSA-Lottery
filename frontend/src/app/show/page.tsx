@@ -3,7 +3,8 @@
 import { useState, useEffect, useRef } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
-import { io, Socket } from "socket.io-client";
+import { Socket } from "socket.io-client";
+import { connectSocket, isUsingSecondary } from "@/lib/api";
 import { GameState, hasWinner, hasTie } from "@/types";
 import BackgroundImage from "@/components/ui/BackgroundImage";
 import ConnectionFailedScreen from "@/components/game/show/ConnectionFailedScreen";
@@ -88,108 +89,122 @@ export default function ShowPage() {
       return;
     }
 
-    const socket = io(process.env.NEXT_PUBLIC_API_BASE!, {
+    const socketOpts = {
       auth: {
         token: session.user.accessToken,
       },
-      transports: ['websocket', 'polling'], // Try WebSocket first, fallback to polling
-      upgrade: true, // Allow transport upgrade
+      transports: ['websocket', 'polling'],
+      upgrade: true,
       reconnection: true,
       reconnectionAttempts: 3,
       reconnectionDelay: 1000,
-    });
-    socketRef.current = socket;
+    };
 
-    socket.on("connect", () => {
-      setSocket(socket);
-    });
+    function setupSocket() {
+      const socket = connectSocket(socketOpts, () => {
+        // Primary server failed — switch to secondary and reconnect
+        socket.disconnect();
+        setupSocket();
+      });
 
-    socket.on("player_count_update", (data: GameState) => {
-      console.log("📺 Received player_count:", data);
-      setGameState((prev) => ({
-        ...prev,
-        survivorsCount: data.survivorsCount,
-        eliminatedCount: data.eliminatedCount,
-      }));
-    });
+      socketRef.current = socket;
 
-    socket.on("countdown_update", (data: { timeLeft: number }) => {
-      setFrontendTimeLeft(data.timeLeft);
-      setCountdownActive(true);
-    });
-
-    socket.on("game_start", (data: GameState) => {
-      console.log("📺 Received game_start:", data);
-      setGameState(data);
-      setWinner(null);
-      setTie(null);
-      setUpdatedWinnerTie(true);
-    });
-
-    socket.on("game_state", (data: GameState) => {
-      console.log("📺 Received game_state:", data);
-      setGameState(data);
-      // 从 roomState 同步 winner/tie，避免重连后只收到 game_state 而漏掉 tie/winner 事件
-      if (data.tie && data.tie.length >= 2) {
-        setTie(data.tie);
-        setWinner(null);
-      } else if (data.winner) {
-        setWinner(data.winner);
-        setTie(null);
+      // When already on secondary, a reconnect failure means both servers are down
+      if (isUsingSecondary()) {
+        socket.io.once('reconnect_failed', () => {
+          console.log("📺 All reconnection attempts failed on secondary");
+          socketRef.current = null;
+          setConnectionFailed(true);
+        });
       }
-    });
 
-    socket.on("new_question", (data: GameState) => {
-      console.log("📺 Received new_question:", data);
-      // 避免在已结束（平局/冠军）时被新题目覆盖
-      setGameState((prev) => (prev.status === "ended" ? prev : data));
-      setFrontendTimeLeft(data.timeLeft ?? 0);
-      setCountdownActive(true);
-    });
+      socket.on("connect", () => {
+        setSocket(socket);
+      });
 
-    socket.on("round_result", (data: GameState) => {
-      console.log("📺 Received round_result:", data);
-      // 避免迟到的 round_result 覆盖已显示的平局/冠军（保持 ended 状态）
-      setGameState((prev) => (prev.status === "ended" ? prev : data));
-      setCountdownActive(false);
-      setFrontendTimeLeft(0);
-    });
+      socket.on("player_count_update", (data: GameState) => {
+        console.log("📺 Received player_count:", data);
+        setGameState((prev) => ({
+          ...prev,
+          survivorsCount: data.survivorsCount,
+          eliminatedCount: data.eliminatedCount,
+        }));
+      });
 
-    socket.on("tie", (data: hasTie) => {
-      console.log("📺 Received game_tie:", data.finalists);
-      if (data.finalists && data.finalists.length === 2) {
-        setTie(data.finalists);
+      socket.on("countdown_update", (data: { timeLeft: number }) => {
+        setFrontendTimeLeft(data.timeLeft);
+        setCountdownActive(true);
+      });
+
+      socket.on("game_start", (data: GameState) => {
+        console.log("📺 Received game_start:", data);
+        setGameState(data);
+        setWinner(null);
+        setTie(null);
+        setUpdatedWinnerTie(true);
+      });
+
+      socket.on("game_state", (data: GameState) => {
+        console.log("📺 Received game_state:", data);
+        setGameState(data);
+        // 从 roomState 同步 winner/tie，避免重连后只收到 game_state 而漏掉 tie/winner 事件
+        if (data.tie && data.tie.length >= 2) {
+          setTie(data.tie);
+          setWinner(null);
+        } else if (data.winner) {
+          setWinner(data.winner);
+          setTie(null);
+        }
+      });
+
+      socket.on("new_question", (data: GameState) => {
+        console.log("📺 Received new_question:", data);
+        // 避免在已结束（平局/冠军）时被新题目覆盖
+        setGameState((prev) => (prev.status === "ended" ? prev : data));
+        setFrontendTimeLeft(data.timeLeft ?? 0);
+        setCountdownActive(true);
+      });
+
+      socket.on("round_result", (data: GameState) => {
+        console.log("📺 Received round_result:", data);
+        // 避免迟到的 round_result 覆盖已显示的平局/冠军（保持 ended 状态）
+        setGameState((prev) => (prev.status === "ended" ? prev : data));
         setCountdownActive(false);
         setFrontendTimeLeft(0);
-      }
-      setUpdatedWinnerTie(true);
-    });
+      });
 
-    socket.on("winner", (data: hasWinner) => {
-      console.log("📺 Received winner:", data.winnerEmail);
-      setWinner(data.winnerEmail);
-      setCountdownActive(false);
-      setFrontendTimeLeft(0);
-      setUpdatedWinnerTie(true);
-    });
+      socket.on("tie", (data: hasTie) => {
+        console.log("📺 Received game_tie:", data.finalists);
+        if (data.finalists && data.finalists.length === 2) {
+          setTie(data.finalists);
+          setCountdownActive(false);
+          setFrontendTimeLeft(0);
+        }
+        setUpdatedWinnerTie(true);
+      });
 
-    socket.on("disconnect", () => {
-      console.log("📺 Socket disconnected");
-      setSocket(null);
-    });
+      socket.on("winner", (data: hasWinner) => {
+        console.log("📺 Received winner:", data.winnerEmail);
+        setWinner(data.winnerEmail);
+        setCountdownActive(false);
+        setFrontendTimeLeft(0);
+        setUpdatedWinnerTie(true);
+      });
 
-    socket.io.on("reconnect_failed", () => {
-      console.log("📺 All reconnection attempts failed");
-      socketRef.current = null;
-      setConnectionFailed(true);
-    });
+      socket.on("disconnect", () => {
+        console.log("📺 Socket disconnected");
+        setSocket(null);
+      });
 
-    socket.io.on("reconnect_attempt", (attemptNumber) => {
-      console.log(`📺 Reconnection attempt ${attemptNumber}/3`);
-    });
+      socket.io.on("reconnect_attempt", (attemptNumber) => {
+        console.log(`📺 Reconnection attempt ${attemptNumber}/3`);
+      });
+    }
+
+    setupSocket();
 
     return () => {
-      socket.disconnect();
+      socketRef.current?.disconnect();
     };
   }, [session]);
 
@@ -245,8 +260,8 @@ export default function ShowPage() {
   // 退出登录处理函数
   const handleLogout = async () => {
     try {
-      if (socket) {
-        socket.disconnect();
+      if (socketRef.current) {
+        socketRef.current.disconnect();
       }
       // 停止倒计时
       setCountdownActive(false);
