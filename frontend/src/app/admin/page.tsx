@@ -75,19 +75,19 @@ const PRESET_QUESTIONS = [
   },
   {
     id: "q11",
-    question: "听 Step.Jet 时的状态",
+    question: "听 step.jad 时的状态",
     optionA: "深夜独处，emo治愈",
     optionB: "通勤",
   },
   {
     id: "q12",
-    question: "Step.Jet的歌你更喜欢",
+    question: "step.jad 的歌你更喜欢",
     optionA: "《思念病》",
     optionB: "《迷宫》",
   },
   {
     id: "q13",
-    question: "2026 对 Step.Jet 的最大期待",
+    question: "2026 对 step.jad 的最大期待",
     optionA: "高产似劳模，快发新专辑",
     optionB: "多开巡演，我要冲去现场",
   },
