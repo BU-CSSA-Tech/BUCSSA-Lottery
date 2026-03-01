@@ -29,7 +29,7 @@ app.use('/api/admin', adminRoutes);
 
 // Start the server
 server.listen(PORT, () => {
-  console.log(`Backend on https://${process.env.RAILWAY_PUBLIC_DOMAIN || `http://localhost:${PORT}`}`);
+  console.log(`Backend on http://localhost:${PORT}`);
   console.log(`Frontend on: ${process.env.FRONTEND_URL || 'http://localhost:3000'}`);
 });
 

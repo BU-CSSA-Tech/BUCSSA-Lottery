@@ -243,11 +243,19 @@ export default function GameContent({
             <div className="text-center space-y-6 w-full">
               {/* 存活答案标题 */}
               <div className="space-y-4">
-                <h2 className="text-amber-800 text-2xl font-bold tracking-wider">
-                  本轮存活答案
-                </h2>
+                {
+                  ((gameState?.answers?.A ?? 0) !== 0 && (gameState?.answers?.B ?? 0) !== 0) && (gameState?.answers?.A !== gameState?.answers?.B ) && 
+                  (
+                    <h2 className="text-amber-800 text-2xl font-bold tracking-wider">
+                    本轮存活答案
+                    </h2>
+                  )
+                }
+
                 <div className="text-5xl font-bold text-amber-600">
-                  {(gameState?.answers?.A ?? 0) < (gameState?.answers?.B ?? 0)
+                  {(gameState?.answers?.A ?? 0) === 0 && (gameState?.answers?.B ?? 0) === 0
+                    ? "无人作答"
+                    : (gameState?.answers?.A ?? 0) < (gameState?.answers?.B ?? 0)
                     ? "A"
                     : (gameState?.answers?.B ?? 0) < (gameState?.answers?.A ?? 0)
                     ? "B"

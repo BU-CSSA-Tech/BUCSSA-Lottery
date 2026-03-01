@@ -5,29 +5,6 @@ import { JWTPayload, NextQuestionBody } from '../types/index.js';
 
 const router = express.Router();
 
-// // 获取游戏统计
-// router.get('/game-stats', async (req, res) => {
-//   try {
-//     const gameManager = getGameManager();
-
-//     // 获取游戏统计信息
-//     const gameStats = await gameManager.getGameStats();
-
-//     // 获取当前轮次统计（如果有进行中的轮次）
-//     const roundStats = await gameManager.getRoundStats();
-
-//     const allStats = {
-//       ...gameStats,
-//       roundStats,
-//     }
-
-//     return res.status(200).json(allStats);
-//   } catch (error) {
-//     console.error('获取游戏统计错误:', error);
-//     return res.status(500).json({ error: '服务器内部错误' });
-//   }
-// });
-
 // 发布下一题
 router.post('/next-question', async (req: Request<object, object, NextQuestionBody>, res: Response) => {
   try {
@@ -116,18 +93,5 @@ router.post('/reset-game', async (req: Request, res: Response) => {
     return res.status(500).json({ error: '服务器内部错误' });
   }
 });
-
-// router.post('/end-round', async (req, res) => {
-//   try {
-//     console.log("收到结束轮次请求");
-//     const gameManager = getGameManager();
-//     gameManager.setCurrentTimeLeft(0);
-
-//     return res.status(200).json({ message: '轮次已结束' });
-//   } catch (error) {
-//     console.error('结束轮次错误:', error);
-//     return res.status(500).json({ error: '服务器内部错误' });
-//   }
-// });
 
 export default router; 

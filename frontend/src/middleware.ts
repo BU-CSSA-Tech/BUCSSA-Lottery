@@ -7,8 +7,6 @@ export default withAuth(
     const token = req.nextauth.token
     const { pathname } = req.nextUrl
 
-    // console.log("Middleware token:", token)
-
     // Protect admin routes
     if (pathname.startsWith('/admin')) {
       if (!token?.isAdmin) {
@@ -40,8 +38,6 @@ export default withAuth(
       authorized: ({ token, req }) => {
         const { pathname } = req.nextUrl
 
-        console.log("Received callback:", { pathname, token })
-
         // Allow access to login page
         if (pathname.startsWith('/login')) {
           return true
@@ -49,8 +45,6 @@ export default withAuth(
 
         // Require authentication for protected routes
         if (pathname.startsWith('/admin') || pathname.startsWith('/play') || pathname.startsWith('/show')) {
-          // console.log("Checking authentication for:", pathname)
-          // console.log("Token details:", { id: token?.id, isAdmin: token?.isAdmin, isDisplay: token?.isDisplay, email: token?.email, accessToken: token?.accessToken })
           return !!token?.accessToken
         }
 
@@ -62,5 +56,4 @@ export default withAuth(
 
 export const config = {
   matcher: ['/admin', '/play', '/show', '/login']
-  // matcher: ["/((?!_next|.*\\..*).*)"]
 }

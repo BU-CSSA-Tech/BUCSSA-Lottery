@@ -296,30 +296,6 @@ export default function AdminPage() {
     }
   };
 
-  // const handleEndRound = async () => {
-  //   setLoading(true);
-  //   try {
-  //     const response = await fetch(
-  //       `${process.env.NEXT_PUBLIC_API_BASE}/api/admin/end-round`,
-  //       {
-  //         method: "POST",
-  //       }
-  //     );
-  //     const data = await response.json();
-  //     console.log("结束轮次响应:", data);
-  //     if (response.ok) {
-  //       setGameState((prev) => ({ ...prev, status: "waiting" }));
-  //     }
-  //     else {
-  //       console.error("结束轮次失败:", data.error);
-  //     }
-  //   } catch (error) {
-  //     console.error("结束轮次错误:", error);
-  //   } finally {
-  //     setLoading(false);
-  //   }
-  // };
-
   const handleLogout = () => {
     signOut({ callbackUrl: "/" });
   };
