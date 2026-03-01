@@ -142,7 +142,6 @@ export default function ShowPage() {
     });
 
     socket.on("player_count_update", (data: GameState) => {
-      console.log("📺 Received player_count:", data);
       setGameState((prev) => ({
         ...prev,
         survivorsCount: data.survivorsCount,
@@ -156,7 +155,6 @@ export default function ShowPage() {
     });
 
     socket.on("game_start", (data: GameState) => {
-      console.log("📺 Received game_start:", data);
       setGameState(data);
       setWinner(null);
       setTie(null);
@@ -168,7 +166,6 @@ export default function ShowPage() {
     });
 
     socket.on("game_state", (data: GameState) => {
-      console.log("📺 Received game_state:", data);
       setGameState(data);
       // 从 roomState 同步 winner/tie，避免重连后只收到 game_state 而漏掉 tie/winner 事件
       if (data.tie && data.tie.length >= 2) {
@@ -181,7 +178,6 @@ export default function ShowPage() {
     });
 
     socket.on("new_question", (data: GameState) => {
-      console.log("📺 Received new_question:", data);
       // 避免在已结束（平局/冠军）时被新题目覆盖
       setGameState((prev) => (prev.status === "ended" ? prev : data));
       setFrontendTimeLeft(data.timeLeft ?? 0);
@@ -196,7 +192,6 @@ export default function ShowPage() {
     });
 
     socket.on("round_result", (data: GameState) => {
-      console.log("📺 Received round_result:", data);
       // 避免迟到的 round_result 覆盖已显示的平局/冠军（保持 ended 状态）
       setGameState((prev) => (prev.status === "ended" ? prev : data));
       setCountdownActive(false);
@@ -210,7 +205,6 @@ export default function ShowPage() {
     });
 
     socket.on("tie", (data: hasTie) => {
-      console.log("📺 Received game_tie:", data.finalists);
       if (data.finalists && data.finalists.length === 2) {
         setTie(data.finalists);
         setCountdownActive(false);
@@ -223,7 +217,6 @@ export default function ShowPage() {
     });
 
     socket.on("winner", (data: hasWinner) => {
-      console.log("📺 Received winner:", data.winnerEmail);
       setWinner(data.winnerEmail);
       setCountdownActive(false);
       setFrontendTimeLeft(0);
@@ -234,18 +227,16 @@ export default function ShowPage() {
     });
 
     socket.on("disconnect", () => {
-      console.log("📺 Socket disconnected");
       setSocket(null);
     });
 
     socket.io.on("reconnect_failed", () => {
-      console.log("📺 All reconnection attempts failed");
       socketRef.current = null;
       setConnectionFailed(true);
     });
 
     socket.io.on("reconnect_attempt", (attemptNumber) => {
-      console.log(`📺 Reconnection attempt ${attemptNumber}/3`);
+      console.log(`Reconnection attempt ${attemptNumber}/3`);
     });
 
     return () => {

@@ -36,7 +36,6 @@ export default function PlayPage() {
   // 添加调试信息
   useEffect(() => {
     if (status === "unauthenticated") {
-      console.log("Redirecting to login - unauthenticated");
       router.push("/login");
       return;
     }
@@ -96,12 +95,8 @@ export default function PlayPage() {
     socketRef.current = socket;
 
     socket.on("connect", () => {
+      console.log('socket connected')
       setConnected(true);
-      // Debug: Check which transport is being used
-      console.log("🔌 Connected via:", socket.io.engine.transport.name);
-      socket.io.engine.on("upgrade", (transport) => {
-        console.log("⬆️ Upgraded to:", transport.name);
-      });
     });
 
     socket.on("disconnect", () => {
@@ -109,12 +104,10 @@ export default function PlayPage() {
     });
 
     socket.on("redirect", (data: { url: string; message: string }) => {
-      console.log("Redirecting:", data);
       handleLogout();
     });
 
     socket.on("game_state", (data: UserGameState) => {
-      console.log("game_state received:", data);
       // 已处于结束状态（平局/冠军/淘汰）时，不被迟到的 waiting/playing 覆盖
       setUserGameState((prev) => {
         const ended = ["tie", "winner", "eliminated"].includes(prev.status);
@@ -142,7 +135,6 @@ export default function PlayPage() {
     });
 
     socket.on("round_result", (data: UserGameState) => {
-      console.log("round_result received:", data);
       // 已处于结束状态时，不被迟到的 round_result（waiting）覆盖
       setUserGameState((prev) =>
         ["tie", "winner", "eliminated"].includes(prev.status) ? prev : data

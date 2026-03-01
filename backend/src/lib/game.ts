@@ -44,25 +44,25 @@ export class GameManager {
   /** 根据房间状态和用户邮箱生成玩家端状态（单一 status） */
   async getPlayerGameState(roomState: RoomState, userEmail: string): Promise<PlayerGameState> {
     const isWinner = await redis.get(RedisKeys.gameWinner()) === userEmail;
-    
-    if (isWinner) 
+
+    if (isWinner)
       return { status: 'winner', round: roomState.round, userAnswer: null, timeLeft: roomState.timeLeft };
-    
+
     const tieSet = await redis.sMembers(RedisKeys.gameTie());
     const isTie = tieSet?.includes(userEmail) ?? false;
-    
-    if (isTie) 
+
+    if (isTie)
       return { status: 'tie', round: roomState.round, userAnswer: null, timeLeft: roomState.timeLeft };
-    
+
     const isEliminated = await redis.sIsMember(RedisKeys.roomEliminated(), userEmail);
-    
-    if (isEliminated) 
+
+    if (isEliminated)
       return { status: 'eliminated', round: roomState.round, userAnswer: null, timeLeft: roomState.timeLeft };
-    
+
     const questionId = roomState.currentQuestion?.id;
     const userAnswer = questionId ? await redis.get(RedisKeys.userAnswer(userEmail, questionId)) as 'A' | 'B' | null : null;
     const status = roomState.status === 'ended' ? 'waiting' : roomState.status;
-    
+
     return { status, round: roomState.round, userAnswer: userAnswer || null, timeLeft: roomState.timeLeft };
   }
 
@@ -86,12 +86,12 @@ export class GameManager {
     const normalizedQuestion: MinorityQuestion | null =
       currentQuestion && currentQuestion.id
         ? {
-            id: currentQuestion.id,
-            question: currentQuestion.question ?? '',
-            optionA: currentQuestion.optionA ?? '',
-            optionB: currentQuestion.optionB ?? '',
-            startTime: currentQuestion.startTime ?? '',
-          }
+          id: currentQuestion.id,
+          question: currentQuestion.question ?? '',
+          optionA: currentQuestion.optionA ?? '',
+          optionB: currentQuestion.optionB ?? '',
+          startTime: currentQuestion.startTime ?? '',
+        }
         : null;
 
     return {
@@ -165,7 +165,7 @@ export class GameManager {
         timeLeft: this.getCurrentTimeLeft(),
       }));
     } else {
-      console.log(`❌ Socket.IO instance is null, cannot emit new_question`);
+      console.error(`❌ Socket.IO instance is null, cannot emit new_question`);
     }
   }
 
@@ -253,6 +253,32 @@ export class GameManager {
       A: parseInt(answersFromRedis.A || '0'),
       B: parseInt(answersFromRedis.B || '0')
     };
+
+    // Check if no one submitted an answer - continue without elimination
+    if (answersCount.A === 0 && answersCount.B === 0) {
+      // Set game status back to waiting
+      await redis.hSet(RedisKeys.gameState(), 'status', 'waiting');
+      await redis.hSet(RedisKeys.gameState(), 'timeLeft', '0');
+
+      // Emit round result without any eliminations
+      const roomState = await this.getRoomState();
+      if (this.io) {
+        await this.emitToRoom('round_result', roomState, (r) => ({ ...r, userAnswer: null }));
+      }
+
+      // Upsert snapshot to maintain game state
+      const snapshotData: RoundSnapshotData = {
+        survivorEmails: survivors,
+        currentRound: parseInt((await redis.get(RedisKeys.currentRound())) || '0', 10),
+        status: 'waiting',
+        started: true,
+      };
+      upsertLatestSnapshot(snapshotData).catch((err) => {
+        console.error('Failed to upsert latest snapshot (non-blocking):', err);
+      });
+
+      return; // Exit early - no elimination needed
+    }
 
     // 批量查答案：一次 mGet 替代 2*N 次 GET
     const answerKeys = survivors.map((u) => RedisKeys.userAnswer(u, currentQuestion.id.toString()));
@@ -362,20 +388,17 @@ export class GameManager {
       currentRound: parseInt((await redis.get(RedisKeys.currentRound())) || '0', 10),
       status: 'waiting',
       started: false,
-    }).catch(() => {});
+    }).catch(() => { });
 
     const redisEliminatedUsers = await redis.sMembers(RedisKeys.roomEliminated()) as string[];
-    console.log(`Eliminated users (endGame): ${redisEliminatedUsers}`);
 
     const roomState = await this.getRoomState();
     if (this.io) {
       if (winner) {
-        console.log(`Winner is ${winner}`);
         this.io.to(ROOM_ID).emit('winner', { winnerEmail: winner });
         await this.emitToRoom('game_state', roomState, (r) => ({ ...r, userAnswer: null, roundResult: null }));
       }
       if (tier) {
-        console.log(`Game ended in a tie between: ${tier.join(', ')}`);
         this.io.to(ROOM_ID).emit('tie', { finalists: tier });
         await this.emitToRoom('game_state', roomState, (r) => ({ ...r, userAnswer: null, roundResult: null }));
       }
@@ -383,7 +406,7 @@ export class GameManager {
 
     // 同步保存 Game Result（关键数据，带 500ms 超时保护）
     const currentRound = parseInt(await redis.get(RedisKeys.currentRound()) || '0');
-    
+
     // 计算总轮数：从 RoundSnapshot 统计，如果没有则使用当前轮次
     // 注意：这里简化处理，使用当前轮次作为总轮数
     // 如果需要精确的总轮数，可以从 RoundSnapshot 表查询
@@ -403,7 +426,6 @@ export class GameManager {
 
   // 重置游戏
   async resetGame(): Promise<void> {
-    console.log(`Resetting game in room ${ROOM_ID}`);
     // Clear any running countdown
     if (this.countdownInterval) {
       clearInterval(this.countdownInterval);
@@ -428,7 +450,7 @@ export class GameManager {
       currentRound: 0,
       status: 'waiting',
       started: false,
-    }).catch(() => {});
+    }).catch(() => { });
 
     // 使用 SCAN 替代 KEYS，避免阻塞 Redis（高并发下 KEYS 会拖慢整个实例）
     const answerPattern = 'user:*:answer:*';
@@ -469,7 +491,6 @@ export class GameManager {
       for (const x of sessionBatch) await redis.del(x);
       sessionCount += sessionBatch.length;
     }
-    console.log(`User accounts to reset: ${sessionCount} (answers cleared: ${answerCount})`);
 
     await redis.hSet(RedisKeys.gameState(), 'status', 'waiting');
     await redis.hSet(RedisKeys.gameState(), 'timeLeft', '0');
