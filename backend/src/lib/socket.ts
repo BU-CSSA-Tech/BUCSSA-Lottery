@@ -4,6 +4,8 @@ import { redis, RedisKeys } from './redis.js';
 import { getGameManager } from './game.js';
 import { ROOM_ID } from './room.js';
 import { ensureRecovered } from './recovery.js';
+import { emitLoginCodeStatus } from './login-code.js';
+import { getDisplayName, resolveDisplayNames } from './player-registry.js';
 import jwt from 'jsonwebtoken';
 import type { JWTPayload } from '../types/index.js';
 
@@ -109,16 +111,22 @@ export function initializeSocketIO(httpServer: HTTPServer): SocketIOServer {
       const remainingTime = gameManager.getCurrentTimeLeft();
       socket.emit('countdown_update', { timeLeft: remainingTime });
 
+      await emitLoginCodeStatus(socket.id);
+
       const winner = await redis.get(RedisKeys.gameWinner());
       const tie = await redis.sMembers(RedisKeys.gameTie());
 
       if (winner) {
+        const winnerDisplay = await getDisplayName(winner);
         socket.emit('winner', {
           winnerEmail: winner,
+          winnerDisplay,
         });
-      } else if (tie) {
+      } else if (tie && tie.length > 0) {
+        const finalistsDisplay = await resolveDisplayNames(tie);
         socket.emit('tie', {
           finalists: tie,
+          finalistsDisplay,
         });
       }
     }

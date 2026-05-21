@@ -41,7 +41,7 @@ const HeroSection = ({
             variant="secondary"
             weight="light"
           >
-            BUCSSA 新春嘉年华 抽奖
+            BUCSSA 新生见面会 抽奖
           </GlassText>
           <Button variant="outline" size="xl" onClick={onStartGame}>
             开始答题, 豪取大奖吧！

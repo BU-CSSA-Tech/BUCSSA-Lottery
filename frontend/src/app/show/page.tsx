@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { io, Socket } from "socket.io-client";
-import { GameState, hasWinner, hasTie } from "@/types";
+import { GameState, hasWinner, hasTie, LoginCodePayload } from "@/types";
 import BackgroundImage from "@/components/ui/BackgroundImage";
 import ConnectionFailedScreen from "@/components/game/show/ConnectionFailedScreen";
 import WinnerModal from "@/components/game/show/WinnerModal";
@@ -12,6 +12,7 @@ import TieModal from "@/components/game/show/TieModal";
 import ShowHeader from "@/components/game/show/ShowHeader";
 import QRCodeModal from "@/components/game/show/QRCodeModal";
 import GameContent from "@/components/game/show/GameContent";
+import LoginCodeDisplay from "@/components/game/show/LoginCodeDisplay";
 import Confetti from "react-confetti";
 
 export default function ShowPage() {
@@ -35,6 +36,7 @@ export default function ShowPage() {
   const [showQRCode, setShowQRCode] = useState(false);
   const [connectionFailed, setConnectionFailed] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(false);
+  const [loginCode, setLoginCode] = useState<LoginCodePayload | null>(null);
 
   const socketRef = useRef<Socket | null>(null);
   const soundEnabledRef = useRef(false);
@@ -158,6 +160,7 @@ export default function ShowPage() {
       setGameState(data);
       setWinner(null);
       setTie(null);
+      setLoginCode(null);
       setUpdatedWinnerTie(true);
       doudizhuRef.current?.pause();
       gongRef.current?.pause();
@@ -178,6 +181,7 @@ export default function ShowPage() {
     });
 
     socket.on("new_question", (data: GameState) => {
+      setLoginCode(null);
       // 避免在已结束（平局/冠军）时被新题目覆盖
       setGameState((prev) => (prev.status === "ended" ? prev : data));
       setFrontendTimeLeft(data.timeLeft ?? 0);
@@ -205,8 +209,9 @@ export default function ShowPage() {
     });
 
     socket.on("tie", (data: hasTie) => {
-      if (data.finalists && data.finalists.length === 2) {
-        setTie(data.finalists);
+      const displayList = data.finalistsDisplay ?? data.finalists;
+      if (displayList && displayList.length === 2) {
+        setTie(displayList);
         setCountdownActive(false);
         setFrontendTimeLeft(0);
       }
@@ -217,13 +222,23 @@ export default function ShowPage() {
     });
 
     socket.on("winner", (data: hasWinner) => {
-      setWinner(data.winnerEmail);
+      setWinner(data.winnerDisplay ?? data.winnerEmail);
       setCountdownActive(false);
       setFrontendTimeLeft(0);
       setUpdatedWinnerTie(true);
       doudizhuRef.current?.pause();
       gongRef.current?.pause();
       currentPhaseRef.current = "none";
+    });
+
+    socket.on("login_code_published", (data: LoginCodePayload) => {
+      setLoginCode(data);
+    });
+
+    socket.on("login_code_status", (data: LoginCodePayload) => {
+      if (data.expiresAt > Date.now()) {
+        setLoginCode(data);
+      }
     });
 
     socket.on("disconnect", () => {
@@ -293,6 +308,23 @@ export default function ShowPage() {
     }
   }, [tie]);
 
+  // 登录码过期后清空状态，回到 GameContent（人数统计 / 准备中等）
+  useEffect(() => {
+    if (!loginCode) return;
+
+    const ms = loginCode.expiresAt - Date.now();
+    if (ms <= 0) {
+      setLoginCode(null);
+      return;
+    }
+
+    const id = window.setTimeout(() => setLoginCode(null), ms);
+    return () => window.clearTimeout(id);
+  }, [loginCode]);
+
+  const loginCodeActive =
+    loginCode !== null && loginCode.expiresAt > Date.now();
+
   const handleToggleSound = () => setSoundEnabled((prev) => !prev);
 
   // 退出登录处理函数
@@ -312,7 +344,7 @@ export default function ShowPage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[url(/showbg.jpg)] bg-cover bg-center">
+      <div className="min-h-screen flex items-center justify-center bg-[url(/showbg_bu.png)] bg-cover bg-center">
         <div className="text-gray-800 text-xl font-medium bg-amber-50/90 px-6 py-3 rounded-xl border border-rose-200/50">加载中...</div>
       </div>
     );
@@ -330,7 +362,7 @@ export default function ShowPage() {
     <>
       {/* 背景图片 */}
       <BackgroundImage
-        imageUrl="/showbg.jpg"
+        imageUrl="/showbg_bu.png"
         overlayOpacity={0.03}
         centerMask={false}
       />
@@ -414,17 +446,20 @@ export default function ShowPage() {
           <div className="w-full max-w-6xl flex flex-col items-center gap-16">
             {/* 头部标题 */}
             <h1 className="text-6xl font-bold text-red-600 drop-shadow-sm tracking-wide text-center [-webkit-text-stroke:2px_white] [paint-order:stroke_fill]">
-              BUCSSA 新春嘉年华 抽奖
+              BUCSSA 新生见面会 抽奖
             </h1>
 
-            {/* 内容区 */}
-            <GameContent
-              gameState={gameState}
-              frontendTimeLeft={frontendTimeLeft}
-              winner={winner}
-              tie={tie}
-              updatedWinnerTie={updatedWinnerTie}
-            />
+            {loginCodeActive ? (
+              <LoginCodeDisplay active={true} loginCode={loginCode} />
+            ) : (
+              <GameContent
+                gameState={gameState}
+                frontendTimeLeft={frontendTimeLeft}
+                winner={winner}
+                tie={tie}
+                updatedWinnerTie={updatedWinnerTie}
+              />
+            )}
           </div>
         </div>
 

@@ -65,10 +65,17 @@ export interface EliminatedEventPayload {
 
 export interface WinnerEventPayload {
   winnerEmail: string;
+  winnerDisplay?: string;
 }
 
 export interface TieEventPayload {
   finalists: string[];
+  finalistsDisplay?: string[];
+}
+
+export interface LoginCodePayload {
+  code: string;
+  expiresAt: number;
 }
 
 export interface SocketErrorPayload {
@@ -111,11 +118,13 @@ export function isSocketErrorPayload(data: unknown): data is SocketErrorPayload 
 // not used at the moment
 export interface hasWinner {
   winnerEmail: string | null;
+  winnerDisplay?: string | null;
 }
 
 // not used at the moment
 export interface hasTie {
   finalists: string[] | null;
+  finalistsDisplay?: string[] | null;
 }
 
 // not used at the moment

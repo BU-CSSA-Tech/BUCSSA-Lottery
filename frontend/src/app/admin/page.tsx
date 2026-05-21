@@ -97,6 +97,9 @@ export default function AdminPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [publishingCode, setPublishingCode] = useState(false);
+  const [loginCodeStatus, setLoginCodeStatus] = useState<"idle" | "published" | "expired">("idle");
+  const loginCodeExpiryRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const [connected, setConnected] = useState(false);
   const [tie, setTie] = useState<string[] | null>(null);
@@ -199,13 +202,13 @@ export default function AdminPage() {
       setGameState(data);
     });
 
-    socket.on("tie", (data: any) => {
-      setTie(data.finalists);
+    socket.on("tie", (data: { finalists?: string[]; finalistsDisplay?: string[] }) => {
+      setTie(data.finalistsDisplay ?? data.finalists ?? null);
       setWinner(null);
     });
 
-    socket.on("winner", (data: any) => {
-      setWinner(data.winnerEmail);
+    socket.on("winner", (data: { winnerEmail?: string; winnerDisplay?: string }) => {
+      setWinner(data.winnerDisplay ?? data.winnerEmail ?? null);
       setTie(null);
     });
 
@@ -254,6 +257,41 @@ export default function AdminPage() {
     }
   };
 
+  const handlePublishLoginCode = async () => {
+    setPublishingCode(true);
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE}/api/admin/publish-login-code`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.user.accessToken}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setLoginCodeStatus("published");
+        if (loginCodeExpiryRef.current) {
+          clearTimeout(loginCodeExpiryRef.current);
+        }
+        const msUntilExpiry = Math.max(0, data.expiresAt - Date.now());
+        loginCodeExpiryRef.current = setTimeout(() => {
+          setLoginCodeStatus("expired");
+        }, msUntilExpiry);
+      } else {
+        console.error("发布登录码失败:", data.error);
+      }
+    } catch (error) {
+      console.error("发布登录码错误:", error);
+    } finally {
+      setPublishingCode(false);
+    }
+  };
+
   const handleResetGame = async () => {
     if (!confirm("确定要重置游戏吗？这将清除所有数据。")) {
       return;
@@ -286,6 +324,10 @@ export default function AdminPage() {
           timeLeft: 0,
         });
         setSentQuestions(new Set());
+        setLoginCodeStatus("idle");
+        if (loginCodeExpiryRef.current) {
+          clearTimeout(loginCodeExpiryRef.current);
+        }
       } else {
         console.error("重置游戏失败:", data.error);
       }
@@ -307,6 +349,9 @@ export default function AdminPage() {
       <AdminHeader
         connected={connected}
         loading={loading}
+        loginCodeStatus={loginCodeStatus}
+        publishingCode={publishingCode}
+        onPublishLoginCode={handlePublishLoginCode}
         onResetGame={handleResetGame}
         onShowLogoutConfirm={() => setShowLogoutConfirm(true)}
       />

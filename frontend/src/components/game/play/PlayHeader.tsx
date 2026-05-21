@@ -27,7 +27,7 @@ export default function PlayHeader({ connected, session, onLogout }: PlayHeaderP
               <WifiOff className="w-5 h-5 text-red-500 shrink-0" />
             )}
           <span className="text-sm text-gray-800 truncate">
-              {session?.user?.email ? session.user.email.slice(0, 5) + "***" : ""}
+              {session?.user?.name || (session?.user?.email ? session.user.email.slice(0, 5) + "***" : "")}
             </span>
           </div>
         </div>

@@ -5,6 +5,7 @@ import cors from 'cors';
 import { initializeSocketIO } from './lib/socket.js';
 import submitAnswerRoutes from './routes/submit-answer.js';
 import adminRoutes from './routes/admin.js';
+import authRoutes from './routes/auth.js';
 
 const app = express();
 const server = createServer(app);
@@ -26,6 +27,7 @@ app.get('/health', (req, res) => {
 // API routes
 app.use('/api/submit-answer', submitAnswerRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/auth', authRoutes);
 
 // Start the server
 server.listen(PORT, () => {

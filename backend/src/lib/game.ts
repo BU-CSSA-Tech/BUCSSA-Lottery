@@ -4,6 +4,8 @@ import { getSocketIO } from './socket.js';
 import type { MinorityQuestion, RoomState, PlayerGameState } from '../types/index.js';
 import { upsertLatestSnapshot, saveGameResult, type RoundSnapshotData, type GameResultData } from './database.js';
 import { ROOM_ID } from './room.js';
+import { clearLoginCode } from './login-code.js';
+import { clearPlayerRegistry, getDisplayName, resolveDisplayNames } from './player-registry.js';
 
 export type { MinorityQuestion };
 
@@ -395,11 +397,13 @@ export class GameManager {
     const roomState = await this.getRoomState();
     if (this.io) {
       if (winner) {
-        this.io.to(ROOM_ID).emit('winner', { winnerEmail: winner });
+        const winnerDisplay = await getDisplayName(winner);
+        this.io.to(ROOM_ID).emit('winner', { winnerEmail: winner, winnerDisplay });
         await this.emitToRoom('game_state', roomState, (r) => ({ ...r, userAnswer: null, roundResult: null }));
       }
       if (tier) {
-        this.io.to(ROOM_ID).emit('tie', { finalists: tier });
+        const finalistsDisplay = await resolveDisplayNames(tier);
+        this.io.to(ROOM_ID).emit('tie', { finalists: tier, finalistsDisplay });
         await this.emitToRoom('game_state', roomState, (r) => ({ ...r, userAnswer: null, roundResult: null }));
       }
     }
@@ -443,6 +447,9 @@ export class GameManager {
     await redis.del(RedisKeys.gameWinner());
     await redis.del(RedisKeys.gameTie());
     await redis.del(RedisKeys.gameAnswers());
+
+    await clearLoginCode();
+    await clearPlayerRegistry();
 
     // Reset 后不应自动从旧快照恢复：清空/停用快照（best-effort）
     upsertLatestSnapshot({

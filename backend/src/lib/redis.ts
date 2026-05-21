@@ -64,6 +64,15 @@ export const RedisKeys = {
   // 游戏获胜者
   gameWinner: () => `game:${ROOM_ID}:winner`,
 
+  // Player code login (CN region)
+  loginCode: () => `game:${ROOM_ID}:login_code`,
+  loginCodeExpiresAt: () => `game:${ROOM_ID}:login_code_expires_at`,
+  playerNumberSeq: () => `game:${ROOM_ID}:player_number_seq`,
+  playerDisplayNumber: (playerId: string) => `player:${playerId}:displayNumber`,
+  playerDisplayName: (playerId: string) => `player:${playerId}:displayName`,
+  playerInternalEmail: (playerId: string) => `player:${playerId}:internalEmail`,
+  internalEmailDisplayName: (internalEmail: string) => `internal:${internalEmail}:displayName`,
+
   // 管理员列表
   admin: () => "nextauth:admin_emails",
 
