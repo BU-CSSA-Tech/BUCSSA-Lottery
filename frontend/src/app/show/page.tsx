@@ -14,6 +14,7 @@ import QRCodeModal from "@/components/game/show/QRCodeModal";
 import GameContent from "@/components/game/show/GameContent";
 import LoginCodeDisplay from "@/components/game/show/LoginCodeDisplay";
 import Confetti from "react-confetti";
+import { SPRING_CONFETTI_COLORS } from "@/lib/confetti-colors";
 
 export default function ShowPage() {
   const { data: session, status } = useSession();
@@ -72,7 +73,7 @@ export default function ShowPage() {
       router.push("/play");
       return;
     }
-  }, []);
+  }, [status, session, router]);
 
   // 音频初始化
   useEffect(() => {
@@ -257,7 +258,7 @@ export default function ShowPage() {
     return () => {
       socket.disconnect();
     };
-  }, [session]);
+  }, [session, status]);
 
   // 前端倒计时逻辑
   useEffect(() => {
@@ -344,8 +345,8 @@ export default function ShowPage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[url(/showbg_bu.png)] bg-cover bg-center">
-        <div className="text-gray-800 text-xl font-medium bg-amber-50/90 px-6 py-3 rounded-xl border border-rose-200/50">加载中...</div>
+      <div className="min-h-screen flex items-center justify-center bg-[url(/showbg.jpg)] bg-cover bg-center">
+        <div className="text-gray-800 text-xl font-medium theme-panel-strong px-6 py-3 rounded-xl border border-rose-200/50">加载中...</div>
       </div>
     );
   }
@@ -362,7 +363,7 @@ export default function ShowPage() {
     <>
       {/* 背景图片 */}
       <BackgroundImage
-        imageUrl="/showbg_bu.png"
+        imageUrl="/showbg.jpg"
         overlayOpacity={0.03}
         centerMask={false}
       />
@@ -388,33 +389,7 @@ export default function ShowPage() {
             gravity={0.3}
             initialVelocityY={20}
             initialVelocityX={5}
-            colors={[
-              "#FFD700",
-              "#FFA500",
-              "#FF8C00",
-              "#FFB347",
-              "#F4A460",
-              "#DAA520",
-              "#B8860B",
-              "#CD853F",
-              "#DEB887",
-              "#F5DEB3",
-              "#FFF8DC",
-              "#FFE4B5",
-              "#FFEFD5",
-              "#FFFACD",
-              "#FFFFE0",
-              "#FFE135",
-              "#FFD700",
-              "#FFC107",
-              "#FFB300",
-              "#FFA000",
-              "#FF8F00",
-              "#FF6F00",
-              "#FF5722",
-              "#E65100",
-              "#BF360C",
-            ]}
+            colors={SPRING_CONFETTI_COLORS}
             style={{
               position: "fixed",
               top: 0,
@@ -445,7 +420,7 @@ export default function ShowPage() {
         <div className="min-h-screen flex items-center justify-center px-4 py-8">
           <div className="w-full max-w-6xl flex flex-col items-center gap-16">
             {/* 头部标题 */}
-            <h1 className="text-6xl font-bold text-red-600 drop-shadow-sm tracking-wide text-center [-webkit-text-stroke:2px_white] [paint-order:stroke_fill]">
+            <h1 className="text-6xl font-bold theme-title">
               BUCSSA 新生见面会 抽奖
             </h1>
 

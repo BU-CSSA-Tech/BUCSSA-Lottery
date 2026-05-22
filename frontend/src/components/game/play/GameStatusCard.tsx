@@ -1,7 +1,6 @@
 "use client";
 
-import { Clock, UserX, Crown, Trophy, CheckCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Crown, CheckCircle } from "lucide-react";
 import { UserGameState } from "@/types";
 import Image from "next/image";
 
@@ -19,7 +18,7 @@ export default function GameStatusCard({
   onSubmitAnswer,
 }: GameStatusCardProps) {
   return (
-    <main className="w-full h-auto px-8 py-12 items-center justify-center flex fixed top-[50vh] left-1/2 -translate-x-1/2 -translate-y-1/2 bg-amber-50/25">
+    <main className="w-full h-auto px-8 py-12 items-center justify-center flex fixed top-[50vh] left-1/2 -translate-x-1/2 -translate-y-1/2 theme-panel-subtle">
       {userGameState.status === "waiting" && (
         <div className="text-center space-y-6">
           <Image
@@ -127,7 +126,7 @@ export default function GameStatusCard({
                   className="object-contain"
                 />
               </div>
-              <div className="flex items-center justify-center gap-2 text-gray-800 bg-white/50 rounded-md p-2">
+              <div className="flex items-center justify-center gap-2 text-gray-800 theme-toolbar-chip rounded-md p-2">
                 <CheckCircle className="w-5 h-5" />
                 <div className="font-medium text-gray-800">
                   您已选择选项 {selectedOption}，请等待结果...

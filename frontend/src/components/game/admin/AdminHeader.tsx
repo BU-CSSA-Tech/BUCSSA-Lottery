@@ -62,7 +62,7 @@ export default function AdminHeader({
               <Button
                 onClick={onPublishLoginCode}
                 disabled={loading || publishingCode}
-                className="h-9 px-4 bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 rounded-lg font-medium text-sm"
+                className="h-9 px-4 rounded-lg font-medium text-sm theme-btn-action-success-alt"
               >
                 {publishingCode ? "发布中..." : "发布登录码"}
               </Button>
@@ -77,7 +77,7 @@ export default function AdminHeader({
               onClick={onResetGame}
               disabled={loading}
               variant="destructive"
-              className="h-9 px-4 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 rounded-lg font-medium transition-all duration-200 hover-lift text-sm"
+              className="h-9 px-4 rounded-lg font-medium transition-all duration-200 text-sm theme-btn-action-danger"
             >
               <RotateCcw className="w-3 h-3 mr-1" />
               重置游戏
@@ -85,7 +85,7 @@ export default function AdminHeader({
 
             <Button
               onClick={onShowLogoutConfirm}
-              className="h-9 px-3 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 rounded-lg font-medium transition-all duration-200 hover-lift"
+              className="h-9 px-3 rounded-lg font-medium transition-all duration-200 theme-btn-action-danger"
             >
               <LogOut className="w-3 h-3" />
             </Button>

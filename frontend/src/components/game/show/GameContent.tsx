@@ -31,23 +31,23 @@ export default function GameContent({
           animate={{ opacity: 1, y: 0 }}
           className="flex flex-wrap justify-center gap-12 mb-12"
         >
-          <div className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-amber-50/95 border border-rose-200/60 shadow-red-down">
+          <div className="theme-pill">
             <Trophy className="w-6 h-6 text-amber-600 shrink-0" />
             <span className="text-gray-800 font-semibold text-2xl">第 {gameState.round} 轮</span>
           </div>
-          <div className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-amber-50/95 border border-rose-200/60 shadow-red-down">
+          <div className="theme-pill">
             <div className="w-4 h-4 rounded-full bg-green-500 shrink-0" />
             <span className="text-gray-800 font-semibold text-2xl">存活: {gameState.survivorsCount}</span>
           </div>
-          <div className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-amber-50/95 border border-rose-200/60 shadow-red-down">
+          <div className="theme-pill">
             <UserX className="w-6 h-6 text-red-500 shrink-0" />
             <span className="text-gray-800 font-semibold text-2xl">淘汰: {gameState.eliminatedCount}</span>
           </div>
-          <div className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-amber-50/95 border border-rose-200/60 shadow-red-down">
+          <div className="theme-pill">
             <Users className="w-6 h-6 text-slate-600 shrink-0" />
             <span className="text-gray-800 font-semibold text-2xl">总数: {(gameState.survivorsCount || 0) + (gameState.eliminatedCount || 0)}</span>
           </div>
-          <div className="inline-flex items-center gap-2.5 px-8 py-4 rounded-full bg-amber-50/95 border border-rose-200/60 shadow-red-down">
+          <div className="theme-pill">
             <Clock className="w-6 h-6 text-slate-600 shrink-0" />
             <span className={`font-semibold text-2xl ${frontendTimeLeft <= 10 ? "text-red-500 animate-pulse" : "text-gray-800"}`}>
               {formatTime(frontendTimeLeft)}
@@ -61,7 +61,7 @@ export default function GameContent({
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="rounded-2xl bg-amber-50/50 border border-rose-200/70 shadow-lg p-8 space-y-8"
+          className="theme-panel p-8 space-y-8"
         >
           <div className="text-center mb-8 flex flex-col items-center justify-center space-y-8">
             <div className="flex items-center gap-4 bg-amber-100/80 rounded-full px-5 py-2">
@@ -119,7 +119,7 @@ export default function GameContent({
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl bg-amber-50/50 border border-rose-200/70 shadow-red-down px-2 py-12 flex items-center justify-center gap-16"
+          className="theme-panel shadow-red-down px-2 py-12 flex items-center justify-center gap-16"
         >
           <div className="flex flex-col items-center gap-4 justify-center">
             <div className="flex items-center gap-3">
@@ -148,7 +148,7 @@ export default function GameContent({
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="rounded-2xl bg-amber-50/50 border border-rose-200/70 shadow-lg p-12 text-center"
+          className="theme-panel p-12 text-center"
         >
           {!winner && !tie && (
             <>
@@ -167,9 +167,11 @@ export default function GameContent({
                 恭喜一等奖获得者!
               </div>
               <div className="relative flex justify-center">
-                <img
+                <Image
                   src="/winbg.png"
                   alt=""
+                  width={1200}
+                  height={640}
                   className="max-w-full h-auto object-contain"
                 />
                 <div className="absolute inset-0 flex items-center justify-center">
@@ -186,7 +188,7 @@ export default function GameContent({
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-5xl mx-auto">
-                <div className="bg-amber-50/95 text-gray-800 px-12 py-8 rounded-3xl border-2 border-white/75">
+                <div className="theme-panel-strong text-gray-800 px-12 py-8 rounded-3xl border-2 border-white/75">
                   <div className="text-3xl font-bold mb-4 text-center">
                     选手 1
                   </div>
@@ -195,7 +197,7 @@ export default function GameContent({
                   </div>
                 </div>
 
-                <div className="bg-amber-50/95 text-gray-800 px-12 py-8 rounded-3xl border-2 border-white/75">
+                <div className="theme-panel-strong text-gray-800 px-12 py-8 rounded-3xl border-2 border-white/75">
                   <div className="text-3xl font-bold mb-4 text-center">
                     选手 2
                   </div>
@@ -216,7 +218,7 @@ export default function GameContent({
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="rounded-2xl bg-amber-50/50 border border-rose-200/70 shadow-lg p-16 text-center"
+          className="theme-panel p-16 text-center"
         >
           <div className="w-24 h-24 rounded-full flex items-center justify-center mx-auto mb-8">
             <div className="w-8 h-8 border-4 border-amber-500 border-t-transparent rounded-full animate-spin"></div>
@@ -238,7 +240,7 @@ export default function GameContent({
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="w-full max-w-4xl mx-auto px-8 py-8 items-center justify-center flex fixed top-[40vh] left-1/2 -translate-x-1/2 -translate-y-1/2 rounded-2xl bg-amber-50/95 border border-rose-200/70 shadow-xl z-20"
+            className="w-full max-w-4xl mx-auto px-8 py-8 items-center justify-center flex fixed top-[40vh] left-1/2 -translate-x-1/2 -translate-y-1/2 theme-panel-strong z-20"
           >
             <div className="text-center space-y-6 w-full">
               {/* 存活答案标题 */}

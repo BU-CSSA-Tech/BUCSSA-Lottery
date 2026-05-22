@@ -1,14 +1,13 @@
 'use client';
 
 import React from 'react';
-import { motion, AnimatePresence } from 'framer-motion';
+import { motion } from 'framer-motion';
 
 interface BattleEffectProps {
   isActive: boolean;
-  duration?: number;
 }
 
-const BattleEffect: React.FC<BattleEffectProps> = ({ isActive, duration = 3000 }) => {
+const BattleEffect: React.FC<BattleEffectProps> = ({ isActive }) => {
   if (!isActive) return null;
 
   return (

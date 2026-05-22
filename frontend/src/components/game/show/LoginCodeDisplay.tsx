@@ -37,19 +37,19 @@ export default function LoginCodeDisplay({ active, loginCode }: LoginCodeDisplay
 
   if (!loginCode || secondsLeft <= 0) {
     return (
-      <div className="rounded-2xl bg-amber-50/50 border border-rose-200/70 shadow-lg p-16 text-center">
+      <div className="theme-panel p-16 text-center">
         <p className="text-4xl font-bold text-gray-700">等待管理员发布登录码</p>
       </div>
     );
   }
 
   return (
-    <div className="rounded-2xl bg-amber-50/50 border border-rose-200/70 shadow-lg p-12 text-center space-y-8">
+    <div className="theme-panel p-12 text-center space-y-8">
       <p className="text-4xl font-bold text-gray-800">请在 {secondsLeft} 秒内输入登录码</p>
       <div className="font-mono text-[8rem] leading-none font-bold tracking-[0.2em] text-gray-900">
         {loginCode.code}
       </div>
-      <p className="text-2xl text-gray-600">打开网站 → 登录 → 输入上方 6 位数字</p>
+      <p className="text-2xl text-gray-600">国区 → 输入上方 6 位登陆码 → 进入游戏</p>
     </div>
   );
 }

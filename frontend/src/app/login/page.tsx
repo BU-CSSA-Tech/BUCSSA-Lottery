@@ -118,9 +118,9 @@ export default function LoginPage() {
   };
 
   return (
-    <>
+    <div>
       <BackgroundImage
-        imageUrl="playbg_cloud.png"
+        imageUrl="playbg.png"
         overlayOpacity={0.05}
         centerMask={true}
         maskWidth={90}
@@ -141,7 +141,7 @@ export default function LoginPage() {
           </div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
             className="p-6 max-w-md mx-auto w-full"
@@ -174,13 +174,13 @@ export default function LoginPage() {
             )}
           </motion.div>
 
-          <div className="bg-white/60 rounded-lg p-3">
+          <div className="theme-hint-card">
             <div className="text-gray-800 text-sm text-center">
               <strong>提示：</strong>如果登录后被踢出来，可能是游戏已开始或者管理员未重置，请耐心等候哦！
             </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

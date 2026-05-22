@@ -40,7 +40,7 @@ export default function TieModal({ tie, onClose }: TieModalProps) {
 
   return (
     <div
-      className="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm cursor-pointer"
+      className="theme-overlay-strong cursor-pointer"
       onClick={onClose}
     >
       {/* 以中间图标为基准，选手相对图标定位 */}

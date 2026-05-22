@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { io, Socket } from "socket.io-client";
-import { GameState, MinorityQuestion } from "@/types";
+import { GameState } from "@/types";
 import { AlertBox } from "@/components/ui/alert-box";
 import AdminHeader from "@/components/game/admin/AdminHeader";
 import GameStatusPanel from "@/components/game/admin/GameStatusPanel";
@@ -227,7 +227,6 @@ export default function AdminPage() {
     }
 
     const questionData = PRESET_QUESTIONS[questionIndex];
-    const isRepublish = sentQuestions.has(questionIndex);
     setLoading(true);
 
     try {
@@ -250,7 +249,7 @@ export default function AdminPage() {
       } else {
         console.error(data.error || "发布题目失败");
       }
-    } catch (error) {
+    } catch {
       console.error("网络错误，请稍后重试");
     } finally {
       setLoading(false);

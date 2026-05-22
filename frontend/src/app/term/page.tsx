@@ -3,17 +3,13 @@
 import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { ArrowRight, FileText } from "lucide-react";
-import Image from "next/image";
-import BackgroundImage from "@/components/ui/BackgroundImage";
-import { GlassText } from "@/components/ui/glass-text";
-import { Box } from "@/components/ui/box";
+import { ArrowRight } from "lucide-react";
 
 export default function TermPage() {
   const router = useRouter();
   
   return (
-    <>
+    <div>
       <div className="min-h-screen relative z-10">
         {/* 返回首页按钮 */}
         <div className="absolute top-4 left-4 z-20">
@@ -89,6 +85,6 @@ export default function TermPage() {
           </motion.div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

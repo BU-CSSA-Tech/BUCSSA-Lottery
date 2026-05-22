@@ -14,7 +14,7 @@ interface ShowHeaderProps {
 export default function ShowHeader({ socket, soundEnabled, onToggleSound, onShowQRCode, onLogout }: ShowHeaderProps) {
   return (
     <div className="fixed top-4 right-4 z-50 flex items-center gap-2">
-      <div className="flex items-center gap-2 px-2 py-2 rounded-lg bg-amber-50/50 border border-rose-200/60 shadow-sm">
+      <div className="theme-toolbar-chip">
         {socket ? (
           <Wifi className="w-5 h-5 text-green-600" />
         ) : (
@@ -26,7 +26,7 @@ export default function ShowHeader({ socket, soundEnabled, onToggleSound, onShow
         className={`p-2 rounded-lg transition-all border shadow-sm ${
           soundEnabled
             ? "bg-amber-100/75 border-amber-300/60 text-amber-700"
-            : "bg-amber-50/50 hover:bg-amber-100/75 text-gray-700 border border-rose-200/60"
+            : "theme-icon-btn"
         }`}
         title={soundEnabled ? "暂停音乐" : "播放音乐"}
       >
@@ -34,14 +34,14 @@ export default function ShowHeader({ socket, soundEnabled, onToggleSound, onShow
       </button>
       <button
         onClick={onShowQRCode}
-        className="p-2 rounded-lg bg-amber-50/50 hover:bg-amber-100/75 text-gray-700 transition-all border border-rose-200/60 shadow-sm"
+        className="theme-icon-btn"
         title="显示二维码"
       >
         <QrCode className="w-5 h-5" />
       </button>
       <button
         onClick={onLogout}
-        className="p-2 rounded-lg bg-amber-50/50 hover:bg-red-200/75 text-red-600 transition-all border border-red-200/60 shadow-sm"
+        className="theme-icon-btn-danger"
         title="退出"
       >
         <LogOut className="w-5 h-5" />

@@ -1,7 +1,6 @@
 import { motion } from "framer-motion";
 import ParticleBackground from "./ParticleBackground";
 import { Button } from "@/components/ui/button";
-import { Box } from "./box";
 import { GlassText } from "./glass-text";
 import Image from "next/image";
 
@@ -13,9 +12,6 @@ interface HeroSectionProps {
 }
 
 const HeroSection = ({
-  currentPrize,
-  playerCount,
-  isEliminated = false,
   onStartGame,
 }: HeroSectionProps) => {
   return (
@@ -32,7 +28,7 @@ const HeroSection = ({
         {/* 操作按钮 - 移动端优化 */}
         <motion.div
           className="w-full px-4 space-y-12 md:space-y-16"
-          initial={{ opacity: 0, y: 20 }}
+          initial={false}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
         >
@@ -52,7 +48,7 @@ const HeroSection = ({
         {/* 规则栏目 - 移动端优化 */}
         <motion.div
           className="w-full max-w-xs md:max-w-sm mx-auto px-4"
-          initial={{ opacity: 0, y: 20 }}
+          initial={false}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.8 }}
         >

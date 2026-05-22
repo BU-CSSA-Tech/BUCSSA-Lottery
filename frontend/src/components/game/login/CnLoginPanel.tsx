@@ -3,7 +3,7 @@
 import { Button } from "@/components/ui/button";
 
 const inputClassName =
-  "w-full px-4 py-3 rounded-xl border-2 border-white/60 bg-white/90 text-gray-900 placeholder:text-gray-400 focus:outline-none focus:border-white/90";
+  "theme-input-glass";
 
 interface CnLoginPanelProps {
   code: string;
@@ -59,7 +59,7 @@ export default function CnLoginPanel({
           placeholder="输入 6 位登录码"
           value={code}
           onChange={(e) => onCodeChange(e.target.value.replace(/\D/g, "").slice(0, 6))}
-          className={`${inputClassName} text-center text-2xl tracking-[0.5em] font-mono`}
+          className={`${inputClassName} text-center text-2xl tracking-[0.5em] font-alimama`}
           disabled={loading}
         />
         <Button type="submit" size="lg" className="w-full" disabled={loading || code.length !== 6}>

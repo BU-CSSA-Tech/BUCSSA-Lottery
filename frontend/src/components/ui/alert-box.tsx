@@ -33,7 +33,7 @@ export function AlertBox({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center">
+    <div className="theme-overlay-soft">
       {/* 背景遮罩 */}
       <div 
         className="absolute inset-0 bg-black/50"
@@ -41,7 +41,7 @@ export function AlertBox({
       />
       
       {/* 弹窗内容 */}
-      <div className="relative bg-white/75 rounded-lg p-6 w-full max-w-md mx-4 transform transition-all">
+      <div className="relative theme-modal bg-white/75 p-6 w-full max-w-md mx-4 transform transition-all">
         {/* 关闭按钮 */}
         <button
           onClick={onClose}
