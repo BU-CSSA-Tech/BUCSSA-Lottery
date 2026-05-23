@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { getGameManager } from '../lib/game.js';
-import { publishLoginCode } from '../lib/login-code.js';
+import { clearLoginCode, publishLoginCode } from '../lib/login-code.js';
 import jwt from 'jsonwebtoken';
 import { JWTPayload, NextQuestionBody } from '../types/index.js';
 
@@ -77,10 +77,24 @@ router.post('/publish-login-code', async (req: Request, res: Response) => {
     return res.status(200).json({
       message: 'Login code published',
       code: payload.code,
-      expiresAt: payload.expiresAt,
     });
   } catch (error: unknown) {
     console.error('publish-login-code error:', error);
+    return res.status(500).json({ error: '服务器内部错误' });
+  }
+});
+
+router.post('/close-login-code', async (req: Request, res: Response) => {
+  try {
+    if (!requireAdmin(req, res)) return;
+
+    await clearLoginCode();
+
+    return res.status(200).json({
+      message: 'Login code closed',
+    });
+  } catch (error: unknown) {
+    console.error('close-login-code error:', error);
     return res.status(500).json({ error: '服务器内部错误' });
   }
 });

@@ -1,41 +1,23 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { Users } from "lucide-react";
 
 export interface LoginCodeState {
   code: string;
-  expiresAt: number;
 }
 
 interface LoginCodeDisplayProps {
   active: boolean;
   loginCode: LoginCodeState | null;
+  totalPlayers: number;
 }
 
-export default function LoginCodeDisplay({ active, loginCode }: LoginCodeDisplayProps) {
-  const [secondsLeft, setSecondsLeft] = useState(0);
-
-  useEffect(() => {
-    if (!loginCode || !active) {
-      setSecondsLeft(0);
-      return;
-    }
-
-    const tick = () => {
-      const remaining = Math.max(0, Math.ceil((loginCode.expiresAt - Date.now()) / 1000));
-      setSecondsLeft(remaining);
-    };
-
-    tick();
-    const interval = setInterval(tick, 250);
-    return () => clearInterval(interval);
-  }, [loginCode, active]);
-
+export default function LoginCodeDisplay({ active, loginCode, totalPlayers }: LoginCodeDisplayProps) {
   if (!active) {
     return null;
   }
 
-  if (!loginCode || secondsLeft <= 0) {
+  if (!loginCode) {
     return (
       <div className="theme-panel-strong p-16 text-center">
         <p className="text-4xl font-bold text-gray-700">等待管理员发布登录码</p>
@@ -45,11 +27,17 @@ export default function LoginCodeDisplay({ active, loginCode }: LoginCodeDisplay
 
   return (
     <div className="theme-panel-strong p-12 text-center space-y-8">
-      <p className="text-4xl font-bold text-gray-800">请在 {secondsLeft} 秒内输入登录码</p>
+      <p className="text-4xl font-bold text-gray-800">请输入当前登录码进入游戏</p>
       <div className="theme-font-display text-[8rem] leading-none font-bold tracking-[0.2em] text-gray-900">
         {loginCode.code}
       </div>
       <p className="text-2xl text-gray-600">国区 → 输入上方 6 位登录码 → 进入游戏</p>
+      <div className="flex justify-center">
+        <div className="theme-pill">
+          <Users className="w-6 h-6 text-slate-600 shrink-0" />
+          <span className="text-gray-800 font-semibold text-2xl">当前已加入: {totalPlayers}</span>
+        </div>
+      </div>
     </div>
   );
 }

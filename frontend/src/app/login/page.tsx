@@ -19,8 +19,6 @@ export default function LoginPage() {
 
   const [region, setRegion] = useState<Region>("us");
   const [code, setCode] = useState("");
-  const [staffEmail, setStaffEmail] = useState("");
-  const [staffPassword, setStaffPassword] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [welcomeName, setWelcomeName] = useState<string | null>(null);
@@ -82,41 +80,6 @@ export default function LoginPage() {
     }
   };
 
-  const handleStaffLogin = async () => {
-    setError("");
-
-    if (!staffEmail.trim() || !staffPassword) {
-      setError("请输入邮箱和密码");
-      return;
-    }
-
-    setLoading(true);
-
-    const result = await signIn("staff-credentials", {
-      email: staffEmail.trim(),
-      password: staffPassword,
-      redirect: false,
-    });
-
-    setLoading(false);
-
-    if (result?.error) {
-      setError("邮箱或密码错误");
-      return;
-    }
-
-    const sessionRes = await fetch("/api/auth/session");
-    const sessionData = await sessionRes.json();
-
-    if (sessionData?.user?.isAdmin) {
-      router.push("/admin");
-    } else if (sessionData?.user?.isDisplay) {
-      router.push("/show");
-    } else {
-      setError("邮箱或密码错误");
-    }
-  };
-
   return (
     <div>
       <BackgroundImage
@@ -160,15 +123,10 @@ export default function LoginPage() {
               <CnLoginPanel
                 code={code}
                 onCodeChange={setCode}
-                staffEmail={staffEmail}
-                onStaffEmailChange={setStaffEmail}
-                staffPassword={staffPassword}
-                onStaffPasswordChange={setStaffPassword}
                 loading={loading}
                 error={error}
                 welcomeName={welcomeName}
                 onPlayerLogin={handlePlayerLogin}
-                onStaffLogin={handleStaffLogin}
               />
             )}
           </motion.div>

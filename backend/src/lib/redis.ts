@@ -66,7 +66,6 @@ export const RedisKeys = {
 
   // Player code login (CN region)
   loginCode: () => `game:${ROOM_ID}:login_code`,
-  loginCodeExpiresAt: () => `game:${ROOM_ID}:login_code_expires_at`,
   playerNumberSeq: () => `game:${ROOM_ID}:player_number_seq`,
   playerDisplayNumber: (playerId: string) => `player:${playerId}:displayNumber`,
   playerDisplayName: (playerId: string) => `player:${playerId}:displayName`,

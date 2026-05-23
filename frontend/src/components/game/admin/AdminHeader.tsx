@@ -7,9 +7,11 @@ import { Button } from "@/components/ui/button";
 interface AdminHeaderProps {
   connected: boolean;
   loading: boolean;
-  loginCodeStatus: "idle" | "published" | "expired";
+  loginCodeStatus: "idle" | "published";
   publishingCode: boolean;
+  closingCode: boolean;
   onPublishLoginCode: () => void;
+  onCloseLoginCode: () => void;
   onResetGame: () => void;
   onShowLogoutConfirm: () => void;
 }
@@ -19,7 +21,9 @@ export default function AdminHeader({
   loading,
   loginCodeStatus,
   publishingCode,
+  closingCode,
   onPublishLoginCode,
+  onCloseLoginCode,
   onResetGame,
   onShowLogoutConfirm,
 }: AdminHeaderProps) {
@@ -67,10 +71,17 @@ export default function AdminHeader({
                 {publishingCode ? "发布中..." : "发布登录码"}
               </Button>
               {loginCodeStatus === "published" && (
-                <span className="text-xs text-emerald-400 mt-1">已发布，请查看投屏</span>
+                <Button
+                  onClick={onCloseLoginCode}
+                  disabled={loading || closingCode}
+                  variant="secondary"
+                  className="h-9 px-4 mt-2 rounded-lg font-medium text-sm"
+                >
+                  {closingCode ? "关闭中..." : "关闭登录码"}
+                </Button>
               )}
-              {loginCodeStatus === "expired" && (
-                <span className="text-xs text-amber-400 mt-1">登录码已过期</span>
+              {loginCodeStatus === "published" && (
+                <span className="text-xs text-emerald-400 mt-1">已发布，请查看投屏</span>
               )}
             </div>
             <Button

@@ -237,9 +237,11 @@ export default function ShowPage() {
     });
 
     socket.on("login_code_status", (data: LoginCodePayload) => {
-      if (data.expiresAt > Date.now()) {
-        setLoginCode(data);
-      }
+      setLoginCode(data);
+    });
+
+    socket.on("login_code_closed", () => {
+      setLoginCode(null);
     });
 
     socket.on("disconnect", () => {
@@ -309,22 +311,9 @@ export default function ShowPage() {
     }
   }, [tie]);
 
-  // 登录码过期后清空状态，回到 GameContent（人数统计 / 准备中等）
-  useEffect(() => {
-    if (!loginCode) return;
-
-    const ms = loginCode.expiresAt - Date.now();
-    if (ms <= 0) {
-      setLoginCode(null);
-      return;
-    }
-
-    const id = window.setTimeout(() => setLoginCode(null), ms);
-    return () => window.clearTimeout(id);
-  }, [loginCode]);
-
-  const loginCodeActive =
-    loginCode !== null && loginCode.expiresAt > Date.now();
+  const loginCodeActive = loginCode !== null;
+  const totalPlayers =
+    (gameState?.survivorsCount || 0) + (gameState?.eliminatedCount || 0);
 
   const handleToggleSound = () => setSoundEnabled((prev) => !prev);
 
@@ -425,7 +414,11 @@ export default function ShowPage() {
             </h1>
 
             {loginCodeActive ? (
-              <LoginCodeDisplay active={true} loginCode={loginCode} />
+              <LoginCodeDisplay
+                active={true}
+                loginCode={loginCode}
+                totalPlayers={totalPlayers}
+              />
             ) : (
               <GameContent
                 gameState={gameState}

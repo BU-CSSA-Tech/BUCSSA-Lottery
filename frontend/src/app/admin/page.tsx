@@ -98,8 +98,8 @@ export default function AdminPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
   const [publishingCode, setPublishingCode] = useState(false);
-  const [loginCodeStatus, setLoginCodeStatus] = useState<"idle" | "published" | "expired">("idle");
-  const loginCodeExpiryRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const [closingCode, setClosingCode] = useState(false);
+  const [loginCodeStatus, setLoginCodeStatus] = useState<"idle" | "published">("idle");
 
   const [connected, setConnected] = useState(false);
   const [tie, setTie] = useState<string[] | null>(null);
@@ -274,13 +274,6 @@ export default function AdminPage() {
 
       if (response.ok) {
         setLoginCodeStatus("published");
-        if (loginCodeExpiryRef.current) {
-          clearTimeout(loginCodeExpiryRef.current);
-        }
-        const msUntilExpiry = Math.max(0, data.expiresAt - Date.now());
-        loginCodeExpiryRef.current = setTimeout(() => {
-          setLoginCodeStatus("expired");
-        }, msUntilExpiry);
       } else {
         console.error("发布登录码失败:", data.error);
       }
@@ -288,6 +281,34 @@ export default function AdminPage() {
       console.error("发布登录码错误:", error);
     } finally {
       setPublishingCode(false);
+    }
+  };
+
+  const handleCloseLoginCode = async () => {
+    setClosingCode(true);
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE}/api/admin/close-login-code`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.user.accessToken}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setLoginCodeStatus("idle");
+      } else {
+        console.error("关闭登录码失败:", data.error);
+      }
+    } catch (error) {
+      console.error("关闭登录码错误:", error);
+    } finally {
+      setClosingCode(false);
     }
   };
 
@@ -324,9 +345,6 @@ export default function AdminPage() {
         });
         setSentQuestions(new Set());
         setLoginCodeStatus("idle");
-        if (loginCodeExpiryRef.current) {
-          clearTimeout(loginCodeExpiryRef.current);
-        }
       } else {
         console.error("重置游戏失败:", data.error);
       }
@@ -350,7 +368,9 @@ export default function AdminPage() {
         loading={loading}
         loginCodeStatus={loginCodeStatus}
         publishingCode={publishingCode}
+        closingCode={closingCode}
         onPublishLoginCode={handlePublishLoginCode}
+        onCloseLoginCode={handleCloseLoginCode}
         onResetGame={handleResetGame}
         onShowLogoutConfirm={() => setShowLogoutConfirm(true)}
       />

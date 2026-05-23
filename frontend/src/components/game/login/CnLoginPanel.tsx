@@ -8,29 +8,19 @@ const inputClassName =
 interface CnLoginPanelProps {
   code: string;
   onCodeChange: (value: string) => void;
-  staffEmail: string;
-  onStaffEmailChange: (value: string) => void;
-  staffPassword: string;
-  onStaffPasswordChange: (value: string) => void;
   loading: boolean;
   error: string;
   welcomeName: string | null;
   onPlayerLogin: () => void;
-  onStaffLogin: () => void;
 }
 
 export default function CnLoginPanel({
   code,
   onCodeChange,
-  staffEmail,
-  onStaffEmailChange,
-  staffPassword,
-  onStaffPasswordChange,
   loading,
   error,
   welcomeName,
   onPlayerLogin,
-  onStaffLogin,
 }: CnLoginPanelProps) {
   if (welcomeName) {
     return (
@@ -68,48 +58,6 @@ export default function CnLoginPanel({
         <p className="text-center text-xs text-white/60">
           请观看现场投屏获取登录码，请勿清除浏览器缓存
         </p>
-      </form>
-
-      <div className="border-t border-white/30" />
-
-      {/* Staff section — Enter in email/password submits this form */}
-      <form
-        className="space-y-4"
-        onSubmit={(e) => {
-          e.preventDefault();
-          const emailOk = Boolean(staffEmail.trim());
-          if (loading || !emailOk || !staffPassword) return;
-          onStaffLogin();
-        }}
-      >
-        <p className="text-center text-sm text-white/70 font-medium">管理 / 投屏登录</p>
-        <input
-          type="email"
-          placeholder="邮箱"
-          value={staffEmail}
-          onChange={(e) => onStaffEmailChange(e.target.value)}
-          className={inputClassName}
-          disabled={loading}
-          autoComplete="email"
-        />
-        <input
-          type="password"
-          placeholder="密码"
-          value={staffPassword}
-          onChange={(e) => onStaffPasswordChange(e.target.value)}
-          className={inputClassName}
-          disabled={loading}
-          autoComplete="current-password"
-        />
-        <Button
-          type="submit"
-          size="lg"
-          variant="secondary"
-          className="w-full"
-          disabled={loading || !staffEmail.trim() || !staffPassword}
-        >
-          {loading ? "登录中..." : "管理 / 投屏登录"}
-        </Button>
       </form>
 
       {error && (

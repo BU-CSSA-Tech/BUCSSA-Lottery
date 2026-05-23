@@ -75,7 +75,6 @@ export interface TieEventPayload {
 
 export interface LoginCodePayload {
   code: string;
-  expiresAt: number;
 }
 
 export interface SocketErrorPayload {

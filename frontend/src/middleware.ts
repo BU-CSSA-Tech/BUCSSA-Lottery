@@ -38,8 +38,8 @@ export default withAuth(
       authorized: ({ token, req }) => {
         const { pathname } = req.nextUrl
 
-        // Allow access to login page
-        if (pathname.startsWith('/login')) {
+        // Allow access to login pages
+        if (pathname.startsWith('/login') || pathname.startsWith('/staff-login')) {
           return true
         }
 
@@ -55,5 +55,5 @@ export default withAuth(
 )
 
 export const config = {
-  matcher: ['/admin', '/play', '/show', '/login']
+  matcher: ['/admin', '/play', '/show', '/login', '/staff-login']
 }
