@@ -247,8 +247,8 @@ export default function PlayPage() {
     <div
       className="min-h-screen bg-cover bg-center bg-no-repeat relatives"
       style={{
-        backgroundImage: "url(/playbg.png)",
-        backgroundColor: "#c41e3a",
+        backgroundImage: "var(--theme-bg-image-play)",
+        backgroundColor: "var(--theme-bg-color-play)",
       }}
     >
       {/* 全屏彩带效果 */}

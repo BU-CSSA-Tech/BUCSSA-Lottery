@@ -120,7 +120,6 @@ export default function LoginPage() {
   return (
     <div>
       <BackgroundImage
-        imageUrl="playbg.png"
         overlayOpacity={0.05}
         centerMask={true}
         maskWidth={90}

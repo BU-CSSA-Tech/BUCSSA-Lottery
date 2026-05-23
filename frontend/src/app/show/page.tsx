@@ -345,7 +345,7 @@ export default function ShowPage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[url(/showbg.jpg)] bg-cover bg-center">
+      <div className="min-h-screen flex items-center justify-center theme-bg-show bg-cover bg-center">
         <div className="text-gray-800 text-xl font-medium theme-panel-strong px-6 py-3 rounded-xl border border-rose-200/50">加载中...</div>
       </div>
     );
@@ -363,7 +363,7 @@ export default function ShowPage() {
     <>
       {/* 背景图片 */}
       <BackgroundImage
-        imageUrl="/showbg.jpg"
+        imageVariable="--theme-bg-image-show"
         overlayOpacity={0.03}
         centerMask={false}
       />

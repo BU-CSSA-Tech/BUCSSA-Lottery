@@ -1,5 +1,6 @@
 interface BackgroundImageProps {
-  imageUrl: string;
+  imageUrl?: string;
+  imageVariable?: string;
   overlayOpacity?: number;
   centerMask?: boolean;
   maskWidth?: number; // 蒙版宽度百分比，默认60%
@@ -7,6 +8,7 @@ interface BackgroundImageProps {
 
 const BackgroundImage = ({ 
   imageUrl, 
+  imageVariable = "--theme-bg-image-main",
   overlayOpacity = 0.05, 
   centerMask = true,
   maskWidth = 60 
@@ -17,7 +19,7 @@ const BackgroundImage = ({
       <div 
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `url(${imageUrl})`,
+          backgroundImage: imageUrl ? `url(${imageUrl})` : `var(${imageVariable})`,
         }}
       />
       

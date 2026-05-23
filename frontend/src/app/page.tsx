@@ -16,7 +16,6 @@ export default function Home() {
     <div>
       {/* 背景图片 */}
       <BackgroundImage
-        imageUrl="playbg.png" // 在这里设置你的背景图片路径
         overlayOpacity={0.05} // 整体遮罩透明度，0-1之间
         centerMask={true} // 启用中间渐变蒙版
         maskWidth={90} // 中间蒙版宽度，80%的屏幕宽度

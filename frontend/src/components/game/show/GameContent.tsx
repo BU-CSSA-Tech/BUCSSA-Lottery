@@ -138,7 +138,7 @@ export default function GameContent({
             )}
           </div>
           <div className="flex-shrink-0 w-36 h-36 md:w-44 md:h-44 flex items-center justify-center">
-            <Image src="/dog.webp" alt="dog" width={176} height={176} className="object-contain" />
+            <Image src="/dog_small.png" alt="dog" width={176} height={176} className="object-contain" />
           </div>
         </motion.div>
       )}
@@ -156,7 +156,7 @@ export default function GameContent({
                 <Trophy className="w-12 h-12 text-yellow-500" />
               </div>
               <h2 className="text-5xl font-bold mb-8 text-gray-800">
-                游戏结束!
+                游戏结 束!
               </h2>
             </>
           )}

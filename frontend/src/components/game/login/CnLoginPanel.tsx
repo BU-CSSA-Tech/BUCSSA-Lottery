@@ -59,7 +59,7 @@ export default function CnLoginPanel({
           placeholder="输入 6 位登录码"
           value={code}
           onChange={(e) => onCodeChange(e.target.value.replace(/\D/g, "").slice(0, 6))}
-          className={`${inputClassName} text-center text-2xl tracking-[0.5em] font-alimama`}
+          className={`${inputClassName} text-center text-2xl tracking-[0.5em] theme-font-body`}
           disabled={loading}
         />
         <Button type="submit" size="lg" className="w-full" disabled={loading || code.length !== 6}>

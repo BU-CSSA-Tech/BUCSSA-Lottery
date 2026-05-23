@@ -12,6 +12,13 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: "zpix";
+  src: url("/zpix.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -88,6 +95,12 @@
     --theme-action-success-alt-to: rgb(20, 184, 166);
     --theme-action-success-alt-hover-from: rgb(5, 150, 105);
     --theme-action-success-alt-hover-to: rgb(13, 148, 136);
+    --theme-font-body: "Alimama DongFang DaKai", sans-serif;
+    --theme-font-display: "Alimama DongFang DaKai", sans-serif;
+    --theme-bg-image-main: url("/playbg.png");
+    --theme-bg-image-play: url("/playbg.png");
+    --theme-bg-image-show: url("/showbg.jpg");
+    --theme-bg-color-play: #c41e3a;
 
     --background: 0 0% 100%;
     --foreground: 222 47% 11%;
@@ -149,6 +162,71 @@
     --theme-action-success-alt-to: rgb(20, 184, 166);
     --theme-action-success-alt-hover-from: rgb(5, 150, 105);
     --theme-action-success-alt-hover-to: rgb(13, 148, 136);
+    --theme-font-body: "Alimama DongFang DaKai", sans-serif;
+    --theme-font-display: "Alimama DongFang DaKai", sans-serif;
+    --theme-bg-image-main: url("/playbg.png");
+    --theme-bg-image-play: url("/playbg.png");
+    --theme-bg-image-show: url("/showbg.jpg");
+    --theme-bg-color-play: #c41e3a;
+  }
+
+  [data-theme="mario"] {
+    --app-theme: mario;
+    --theme-surface: var(--spring-surface);
+    --theme-surface-strong: var(--spring-surface-strong);
+    --theme-surface-subtle: rgba(255, 251, 235, 0.25);
+    --theme-surface-soft: var(--spring-surface-soft);
+    --theme-border: var(--spring-border);
+    --theme-border-soft: var(--spring-border-soft);
+    --theme-title: var(--spring-title);
+    --theme-toolbar-bg: var(--theme-surface);
+    --theme-toolbar-hover-bg: var(--theme-surface-soft);
+    --theme-danger-bg: var(--theme-surface);
+    --theme-danger-hover-bg: rgba(254, 202, 202, 0.75);
+    --theme-danger-border: rgba(254, 202, 202, 0.6);
+    --theme-danger-text: rgb(220, 38, 38);
+    --theme-hint-bg: rgba(255, 255, 255, 0.6);
+    --theme-input-bg: rgba(255, 255, 255, 0.9);
+    --theme-input-border: rgba(255, 255, 255, 0.6);
+    --theme-input-focus-border: rgba(255, 255, 255, 0.9);
+    --theme-segment-active-bg: rgba(255, 255, 255, 0.25);
+    --theme-segment-active-border: rgba(255, 255, 255, 0.5);
+    --theme-segment-active-text: rgba(255, 255, 255, 1);
+    --theme-segment-inactive-text: rgba(255, 255, 255, 0.6);
+    --theme-segment-inactive-hover-text: rgba(255, 255, 255, 0.8);
+    --theme-overlay-soft-bg: rgba(0, 0, 0, 0.5);
+    --theme-overlay-strong-bg: rgba(0, 0, 0, 0.8);
+    --theme-admin-panel-bg: rgba(255, 255, 255, 0.1);
+    --theme-admin-panel-border: rgba(255, 255, 255, 0.2);
+    --theme-admin-option-bg: rgba(0, 0, 0, 0.25);
+    --theme-admin-option-border: rgba(255, 255, 255, 0.2);
+    --theme-admin-option-hover-border: rgba(255, 255, 255, 0.3);
+    --theme-admin-question-bg: rgba(255, 255, 255, 0.05);
+    --theme-admin-question-border: rgba(255, 255, 255, 0.2);
+    --theme-admin-question-hover-border: rgba(255, 255, 255, 0.4);
+    --theme-action-text: #ffffff;
+    --theme-action-success-from: rgb(34, 197, 94);
+    --theme-action-success-to: rgb(16, 185, 129);
+    --theme-action-success-hover-from: rgb(22, 163, 74);
+    --theme-action-success-hover-to: rgb(5, 150, 105);
+    --theme-action-info-from: rgb(59, 130, 246);
+    --theme-action-info-to: rgb(6, 182, 212);
+    --theme-action-info-hover-from: rgb(37, 99, 235);
+    --theme-action-info-hover-to: rgb(8, 145, 178);
+    --theme-action-danger-from: rgb(239, 68, 68);
+    --theme-action-danger-to: rgb(236, 72, 153);
+    --theme-action-danger-hover-from: rgb(220, 38, 38);
+    --theme-action-danger-hover-to: rgb(219, 39, 119);
+    --theme-action-success-alt-from: rgb(16, 185, 129);
+    --theme-action-success-alt-to: rgb(20, 184, 166);
+    --theme-action-success-alt-hover-from: rgb(5, 150, 105);
+    --theme-action-success-alt-hover-to: rgb(13, 148, 136);
+    --theme-font-body: "zpix", sans-serif;
+    --theme-font-display: "zpix", sans-serif;
+    --theme-bg-image-main: url("/playbg_cloud.png");
+    --theme-bg-image-play: url("/playbg_cloud.png");
+    --theme-bg-image-show: url("/showbg_bu.png");
+    --theme-bg-color-play: #c41e3a;
   }
 
   html {
@@ -163,6 +241,7 @@
       rgb(var(--background-start-rgb)),
       rgb(var(--background-end-rgb))
     );
+    font-family: var(--theme-font-body);
     height: 100%;
     overflow: hidden;
     overscroll-behavior: none;
@@ -194,6 +273,27 @@
     font-family: "Ding Lie Zhu Hai", cursive;
     font-weight: 400;
     font-style: normal;
+  }
+
+  .theme-font-body {
+    font-family: var(--theme-font-body);
+  }
+
+  .theme-font-display {
+    font-family: var(--theme-font-display);
+  }
+
+  .theme-bg-main {
+    background-image: var(--theme-bg-image-main);
+  }
+
+  .theme-bg-play {
+    background-image: var(--theme-bg-image-play);
+    background-color: var(--theme-bg-color-play);
+  }
+
+  .theme-bg-show {
+    background-image: var(--theme-bg-image-show);
   }
 
   .theme-panel-glass {

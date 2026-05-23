@@ -17,7 +17,7 @@ export default function RootLayout({
 
   return (
     <html lang="zh-CN" data-theme={activeTheme}>
-      <body className="font-alimama antialiased" data-theme={activeTheme}>
+      <body className="theme-font-body antialiased" data-theme={activeTheme}>
         <Providers>
           {children}
         </Providers>
