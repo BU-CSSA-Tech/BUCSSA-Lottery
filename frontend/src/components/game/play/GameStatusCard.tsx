@@ -22,10 +22,10 @@ export default function GameStatusCard({
       {userGameState.status === "waiting" && (
         <div className="text-center space-y-6">
           <Image
-            src="/waitma.gif"
+            src="/waitstar.gif"
             alt="等待中"
-            width={160}
-            height={160}
+            width={100}
+            height={100}
             className="mx-auto"
           />
           <p className="text-gray-800 text-3xl font-bold tracking-wider">
@@ -93,10 +93,10 @@ export default function GameStatusCard({
               <button
                 type="button"
                 onClick={() => onSubmitAnswer("A")}
-                className="relative w-48 h-48 md:w-56 md:h-56 transition-all duration-200 rounded-lg overflow-hidden"
+                className="relative w-24 h-24 md:w-56 md:h-56 transition-all duration-200 rounded-lg overflow-hidden"
               >
                 <Image
-                  src="/aoption.png"
+                  src="/optionA-pixel.png"
                   alt="选项 A"
                   fill
                   className="object-contain"
@@ -106,10 +106,10 @@ export default function GameStatusCard({
               <button
                 type="button"
                 onClick={() => onSubmitAnswer("B")}
-                className="relative w-48 h-48 md:w-56 md:h-56 transition-all duration-200 rounded-lg overflow-hidden"
+                className="relative w-24 h-24 md:w-56 md:h-56 transition-all duration-200 rounded-lg overflow-hidden"
               >
                 <Image
-                  src="/boption.png"
+                  src="/optionB-pixel.png"
                   alt="选项 B"
                   fill
                   className="object-contain"
@@ -118,9 +118,9 @@ export default function GameStatusCard({
             </div>
           ) : (
             <div className="flex flex-col items-center gap-4">
-              <div className="relative w-56 h-56 md:w-64 md:h-64">
+              <div className="relative w-48 h-48 md:w-64 md:h-64">
                 <Image
-                  src={selectedOption === "A" ? "/aoption.png" : "/boption.png"}
+                  src={selectedOption === "A" ? "/optionA-pixel.png" : "/optionB-pixel.png"}
                   alt={`选项 ${selectedOption}`}
                   fill
                   className="object-contain"

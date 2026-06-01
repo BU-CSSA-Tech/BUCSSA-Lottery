@@ -163,19 +163,22 @@ export default function GameContent({
 
           {winner ? (
             <div className="space-y-8 max-w-6xl mx-auto px-16 py-8">
-              <div className="text-6xl text-yellow-500/80 font-normal">
+              <div
+                className="text-6xl text-white font-bold"
+                style={{ WebkitTextStroke: "4px #000", paintOrder: "stroke fill" }}
+              >
                 恭喜一等奖获得者!
               </div>
               <div className="relative flex justify-center">
                 <Image
-                  src="/winbg.png"
+                  src="/winbg-tube.png"
                   alt=""
-                  width={1200}
-                  height={640}
+                  width={700}
+                  height={350}
                   className="max-w-full h-auto object-contain"
                 />
                 <div className="absolute inset-0 flex items-center justify-center">
-                  <div className="text-6xl font-light text-center text-black">
+                  <div className="text-6xl font-bold text-center text-white">
                     {winner}
                   </div>
                 </div>

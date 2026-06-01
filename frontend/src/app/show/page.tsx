@@ -32,6 +32,7 @@ export default function ShowPage() {
   const [winner, setWinner] = useState<string | null>(null);
   const [tie, setTie] = useState<string[] | null>(null);
   const [showWinnerModal, setShowWinnerModal] = useState<boolean>(false);
+  const [showWinnerConfetti, setShowWinnerConfetti] = useState<boolean>(false);
   const [showTieModal, setShowTieModal] = useState<boolean>(false);
   const [updatedWinnerTie, setUpdatedWinnerTie] = useState<boolean>(false);
   const [showQRCode, setShowQRCode] = useState(false);
@@ -289,12 +290,14 @@ export default function ShowPage() {
   useEffect(() => {
     if (winner) {
       setShowWinnerModal(true);
+      setShowWinnerConfetti(false);
       const timer = setTimeout(() => {
         setShowWinnerModal(false);
       }, 180000);
       return () => clearTimeout(timer);
     } else {
       setShowWinnerModal(false);
+      setShowWinnerConfetti(false);
     }
   }, [winner]);
 
@@ -314,6 +317,7 @@ export default function ShowPage() {
   const loginCodeActive = loginCode !== null;
   const totalPlayers =
     (gameState?.survivorsCount || 0) + (gameState?.eliminatedCount || 0);
+  const winnerForGameContent = showWinnerModal ? null : winner;
 
   const handleToggleSound = () => setSoundEnabled((prev) => !prev);
 
@@ -359,7 +363,11 @@ export default function ShowPage() {
 
       {/* 全屏获胜者模态框 */}
       {showWinnerModal && winner && (
-        <WinnerModal winner={winner} onClose={() => setShowWinnerModal(false)} />
+        <WinnerModal
+          winner={winner}
+          onClose={() => setShowWinnerModal(false)}
+          onRevealStart={() => setShowWinnerConfetti(true)}
+        />
       )}
 
       {/* 全屏平局 VS 模态框 */}
@@ -369,7 +377,7 @@ export default function ShowPage() {
 
       <div className="min-h-screen relative z-10 text-gray-800">
         {/* 全屏彩带效果 */}
-        {winner && (
+        {winner && showWinnerConfetti && (
           <Confetti
             width={typeof window !== "undefined" ? window.innerWidth : 0}
             height={typeof window !== "undefined" ? window.innerHeight : 0}
@@ -423,7 +431,7 @@ export default function ShowPage() {
               <GameContent
                 gameState={gameState}
                 frontendTimeLeft={frontendTimeLeft}
-                winner={winner}
+                winner={winnerForGameContent}
                 tie={tie}
                 updatedWinnerTie={updatedWinnerTie}
               />
