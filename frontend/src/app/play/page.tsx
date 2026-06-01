@@ -210,7 +210,7 @@ export default function PlayPage() {
         }
       );
 
-        const data = await response.json();
+      const data = await response.json();
 
       if (response.ok) {
         console.log(`您选择了选项 ${option}，请等待结果...`);
