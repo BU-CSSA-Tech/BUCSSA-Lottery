@@ -8,8 +8,8 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import BackgroundImage from "@/components/ui/BackgroundImage";
-import RegionToggle, { type Region } from "@/components/game/login/RegionToggle";
-import UsLoginPanel from "@/components/game/login/UsLoginPanel";
+// import RegionToggle, { type Region } from "@/components/game/login/RegionToggle";
+// import UsLoginPanel from "@/components/game/login/UsLoginPanel";
 import CnLoginPanel from "@/components/game/login/CnLoginPanel";
 import { getOrCreatePlayerId } from "@/lib/player-id";
 
@@ -17,7 +17,7 @@ export default function LoginPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  const [region, setRegion] = useState<Region>("us");
+  // const [region, setRegion] = useState<Region>("us");
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -35,6 +35,7 @@ export default function LoginPage() {
     }
   }, [session, status, router]);
 
+  /*
   const handleGoogleSignIn = async () => {
     await signIn("google");
   };
@@ -42,6 +43,7 @@ export default function LoginPage() {
   const handleAzureADSignIn = async () => {
     await signIn("azure-ad");
   };
+  */
 
   const handlePlayerLogin = async () => {
     setError("");
@@ -112,6 +114,7 @@ export default function LoginPage() {
               <div className="text-center text-2xl font-bold text-white">登 录</div>
             </div>
 
+            {/* 暂时隐藏美区 OAuth 登录
             <RegionToggle region={region} onChange={setRegion} />
 
             {region === "us" ? (
@@ -120,6 +123,7 @@ export default function LoginPage() {
                 onAzureSignIn={handleAzureADSignIn}
               />
             ) : (
+            */}
               <CnLoginPanel
                 code={code}
                 onCodeChange={setCode}
@@ -128,7 +132,7 @@ export default function LoginPage() {
                 welcomeName={welcomeName}
                 onPlayerLogin={handlePlayerLogin}
               />
-            )}
+            {/* )} */}
           </motion.div>
 
           <div className="theme-hint-card">

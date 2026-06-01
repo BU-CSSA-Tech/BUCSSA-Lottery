@@ -31,7 +31,7 @@ export default function LoginCodeDisplay({ active, loginCode, totalPlayers }: Lo
       <div className="theme-font-display text-[8rem] leading-none font-bold tracking-[0.2em] text-gray-900">
         {loginCode.code}
       </div>
-      <p className="text-2xl text-gray-600">国区 → 输入上方 6 位登录码 → 进入游戏</p>
+      <p className="text-2xl text-gray-600">输入上方 6 位登录码 → 进入游戏</p>
       <div className="flex justify-center">
         <div className="theme-pill">
           <Users className="w-6 h-6 text-slate-600 shrink-0" />

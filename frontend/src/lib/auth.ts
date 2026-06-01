@@ -141,7 +141,7 @@ export const authOptions: AuthOptions = {
         session.user.id = String(token.sub || token.id || "");
         session.user.isAdmin = Boolean(token.isAdmin);
         session.user.isDisplay = Boolean(token.isDisplay);
-        session.user.accessToken = String(token.accessToken) || null;
+        session.user.accessToken = typeof token.accessToken === "string" ? token.accessToken : null;
         if (token.name) {
           session.user.name = String(token.name);
         }
@@ -150,8 +150,10 @@ export const authOptions: AuthOptions = {
       return session;
     },
 
-    async redirect({ baseUrl }) {
-      return `${baseUrl}/play`;
+    async redirect({ url, baseUrl }) {
+      if (url.startsWith("/")) return `${baseUrl}${url}`;
+      if (new URL(url).origin === baseUrl) return url;
+      return baseUrl;
     },
   },
   pages: {

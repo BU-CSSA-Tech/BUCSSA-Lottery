@@ -15,6 +15,28 @@ function formatDisplayName(playerNumber: number): string {
   return `玩家 #${String(playerNumber).padStart(3, '0')}`;
 }
 
+function parsePlayerIdFromInternalEmail(internalEmail: string): string | null {
+  if (!internalEmail.startsWith('player:') || !internalEmail.endsWith('@game.local')) {
+    return null;
+  }
+  const playerId = internalEmail.slice('player:'.length, -'@game.local'.length);
+  return isValidPlayerId(playerId) ? playerId : null;
+}
+
+async function persistPlayerDisplayKeys(
+  playerId: string,
+  internalEmail: string,
+  displayName: string,
+  playerNumber: number,
+): Promise<void> {
+  await Promise.all([
+    redis.set(RedisKeys.playerDisplayNumber(playerId), String(playerNumber)),
+    redis.set(RedisKeys.playerDisplayName(playerId), displayName),
+    redis.set(RedisKeys.playerInternalEmail(playerId), internalEmail),
+    redis.set(RedisKeys.internalEmailDisplayName(internalEmail), displayName),
+  ]);
+}
+
 export interface PlayerIdentity {
   playerId: string;
   internalEmail: string;
@@ -33,17 +55,14 @@ export async function assignPlayerIdentity(playerId: string): Promise<PlayerIden
       (await redis.get(RedisKeys.playerDisplayName(playerId))) ||
       formatDisplayName(playerNumber);
 
+    await persistPlayerDisplayKeys(playerId, internalEmail, displayName, playerNumber);
     return { playerId, internalEmail, displayName, playerNumber };
   }
 
   const playerNumber = await redis.incr(RedisKeys.playerNumberSeq());
   const displayName = formatDisplayName(playerNumber);
 
-  await redis.set(RedisKeys.playerDisplayNumber(playerId), String(playerNumber));
-  await redis.set(RedisKeys.playerDisplayName(playerId), displayName);
-  await redis.set(RedisKeys.playerInternalEmail(playerId), internalEmail);
-  // Reverse lookup: internal email -> display name for winner/tie emits
-  await redis.set(RedisKeys.internalEmailDisplayName(internalEmail), displayName);
+  await persistPlayerDisplayKeys(playerId, internalEmail, displayName, playerNumber);
 
   return { playerId, internalEmail, displayName, playerNumber };
 }
@@ -57,7 +76,21 @@ export async function getDisplayName(internalEmail: string): Promise<string> {
     return internalEmail;
   }
 
-  return internalEmail.replace('@game.local', '').replace('player:', 'player:');
+  const playerId = parsePlayerIdFromInternalEmail(internalEmail);
+  if (!playerId) return '玩家';
+
+  const name = await redis.get(RedisKeys.playerDisplayName(playerId));
+  if (name) return name;
+
+  const numberStr = await redis.get(RedisKeys.playerDisplayNumber(playerId));
+  if (numberStr) {
+    const displayName = formatDisplayName(parseInt(numberStr, 10));
+    await redis.set(RedisKeys.playerDisplayName(playerId), displayName);
+    await redis.set(RedisKeys.internalEmailDisplayName(internalEmail), displayName);
+    return displayName;
+  }
+
+  return '玩家';
 }
 
 export async function resolveDisplayNames(internalEmails: string[]): Promise<string[]> {
