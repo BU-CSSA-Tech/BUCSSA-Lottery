@@ -17,12 +17,12 @@ interface AnimatedBarChartProps {
 }
 
 // 使用 react-spring 的数字动画组件
-const AnimatedNumber: React.FC<{ value: number; delay: number }> = ({ value, delay }) => {
+const AnimatedNumber: React.FC<{ value: number; delayMs: number; durationMs: number }> = ({ value, delayMs, durationMs }) => {
   const { number } = useSpring({
     from: { number: 0 },
     to: { number: value },
-    delay: delay * 1000,
-    config: { duration: 2000, tension: 120, friction: 14 }
+    delay: delayMs,
+    config: { duration: durationMs, tension: 120, friction: 14 }
   });
 
   return (
@@ -38,7 +38,8 @@ const BarItem: React.FC<{
   index: number;
   max: number;
   isVisible: boolean;
-}> = ({ item, index, max, isVisible }) => {
+  durationMs: number;
+}> = ({ item, index, max, isVisible, durationMs }) => {
   const safeValue = Math.max(0, item.value || 0);
 
   // ✅ 在子组件顶层调用 useSpring
@@ -46,7 +47,7 @@ const BarItem: React.FC<{
     from: { width: '0%' },
     to: { width: isVisible ? `${(safeValue / max) * 100}%` : '0%' },
     delay: index * 300,
-    config: { duration: 2000, tension: 120, friction: 14 }
+    config: { duration: durationMs, tension: 120, friction: 14 }
   });
 
   return (
@@ -62,7 +63,7 @@ const BarItem: React.FC<{
           {item.label}
         </span>
         <div className="text-3xl font-bold" style={{ color: item.color }}>
-          <AnimatedNumber value={safeValue} delay={index * 0.3} />
+          <AnimatedNumber value={safeValue} delayMs={index * 300} durationMs={durationMs} />
         </div>
       </div>
 
@@ -93,6 +94,7 @@ const AnimatedBarChart: React.FC<AnimatedBarChartProps> = ({
   duration = 2 
 }) => {
   const [isVisible, setIsVisible] = useState(false);
+  const durationMs = Math.max(200, Math.round(duration * 1000));
 
   useEffect(() => {
     const timer = setTimeout(() => setIsVisible(true), 100);
@@ -127,6 +129,7 @@ const AnimatedBarChart: React.FC<AnimatedBarChartProps> = ({
           index={index}
           max={max}
           isVisible={isVisible}
+          durationMs={durationMs}
         />
       ))}
     </div>

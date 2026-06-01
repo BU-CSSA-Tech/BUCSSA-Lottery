@@ -12,9 +12,23 @@ module.exports = {
         alimama: ['"Alimama DongFang DaKai"', 'sans-serif'],
       },
       colors: {
+        border: 'hsl(var(--border, 214 32% 91%))',
+        input: 'hsl(var(--input, 214 32% 91%))',
+        ring: 'hsl(var(--ring, 215 20% 65%))',
+        background: 'hsl(var(--background, 0 0% 100%))',
+        foreground: 'hsl(var(--foreground, 222 47% 11%))',
+        muted: {
+          DEFAULT: 'hsl(var(--muted, 210 40% 96%))',
+          foreground: 'hsl(var(--muted-foreground, 215 16% 47%))',
+        },
         primary: {
           from: '#28a7ff',
           to: '#0066ff',
+        },
+        spring: {
+          surface: '#FFFBEB',
+          border: '#FECDD3',
+          accent: '#DC2626',
         },
       },
       backgroundImage: {

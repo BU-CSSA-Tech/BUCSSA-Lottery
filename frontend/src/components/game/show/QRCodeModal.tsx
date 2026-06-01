@@ -8,8 +8,8 @@ interface QRCodeModalProps {
 
 export default function QRCodeModal({ onClose }: QRCodeModalProps) {
   return (
-    <div className="fixed inset-0 bg-black/50 backdrop-blur-sm z-[100] flex items-center justify-center">
-      <div className="bg-amber-50/98 backdrop-blur-lg rounded-2xl p-8 max-w-lg mx-4 border border-rose-200/70 shadow-xl">
+    <div className="theme-overlay-soft z-[100]">
+      <div className="theme-modal p-8 max-w-lg mx-4">
         <div className="text-center space-y-4">
           <div className="w-72 h-72 md:w-96 md:h-96 bg-white rounded-xl flex items-center justify-center mx-auto border border-rose-100">
             <Image src="/qrcode.png" alt="qrcode" width={350} height={350} className="p-2" />

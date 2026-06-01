@@ -47,7 +47,7 @@ export default function GameStatusPanel({ gameState, winner, tie }: GameStatusPa
     <>
       {/* Status Banner */}
       <div
-        className={`glass rounded-2xl p-4 bg-gradient-to-r ${getStatusColor()} animate-fade-in`}
+        className={`theme-admin-panel p-4 bg-gradient-to-r ${getStatusColor()} animate-fade-in`}
       >
         <div className="flex items-center justify-center gap-3 text-white">
           {getStatusIcon()}
@@ -57,7 +57,7 @@ export default function GameStatusPanel({ gameState, winner, tie }: GameStatusPa
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3 animate-slide-up">
-        <div className="glass rounded-xl p-4 hover-lift">
+        <div className="theme-admin-stat-card">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center">
               <Users className="w-4 h-4 text-green-400" />
@@ -71,7 +71,7 @@ export default function GameStatusPanel({ gameState, winner, tie }: GameStatusPa
           </div>
         </div>
 
-        <div className="glass rounded-xl p-4 hover-lift">
+        <div className="theme-admin-stat-card">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-red-500/20 rounded-lg flex items-center justify-center">
               <UserX className="w-4 h-4 text-red-400" />
@@ -85,7 +85,7 @@ export default function GameStatusPanel({ gameState, winner, tie }: GameStatusPa
           </div>
         </div>
 
-        <div className="glass rounded-xl p-4 hover-lift">
+        <div className="theme-admin-stat-card">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-purple-500/20 rounded-lg flex items-center justify-center">
               <Target className="w-4 h-4 text-purple-400" />
@@ -101,7 +101,7 @@ export default function GameStatusPanel({ gameState, winner, tie }: GameStatusPa
           </div>
         </div>
 
-        <div className="glass rounded-xl p-4 hover-lift">
+        <div className="theme-admin-stat-card">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-green-500/20 rounded-lg flex items-center justify-center">
               <Crown className="w-4 h-4 text-green-400" />
@@ -117,7 +117,7 @@ export default function GameStatusPanel({ gameState, winner, tie }: GameStatusPa
           </div>
         </div>
 
-        <div className="glass rounded-xl p-4 hover-lift">
+        <div className="theme-admin-stat-card">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-yellow-500/20 rounded-lg flex items-center justify-center">
               <Trophy className="w-4 h-4 text-yellow-400" />

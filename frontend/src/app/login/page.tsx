@@ -2,23 +2,31 @@
 
 import { signIn, useSession } from "next-auth/react";
 import { motion } from "framer-motion";
-import { ArrowRight, UserIcon } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
-import Image from "next/image";
 import { useRouter } from "next/navigation";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import BackgroundImage from "@/components/ui/BackgroundImage";
+// import RegionToggle, { type Region } from "@/components/game/login/RegionToggle";
+// import UsLoginPanel from "@/components/game/login/UsLoginPanel";
+import CnLoginPanel from "@/components/game/login/CnLoginPanel";
+import { getOrCreatePlayerId } from "@/lib/player-id";
 
 export default function LoginPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
 
-  // 检查登录状态并重定向
+  // const [region, setRegion] = useState<Region>("us");
+  const [code, setCode] = useState("");
+  const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
+  const [welcomeName, setWelcomeName] = useState<string | null>(null);
+
   useEffect(() => {
     if (status === "authenticated" && session?.user) {
       if (session.user.isAdmin) {
-          router.push("/admin");
+        router.push("/admin");
       } else if (session.user.isDisplay) {
         router.push("/show");
       } else {
@@ -27,6 +35,7 @@ export default function LoginPage() {
     }
   }, [session, status, router]);
 
+  /*
   const handleGoogleSignIn = async () => {
     await signIn("google");
   };
@@ -34,11 +43,48 @@ export default function LoginPage() {
   const handleAzureADSignIn = async () => {
     await signIn("azure-ad");
   };
+  */
+
+  const handlePlayerLogin = async () => {
+    setError("");
+    const trimmed = code.trim();
+    if (!/^\d{6}$/.test(trimmed)) {
+      setError("请输入 6 位数字登录码");
+      return;
+    }
+
+    setLoading(true);
+    const playerId = getOrCreatePlayerId();
+
+    const result = await signIn("player-code", {
+      code: trimmed,
+      playerId,
+      redirect: false,
+    });
+
+    if (result?.error) {
+      setLoading(false);
+      setError("登录码无效或已过期，请查看现场投屏");
+      return;
+    }
+
+    const sessionRes = await fetch("/api/auth/session");
+    const sessionData = await sessionRes.json();
+    const displayName = sessionData?.user?.name as string | undefined;
+
+    setLoading(false);
+
+    if (displayName) {
+      setWelcomeName(displayName);
+      setTimeout(() => router.push("/play"), 1500);
+    } else {
+      router.push("/play");
+    }
+  };
 
   return (
-    <>
+    <div>
       <BackgroundImage
-        imageUrl="playbg.png"
         overlayOpacity={0.05}
         centerMask={true}
         maskWidth={90}
@@ -59,64 +105,43 @@ export default function LoginPage() {
           </div>
 
           <motion.div
-            initial={{ opacity: 0, y: 20 }}
+            initial={false}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6 }}
-            className="p-6 max-w-md mx-auto"
+            className="p-6 max-w-md mx-auto w-full"
           >
-            <div className="flex mb-8 items-center justify-center gap-2">
-              <div className="text-center text-2xl font-bold">登 录</div>
+            <div className="flex mb-6 items-center justify-center">
+              <div className="text-center text-2xl font-bold text-white">登 录</div>
             </div>
-            <div className="text-center">
-              {/* Google 登录按钮 */}
-              <Button
-                onClick={handleGoogleSignIn}
-                size="lg"
-                className="w-full mb-6"
-                variant="outline"
-              >
-                <Image
-                  src="/google.svg"
-                  alt="Google"
-                  width={20}
-                  height={20}
-                  className="mr-2"
-                />
-                Google 登录
-              </Button>
 
-              <Button
-                onClick={handleAzureADSignIn}
-                size="lg"
-                className="w-full mb-6"
-                variant="outline"
-              >
-                <Image
-                  src="/outlook.png"
-                  alt="Azure"
-                  width={20}
-                  height={20}
-                  className="mr-2"
-                />
-                Outlook 登录
-              </Button>
+            {/* 暂时隐藏美区 OAuth 登录
+            <RegionToggle region={region} onChange={setRegion} />
 
-              <div className="text-center text-sm text-white/80">
-                登录即表示您同意我们的{" "}
-                <a href="/term" className="text-red-400 underline">
-                  《使用与参与条款》
-                </a>
-              </div>
-            </div>
+            {region === "us" ? (
+              <UsLoginPanel
+                onGoogleSignIn={handleGoogleSignIn}
+                onAzureSignIn={handleAzureADSignIn}
+              />
+            ) : (
+            */}
+              <CnLoginPanel
+                code={code}
+                onCodeChange={setCode}
+                loading={loading}
+                error={error}
+                welcomeName={welcomeName}
+                onPlayerLogin={handlePlayerLogin}
+              />
+            {/* )} */}
           </motion.div>
 
-          <div className="bg-white/60 rounded-lg p-3">
+          <div className="theme-hint-card">
             <div className="text-gray-800 text-sm text-center">
               <strong>提示：</strong>如果登录后被踢出来，可能是游戏已开始或者管理员未重置，请耐心等候哦！
             </div>
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
 }

@@ -7,6 +7,11 @@ import { Button } from "@/components/ui/button";
 interface AdminHeaderProps {
   connected: boolean;
   loading: boolean;
+  loginCodeStatus: "idle" | "published";
+  publishingCode: boolean;
+  closingCode: boolean;
+  onPublishLoginCode: () => void;
+  onCloseLoginCode: () => void;
   onResetGame: () => void;
   onShowLogoutConfirm: () => void;
 }
@@ -14,6 +19,11 @@ interface AdminHeaderProps {
 export default function AdminHeader({
   connected,
   loading,
+  loginCodeStatus,
+  publishingCode,
+  closingCode,
+  onPublishLoginCode,
+  onCloseLoginCode,
   onResetGame,
   onShowLogoutConfirm,
 }: AdminHeaderProps) {
@@ -51,21 +61,34 @@ export default function AdminHeader({
             </div>
           </div>
 
-          <div className="flex gap-2">
-            {/* <Button
-              onClick={handleEndRound}
-              disabled={loading}
-              variant="destructive"
-              className="h-9 px-4 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 rounded-lg font-medium transition-all duration-200 hover-lift text-sm"
-            >
-              <RotateCcw className="w-3 h-3 mr-1" />
-              结束轮次
-            </Button> */}
+          <div className="flex gap-2 items-center">
+            <div className="flex flex-col items-end mr-2">
+              <Button
+                onClick={onPublishLoginCode}
+                disabled={loading || publishingCode}
+                className="h-9 px-4 rounded-lg font-medium text-sm theme-btn-action-success-alt"
+              >
+                {publishingCode ? "发布中..." : "发布登录码"}
+              </Button>
+              {loginCodeStatus === "published" && (
+                <Button
+                  onClick={onCloseLoginCode}
+                  disabled={loading || closingCode}
+                  variant="secondary"
+                  className="h-9 px-4 mt-2 rounded-lg font-medium text-sm"
+                >
+                  {closingCode ? "关闭中..." : "关闭登录码"}
+                </Button>
+              )}
+              {loginCodeStatus === "published" && (
+                <span className="text-xs text-emerald-400 mt-1">已发布，请查看投屏</span>
+              )}
+            </div>
             <Button
               onClick={onResetGame}
               disabled={loading}
               variant="destructive"
-              className="h-9 px-4 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 rounded-lg font-medium transition-all duration-200 hover-lift text-sm"
+              className="h-9 px-4 rounded-lg font-medium transition-all duration-200 text-sm theme-btn-action-danger"
             >
               <RotateCcw className="w-3 h-3 mr-1" />
               重置游戏
@@ -73,7 +96,7 @@ export default function AdminHeader({
 
             <Button
               onClick={onShowLogoutConfirm}
-              className="h-9 px-3 bg-gradient-to-r from-red-500 to-pink-500 hover:from-red-600 hover:to-pink-600 rounded-lg font-medium transition-all duration-200 hover-lift"
+              className="h-9 px-3 rounded-lg font-medium transition-all duration-200 theme-btn-action-danger"
             >
               <LogOut className="w-3 h-3" />
             </Button>

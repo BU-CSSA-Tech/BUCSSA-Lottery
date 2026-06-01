@@ -9,7 +9,7 @@ interface CurrentQuestionDisplayProps {
 
 export default function CurrentQuestionDisplay({ gameState }: CurrentQuestionDisplayProps) {
   return (
-    <div className="glass rounded-2xl p-5 animate-slide-up">
+    <div className="theme-admin-panel">
       <div className="text-center mb-5">
         <div className="inline-flex items-center gap-2 px-3 py-1 bg-gradient-primary rounded-full text-white font-medium mb-4 text-sm">
           <Zap className="w-3 h-3" />第 {gameState.round} 题
@@ -20,7 +20,7 @@ export default function CurrentQuestionDisplay({ gameState }: CurrentQuestionDis
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <div className="glass-dark rounded-xl p-4 border border-white/20 hover:border-white/30 transition-all duration-200">
+        <div className="theme-admin-option-card">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">A</span>
@@ -31,7 +31,7 @@ export default function CurrentQuestionDisplay({ gameState }: CurrentQuestionDis
           </div>
         </div>
 
-        <div className="glass-dark rounded-xl p-4 border border-white/20 hover:border-white/30 transition-all duration-200">
+        <div className="theme-admin-option-card">
           <div className="flex items-center gap-3">
             <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
               <span className="text-white font-bold text-sm">B</span>

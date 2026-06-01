@@ -1,7 +1,6 @@
 "use client";
 
-import { Clock, UserX, Crown, Trophy, CheckCircle } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Crown, CheckCircle } from "lucide-react";
 import { UserGameState } from "@/types";
 import Image from "next/image";
 
@@ -19,14 +18,14 @@ export default function GameStatusCard({
   onSubmitAnswer,
 }: GameStatusCardProps) {
   return (
-    <main className="w-full h-auto px-8 py-12 items-center justify-center flex fixed top-[50vh] left-1/2 -translate-x-1/2 -translate-y-1/2 bg-amber-50/25">
+    <main className="w-full h-auto px-8 py-12 items-center justify-center flex fixed top-[50vh] left-1/2 -translate-x-1/2 -translate-y-1/2 theme-panel-subtle">
       {userGameState.status === "waiting" && (
         <div className="text-center space-y-6">
           <Image
-            src="/waitma.gif"
+            src="/waitstar.gif"
             alt="等待中"
-            width={160}
-            height={160}
+            width={100}
+            height={100}
             className="mx-auto"
           />
           <p className="text-gray-800 text-3xl font-bold tracking-wider">
@@ -94,10 +93,10 @@ export default function GameStatusCard({
               <button
                 type="button"
                 onClick={() => onSubmitAnswer("A")}
-                className="relative w-48 h-48 md:w-56 md:h-56 transition-all duration-200 rounded-lg overflow-hidden"
+                className="relative w-24 h-24 md:w-56 md:h-56 transition-all duration-200 rounded-lg overflow-hidden"
               >
                 <Image
-                  src="/aoption.png"
+                  src="/optionA-pixel.png"
                   alt="选项 A"
                   fill
                   className="object-contain"
@@ -107,10 +106,10 @@ export default function GameStatusCard({
               <button
                 type="button"
                 onClick={() => onSubmitAnswer("B")}
-                className="relative w-48 h-48 md:w-56 md:h-56 transition-all duration-200 rounded-lg overflow-hidden"
+                className="relative w-24 h-24 md:w-56 md:h-56 transition-all duration-200 rounded-lg overflow-hidden"
               >
                 <Image
-                  src="/boption.png"
+                  src="/optionB-pixel.png"
                   alt="选项 B"
                   fill
                   className="object-contain"
@@ -119,15 +118,15 @@ export default function GameStatusCard({
             </div>
           ) : (
             <div className="flex flex-col items-center gap-4">
-              <div className="relative w-56 h-56 md:w-64 md:h-64">
+              <div className="relative w-48 h-48 md:w-64 md:h-64">
                 <Image
-                  src={selectedOption === "A" ? "/aoption.png" : "/boption.png"}
+                  src={selectedOption === "A" ? "/optionA-pixel.png" : "/optionB-pixel.png"}
                   alt={`选项 ${selectedOption}`}
                   fill
                   className="object-contain"
                 />
               </div>
-              <div className="flex items-center justify-center gap-2 text-gray-800 bg-white/50 rounded-md p-2">
+              <div className="flex items-center justify-center gap-2 text-gray-800 theme-toolbar-chip rounded-md p-2">
                 <CheckCircle className="w-5 h-5" />
                 <div className="font-medium text-gray-800">
                   您已选择选项 {selectedOption}，请等待结果...

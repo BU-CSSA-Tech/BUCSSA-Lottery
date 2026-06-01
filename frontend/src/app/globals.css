@@ -12,15 +12,221 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: "zpix";
+  src: url("/zpix.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
+    --app-theme: spring;
     --foreground-rgb: 255, 255, 255;
     --background-start-rgb: 11, 15, 30;
     --background-end-rgb: 5, 6, 13;
+    --text-muted: rgba(255, 255, 255, 0.7);
+
+    --ui-surface-glass: rgba(255, 255, 255, 0.1);
+    --ui-surface-glass-strong: rgba(255, 255, 255, 0.25);
+    --ui-border-glass: rgba(255, 255, 255, 0.2);
+    --ui-border-glass-strong: rgba(255, 255, 255, 0.4);
+    --ui-text-strong: rgba(255, 255, 255, 0.95);
+    --ui-text-muted: rgba(255, 255, 255, 0.7);
+
+    --spring-surface: rgba(255, 251, 235, 0.5);
+    --spring-surface-strong: rgba(255, 251, 235, 0.95);
+    --spring-surface-soft: rgba(254, 243, 199, 0.8);
+    --spring-border: rgba(251, 113, 133, 0.7);
+    --spring-border-soft: rgba(251, 113, 133, 0.6);
+    --spring-text-strong: rgb(31, 41, 55);
+    --spring-text-muted: rgb(75, 85, 99);
+    --spring-title: rgb(220, 38, 38);
+    --theme-surface: rgba(255, 251, 235, 0.5);
+    --theme-surface-strong: rgba(255, 251, 235, 0.95);
+    --theme-surface-subtle: rgba(255, 251, 235, 0.25);
+    --theme-surface-soft: rgba(254, 243, 199, 0.8);
+    --theme-border: rgba(251, 113, 133, 0.7);
+    --theme-border-soft: rgba(251, 113, 133, 0.6);
+    --theme-title: rgb(220, 38, 38);
+    --theme-toolbar-bg: rgba(255, 251, 235, 0.5);
+    --theme-toolbar-hover-bg: rgba(254, 243, 199, 0.75);
+    --theme-danger-bg: rgba(255, 251, 235, 0.5);
+    --theme-danger-hover-bg: rgba(254, 202, 202, 0.75);
+    --theme-danger-border: rgba(254, 202, 202, 0.6);
+    --theme-danger-text: rgb(220, 38, 38);
+    --theme-hint-bg: rgba(255, 255, 255, 0.6);
+    --theme-input-bg: rgba(255, 255, 255, 0.9);
+    --theme-input-border: rgba(255, 255, 255, 0.6);
+    --theme-input-focus-border: rgba(255, 255, 255, 0.9);
+    --theme-segment-active-bg: rgba(255, 255, 255, 0.25);
+    --theme-segment-active-border: rgba(255, 255, 255, 0.5);
+    --theme-segment-active-text: rgba(255, 255, 255, 1);
+    --theme-segment-inactive-text: rgba(255, 255, 255, 0.6);
+    --theme-segment-inactive-hover-text: rgba(255, 255, 255, 0.8);
+    --theme-overlay-soft-bg: rgba(0, 0, 0, 0.5);
+    --theme-overlay-strong-bg: rgba(0, 0, 0, 0.8);
+    --theme-admin-panel-bg: rgba(255, 255, 255, 0.1);
+    --theme-admin-panel-border: rgba(255, 255, 255, 0.2);
+    --theme-admin-option-bg: rgba(0, 0, 0, 0.25);
+    --theme-admin-option-border: rgba(255, 255, 255, 0.2);
+    --theme-admin-option-hover-border: rgba(255, 255, 255, 0.3);
+    --theme-admin-question-bg: rgba(255, 255, 255, 0.05);
+    --theme-admin-question-border: rgba(255, 255, 255, 0.2);
+    --theme-admin-question-hover-border: rgba(255, 255, 255, 0.4);
+    --theme-action-text: #ffffff;
+    --theme-action-success-from: rgb(34, 197, 94);
+    --theme-action-success-to: rgb(16, 185, 129);
+    --theme-action-success-hover-from: rgb(22, 163, 74);
+    --theme-action-success-hover-to: rgb(5, 150, 105);
+    --theme-action-info-from: rgb(59, 130, 246);
+    --theme-action-info-to: rgb(6, 182, 212);
+    --theme-action-info-hover-from: rgb(37, 99, 235);
+    --theme-action-info-hover-to: rgb(8, 145, 178);
+    --theme-action-danger-from: rgb(239, 68, 68);
+    --theme-action-danger-to: rgb(236, 72, 153);
+    --theme-action-danger-hover-from: rgb(220, 38, 38);
+    --theme-action-danger-hover-to: rgb(219, 39, 119);
+    --theme-action-success-alt-from: rgb(16, 185, 129);
+    --theme-action-success-alt-to: rgb(20, 184, 166);
+    --theme-action-success-alt-hover-from: rgb(5, 150, 105);
+    --theme-action-success-alt-hover-to: rgb(13, 148, 136);
+    --theme-font-body: "Alimama DongFang DaKai", sans-serif;
+    --theme-font-display: "Alimama DongFang DaKai", sans-serif;
+    --theme-bg-image-main: url("/playbg.png");
+    --theme-bg-image-play: url("/playbg.png");
+    --theme-bg-image-show: url("/showbg.jpg");
+    --theme-bg-color-play: #c41e3a;
+
+    --background: 0 0% 100%;
+    --foreground: 222 47% 11%;
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 215 20% 65%;
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 16% 47%;
+  }
+
+  [data-theme="spring"] {
+    --app-theme: spring;
+    --theme-surface: var(--spring-surface);
+    --theme-surface-strong: var(--spring-surface-strong);
+    --theme-surface-subtle: rgba(255, 251, 235, 0.25);
+    --theme-surface-soft: var(--spring-surface-soft);
+    --theme-border: var(--spring-border);
+    --theme-border-soft: var(--spring-border-soft);
+    --theme-title: var(--spring-title);
+    --theme-toolbar-bg: var(--theme-surface);
+    --theme-toolbar-hover-bg: var(--theme-surface-soft);
+    --theme-danger-bg: var(--theme-surface);
+    --theme-danger-hover-bg: rgba(254, 202, 202, 0.75);
+    --theme-danger-border: rgba(254, 202, 202, 0.6);
+    --theme-danger-text: rgb(220, 38, 38);
+    --theme-hint-bg: rgba(255, 255, 255, 0.6);
+    --theme-input-bg: rgba(255, 255, 255, 0.9);
+    --theme-input-border: rgba(255, 255, 255, 0.6);
+    --theme-input-focus-border: rgba(255, 255, 255, 0.9);
+    --theme-segment-active-bg: rgba(255, 255, 255, 0.25);
+    --theme-segment-active-border: rgba(255, 255, 255, 0.5);
+    --theme-segment-active-text: rgba(255, 255, 255, 1);
+    --theme-segment-inactive-text: rgba(255, 255, 255, 0.6);
+    --theme-segment-inactive-hover-text: rgba(255, 255, 255, 0.8);
+    --theme-overlay-soft-bg: rgba(0, 0, 0, 0.5);
+    --theme-overlay-strong-bg: rgba(0, 0, 0, 0.8);
+    --theme-admin-panel-bg: rgba(255, 255, 255, 0.1);
+    --theme-admin-panel-border: rgba(255, 255, 255, 0.2);
+    --theme-admin-option-bg: rgba(0, 0, 0, 0.25);
+    --theme-admin-option-border: rgba(255, 255, 255, 0.2);
+    --theme-admin-option-hover-border: rgba(255, 255, 255, 0.3);
+    --theme-admin-question-bg: rgba(255, 255, 255, 0.05);
+    --theme-admin-question-border: rgba(255, 255, 255, 0.2);
+    --theme-admin-question-hover-border: rgba(255, 255, 255, 0.4);
+    --theme-action-text: #ffffff;
+    --theme-action-success-from: rgb(34, 197, 94);
+    --theme-action-success-to: rgb(16, 185, 129);
+    --theme-action-success-hover-from: rgb(22, 163, 74);
+    --theme-action-success-hover-to: rgb(5, 150, 105);
+    --theme-action-info-from: rgb(59, 130, 246);
+    --theme-action-info-to: rgb(6, 182, 212);
+    --theme-action-info-hover-from: rgb(37, 99, 235);
+    --theme-action-info-hover-to: rgb(8, 145, 178);
+    --theme-action-danger-from: rgb(239, 68, 68);
+    --theme-action-danger-to: rgb(236, 72, 153);
+    --theme-action-danger-hover-from: rgb(220, 38, 38);
+    --theme-action-danger-hover-to: rgb(219, 39, 119);
+    --theme-action-success-alt-from: rgb(16, 185, 129);
+    --theme-action-success-alt-to: rgb(20, 184, 166);
+    --theme-action-success-alt-hover-from: rgb(5, 150, 105);
+    --theme-action-success-alt-hover-to: rgb(13, 148, 136);
+    --theme-font-body: "Alimama DongFang DaKai", sans-serif;
+    --theme-font-display: "Alimama DongFang DaKai", sans-serif;
+    --theme-bg-image-main: url("/playbg.png");
+    --theme-bg-image-play: url("/playbg.png");
+    --theme-bg-image-show: url("/showbg.jpg");
+    --theme-bg-color-play: #c41e3a;
+  }
+
+  [data-theme="mario"] {
+    --app-theme: mario;
+    --theme-surface: var(--spring-surface);
+    --theme-surface-strong: var(--spring-surface-strong);
+    --theme-surface-subtle: rgba(255, 251, 235, 0.25);
+    --theme-surface-soft: var(--spring-surface-soft);
+    --theme-border: var(--spring-border);
+    --theme-border-soft: var(--spring-border-soft);
+    --theme-title: var(--spring-title);
+    --theme-toolbar-bg: var(--theme-surface);
+    --theme-toolbar-hover-bg: var(--theme-surface-soft);
+    --theme-danger-bg: var(--theme-surface);
+    --theme-danger-hover-bg: rgba(254, 202, 202, 0.75);
+    --theme-danger-border: rgba(254, 202, 202, 0.6);
+    --theme-danger-text: rgb(220, 38, 38);
+    --theme-hint-bg: rgba(255, 255, 255, 0.6);
+    --theme-input-bg: rgba(255, 255, 255, 0.9);
+    --theme-input-border: rgba(255, 255, 255, 0.6);
+    --theme-input-focus-border: rgba(255, 255, 255, 0.9);
+    --theme-segment-active-bg: rgba(255, 255, 255, 0.25);
+    --theme-segment-active-border: rgba(255, 255, 255, 0.5);
+    --theme-segment-active-text: rgba(255, 255, 255, 1);
+    --theme-segment-inactive-text: rgba(255, 255, 255, 0.6);
+    --theme-segment-inactive-hover-text: rgba(255, 255, 255, 0.8);
+    --theme-overlay-soft-bg: rgba(0, 0, 0, 0.5);
+    --theme-overlay-strong-bg: rgba(0, 0, 0, 0.8);
+    --theme-admin-panel-bg: rgba(255, 255, 255, 0.1);
+    --theme-admin-panel-border: rgba(255, 255, 255, 0.2);
+    --theme-admin-option-bg: rgba(0, 0, 0, 0.25);
+    --theme-admin-option-border: rgba(255, 255, 255, 0.2);
+    --theme-admin-option-hover-border: rgba(255, 255, 255, 0.3);
+    --theme-admin-question-bg: rgba(255, 255, 255, 0.05);
+    --theme-admin-question-border: rgba(255, 255, 255, 0.2);
+    --theme-admin-question-hover-border: rgba(255, 255, 255, 0.4);
+    --theme-action-text: #ffffff;
+    --theme-action-success-from: rgb(34, 197, 94);
+    --theme-action-success-to: rgb(16, 185, 129);
+    --theme-action-success-hover-from: rgb(22, 163, 74);
+    --theme-action-success-hover-to: rgb(5, 150, 105);
+    --theme-action-info-from: rgb(59, 130, 246);
+    --theme-action-info-to: rgb(6, 182, 212);
+    --theme-action-info-hover-from: rgb(37, 99, 235);
+    --theme-action-info-hover-to: rgb(8, 145, 178);
+    --theme-action-danger-from: rgb(239, 68, 68);
+    --theme-action-danger-to: rgb(236, 72, 153);
+    --theme-action-danger-hover-from: rgb(220, 38, 38);
+    --theme-action-danger-hover-to: rgb(219, 39, 119);
+    --theme-action-success-alt-from: rgb(16, 185, 129);
+    --theme-action-success-alt-to: rgb(20, 184, 166);
+    --theme-action-success-alt-hover-from: rgb(5, 150, 105);
+    --theme-action-success-alt-hover-to: rgb(13, 148, 136);
+    --theme-font-body: "zpix", sans-serif;
+    --theme-font-display: "zpix", sans-serif;
+    --theme-bg-image-main: url("/playbg_cloud.png");
+    --theme-bg-image-play: url("/playbg_cloud.png");
+    --theme-bg-image-show: url("/showbg_bu.png");
+    --theme-bg-color-play: #c41e3a;
   }
 
   html {
@@ -35,6 +241,7 @@
       rgb(var(--background-start-rgb)),
       rgb(var(--background-end-rgb))
     );
+    font-family: var(--theme-font-body);
     height: 100%;
     overflow: hidden;
     overscroll-behavior: none;
@@ -44,6 +251,10 @@
 @layer components {
   .glass {
     @apply backdrop-blur-lg bg-white/10 border border-white/20;
+  }
+
+  .glass-dark {
+    @apply backdrop-blur-lg bg-black/25 border border-white/15;
   }
 
   .hover-lift {
@@ -62,6 +273,216 @@
     font-family: "Ding Lie Zhu Hai", cursive;
     font-weight: 400;
     font-style: normal;
+  }
+
+  .theme-font-body {
+    font-family: var(--theme-font-body);
+  }
+
+  .theme-font-display {
+    font-family: var(--theme-font-display);
+  }
+
+  .theme-bg-main {
+    background-image: var(--theme-bg-image-main);
+  }
+
+  .theme-bg-play {
+    background-image: var(--theme-bg-image-play);
+    background-color: var(--theme-bg-color-play);
+  }
+
+  .theme-bg-show {
+    background-image: var(--theme-bg-image-show);
+  }
+
+  .theme-panel-glass {
+    @apply rounded-2xl border border-white/20 bg-white/10 backdrop-blur-sm;
+  }
+
+  .theme-panel {
+    @apply rounded-2xl shadow-lg;
+    background-color: var(--theme-surface);
+    border: 1px solid var(--theme-border);
+  }
+
+  .theme-panel-strong {
+    @apply rounded-2xl shadow-xl;
+    background-color: var(--theme-surface-strong);
+    border: 1px solid var(--theme-border);
+  }
+
+  .theme-pill {
+    @apply inline-flex items-center gap-2.5 px-8 py-4 rounded-full shadow-red-down;
+    background-color: var(--theme-surface-strong);
+    border: 1px solid var(--theme-border-soft);
+  }
+
+  .theme-toolbar-chip {
+    @apply flex items-center gap-2 px-2 py-2 rounded-lg shadow-sm;
+    background-color: var(--theme-toolbar-bg);
+    border: 1px solid var(--theme-border-soft);
+  }
+
+  .theme-icon-btn {
+    @apply p-2 rounded-lg text-gray-700 transition-all shadow-sm;
+    background-color: var(--theme-surface);
+    border: 1px solid var(--theme-border-soft);
+  }
+
+  .theme-icon-btn:hover {
+    background-color: var(--theme-toolbar-hover-bg);
+  }
+
+  .theme-icon-btn-danger {
+    @apply p-2 rounded-lg transition-all shadow-sm;
+    background-color: var(--theme-danger-bg);
+    color: var(--theme-danger-text);
+    border: 1px solid var(--theme-danger-border);
+  }
+
+  .theme-icon-btn-danger:hover {
+    background-color: var(--theme-danger-hover-bg);
+  }
+
+  .theme-title {
+    @apply drop-shadow-sm tracking-wide text-center;
+    color: var(--theme-title);
+    -webkit-text-stroke: 2px white;
+    paint-order: stroke fill;
+  }
+
+  .theme-overlay-soft {
+    @apply fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm;
+    background-color: var(--theme-overlay-soft-bg);
+  }
+
+  .theme-overlay-strong {
+    @apply fixed inset-0 z-50 flex items-center justify-center backdrop-blur-sm;
+    background-color: var(--theme-overlay-strong-bg);
+  }
+
+  .theme-modal {
+    @apply backdrop-blur-lg rounded-2xl shadow-xl;
+    background-color: var(--theme-surface-strong);
+    border: 1px solid var(--theme-border);
+  }
+
+  .theme-hint-card {
+    @apply rounded-lg p-3;
+    background-color: var(--theme-hint-bg);
+  }
+
+  .theme-input-glass {
+    @apply w-full px-4 py-3 rounded-xl border-2 text-gray-900 placeholder:text-gray-400 focus:outline-none;
+    border-color: var(--theme-input-border);
+    background-color: var(--theme-input-bg);
+  }
+
+  .theme-input-glass:focus {
+    border-color: var(--theme-input-focus-border);
+  }
+
+  .theme-panel-subtle {
+    @apply rounded-2xl;
+    background-color: var(--theme-surface-subtle);
+    border: 1px solid color-mix(in srgb, var(--theme-border) 45%, transparent);
+  }
+
+  /* Backward-compatible aliases during migration */
+  .theme-panel-spring { @apply theme-panel; }
+  .theme-panel-spring-strong { @apply theme-panel-strong; }
+  .theme-pill-spring { @apply theme-pill; }
+  .theme-icon-btn-spring { @apply theme-icon-btn; }
+  .theme-title-spring { @apply theme-title; }
+  .theme-modal-spring { @apply theme-modal; }
+  .theme-panel-spring-subtle { @apply theme-panel-subtle; }
+
+  .theme-admin-panel {
+    @apply rounded-2xl p-5 animate-slide-up backdrop-blur-lg;
+    background-color: var(--theme-admin-panel-bg);
+    border: 1px solid var(--theme-admin-panel-border);
+  }
+
+  .theme-admin-stat-card {
+    @apply rounded-xl p-4 hover-lift backdrop-blur-lg;
+    background-color: var(--theme-admin-panel-bg);
+    border: 1px solid var(--theme-admin-panel-border);
+  }
+
+  .theme-admin-option-card {
+    @apply rounded-xl p-4 transition-all duration-200 backdrop-blur-lg;
+    background-color: var(--theme-admin-option-bg);
+    border: 1px solid var(--theme-admin-option-border);
+  }
+
+  .theme-admin-option-card:hover {
+    border-color: var(--theme-admin-option-hover-border);
+  }
+
+  .theme-admin-question-item {
+    @apply p-3 rounded-lg border transition-all duration-200 relative;
+    background-color: var(--theme-admin-question-bg);
+    border-color: var(--theme-admin-question-border);
+  }
+
+  .theme-admin-question-item:hover {
+    border-color: var(--theme-admin-question-hover-border);
+  }
+
+  .theme-btn-action-success {
+    @apply text-white hover-lift;
+    color: var(--theme-action-text);
+    background-image: linear-gradient(to right, var(--theme-action-success-from), var(--theme-action-success-to));
+  }
+
+  .theme-btn-action-success:hover {
+    background-image: linear-gradient(to right, var(--theme-action-success-hover-from), var(--theme-action-success-hover-to));
+  }
+
+  .theme-btn-action-info {
+    @apply text-white hover-lift;
+    color: var(--theme-action-text);
+    background-image: linear-gradient(to right, var(--theme-action-info-from), var(--theme-action-info-to));
+  }
+
+  .theme-btn-action-info:hover {
+    background-image: linear-gradient(to right, var(--theme-action-info-hover-from), var(--theme-action-info-hover-to));
+  }
+
+  .theme-btn-action-danger {
+    @apply text-white hover-lift;
+    color: var(--theme-action-text);
+    background-image: linear-gradient(to right, var(--theme-action-danger-from), var(--theme-action-danger-to));
+  }
+
+  .theme-btn-action-danger:hover {
+    background-image: linear-gradient(to right, var(--theme-action-danger-hover-from), var(--theme-action-danger-hover-to));
+  }
+
+  .theme-btn-action-success-alt {
+    @apply text-white;
+    color: var(--theme-action-text);
+    background-image: linear-gradient(to right, var(--theme-action-success-alt-from), var(--theme-action-success-alt-to));
+  }
+
+  .theme-btn-action-success-alt:hover {
+    background-image: linear-gradient(to right, var(--theme-action-success-alt-hover-from), var(--theme-action-success-alt-hover-to));
+  }
+
+  .theme-segment-active {
+    @apply shadow-sm;
+    background-color: var(--theme-segment-active-bg);
+    color: var(--theme-segment-active-text);
+    border: 1px solid var(--theme-segment-active-border);
+  }
+
+  .theme-segment-inactive {
+    color: var(--theme-segment-inactive-text);
+  }
+
+  .theme-segment-inactive:hover {
+    color: var(--theme-segment-inactive-hover-text);
   }
 
   /* 毛玻璃文字效果 - 边缘勾线 + backdrop模糊 */
@@ -145,6 +566,38 @@
 
   .animate-pulse-slow {
     animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes fade-in {
+    from { opacity: 0; }
+    to { opacity: 1; }
+  }
+
+  .animate-fade-in {
+    animation: fade-in 0.4s ease-out;
+  }
+
+  @keyframes slide-up {
+    from {
+      opacity: 0;
+      transform: translateY(12px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-slide-up {
+    animation: slide-up 0.4s ease-out;
+  }
+
+  .text-muted {
+    color: var(--text-muted);
+  }
+
+  .spinner {
+    @apply animate-spin rounded-full border-4 border-white/40 border-t-transparent;
   }
 
   /* 渐变流动动画 */

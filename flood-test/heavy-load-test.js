@@ -6,13 +6,13 @@ require('dotenv').config();
 
 // 压力测试配置
 const CONFIG = {
-  wsTarget: 'ws://23.95.184.98:4000',
+  wsTarget: 'ws://localhost:4000',
   wssTarget: 'wss://lottery.bucssa.org',
-  httpTarget: 'http://23.95.184.98:4000',
+  httpTarget: 'http://localhost:4000',
   httpsTarget: 'https://lottery.bucssa.org',
-  concurrentUsers: 2000,
-  testDuration: 600,
-  arrivalRate: 20,
+  concurrentUsers: 300,
+  testDuration: 240,
+  arrivalRate: 30,
   ignorePercentage: 0.1,
   ABSplit: 0.5
 };

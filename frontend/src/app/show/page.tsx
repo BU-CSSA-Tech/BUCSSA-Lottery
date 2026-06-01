@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useSession, signOut } from "next-auth/react";
 import { useRouter } from "next/navigation";
 import { io, Socket } from "socket.io-client";
-import { GameState, hasWinner, hasTie } from "@/types";
+import { GameState, hasWinner, hasTie, LoginCodePayload } from "@/types";
 import BackgroundImage from "@/components/ui/BackgroundImage";
 import ConnectionFailedScreen from "@/components/game/show/ConnectionFailedScreen";
 import WinnerModal from "@/components/game/show/WinnerModal";
@@ -12,7 +12,9 @@ import TieModal from "@/components/game/show/TieModal";
 import ShowHeader from "@/components/game/show/ShowHeader";
 import QRCodeModal from "@/components/game/show/QRCodeModal";
 import GameContent from "@/components/game/show/GameContent";
+import LoginCodeDisplay from "@/components/game/show/LoginCodeDisplay";
 import Confetti from "react-confetti";
+import { SPRING_CONFETTI_COLORS } from "@/lib/confetti-colors";
 
 export default function ShowPage() {
   const { data: session, status } = useSession();
@@ -30,11 +32,13 @@ export default function ShowPage() {
   const [winner, setWinner] = useState<string | null>(null);
   const [tie, setTie] = useState<string[] | null>(null);
   const [showWinnerModal, setShowWinnerModal] = useState<boolean>(false);
+  const [showWinnerConfetti, setShowWinnerConfetti] = useState<boolean>(false);
   const [showTieModal, setShowTieModal] = useState<boolean>(false);
   const [updatedWinnerTie, setUpdatedWinnerTie] = useState<boolean>(false);
   const [showQRCode, setShowQRCode] = useState(false);
   const [connectionFailed, setConnectionFailed] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(false);
+  const [loginCode, setLoginCode] = useState<LoginCodePayload | null>(null);
 
   const socketRef = useRef<Socket | null>(null);
   const soundEnabledRef = useRef(false);
@@ -70,7 +74,7 @@ export default function ShowPage() {
       router.push("/play");
       return;
     }
-  }, []);
+  }, [status, session, router]);
 
   // 音频初始化
   useEffect(() => {
@@ -158,6 +162,7 @@ export default function ShowPage() {
       setGameState(data);
       setWinner(null);
       setTie(null);
+      setLoginCode(null);
       setUpdatedWinnerTie(true);
       doudizhuRef.current?.pause();
       gongRef.current?.pause();
@@ -178,6 +183,7 @@ export default function ShowPage() {
     });
 
     socket.on("new_question", (data: GameState) => {
+      setLoginCode(null);
       // 避免在已结束（平局/冠军）时被新题目覆盖
       setGameState((prev) => (prev.status === "ended" ? prev : data));
       setFrontendTimeLeft(data.timeLeft ?? 0);
@@ -205,8 +211,9 @@ export default function ShowPage() {
     });
 
     socket.on("tie", (data: hasTie) => {
-      if (data.finalists && data.finalists.length === 2) {
-        setTie(data.finalists);
+      const displayList = data.finalistsDisplay ?? data.finalists;
+      if (displayList && displayList.length === 2) {
+        setTie(displayList);
         setCountdownActive(false);
         setFrontendTimeLeft(0);
       }
@@ -217,13 +224,25 @@ export default function ShowPage() {
     });
 
     socket.on("winner", (data: hasWinner) => {
-      setWinner(data.winnerEmail);
+      setWinner(data.winnerDisplay ?? data.winnerEmail);
       setCountdownActive(false);
       setFrontendTimeLeft(0);
       setUpdatedWinnerTie(true);
       doudizhuRef.current?.pause();
       gongRef.current?.pause();
       currentPhaseRef.current = "none";
+    });
+
+    socket.on("login_code_published", (data: LoginCodePayload) => {
+      setLoginCode(data);
+    });
+
+    socket.on("login_code_status", (data: LoginCodePayload) => {
+      setLoginCode(data);
+    });
+
+    socket.on("login_code_closed", () => {
+      setLoginCode(null);
     });
 
     socket.on("disconnect", () => {
@@ -242,7 +261,7 @@ export default function ShowPage() {
     return () => {
       socket.disconnect();
     };
-  }, [session]);
+  }, [session, status]);
 
   // 前端倒计时逻辑
   useEffect(() => {
@@ -271,12 +290,14 @@ export default function ShowPage() {
   useEffect(() => {
     if (winner) {
       setShowWinnerModal(true);
+      setShowWinnerConfetti(false);
       const timer = setTimeout(() => {
         setShowWinnerModal(false);
       }, 180000);
       return () => clearTimeout(timer);
     } else {
       setShowWinnerModal(false);
+      setShowWinnerConfetti(false);
     }
   }, [winner]);
 
@@ -292,6 +313,11 @@ export default function ShowPage() {
       setShowTieModal(false);
     }
   }, [tie]);
+
+  const loginCodeActive = loginCode !== null;
+  const totalPlayers =
+    (gameState?.survivorsCount || 0) + (gameState?.eliminatedCount || 0);
+  const winnerForGameContent = showWinnerModal ? null : winner;
 
   const handleToggleSound = () => setSoundEnabled((prev) => !prev);
 
@@ -312,8 +338,8 @@ export default function ShowPage() {
 
   if (status === "loading") {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[url(/showbg.jpg)] bg-cover bg-center">
-        <div className="text-gray-800 text-xl font-medium bg-amber-50/90 px-6 py-3 rounded-xl border border-rose-200/50">加载中...</div>
+      <div className="min-h-screen flex items-center justify-center theme-bg-show bg-cover bg-center">
+        <div className="text-gray-800 text-xl font-medium theme-panel-strong px-6 py-3 rounded-xl border border-rose-200/50">加载中...</div>
       </div>
     );
   }
@@ -330,14 +356,18 @@ export default function ShowPage() {
     <>
       {/* 背景图片 */}
       <BackgroundImage
-        imageUrl="/showbg.jpg"
+        imageVariable="--theme-bg-image-show"
         overlayOpacity={0.03}
         centerMask={false}
       />
 
       {/* 全屏获胜者模态框 */}
       {showWinnerModal && winner && (
-        <WinnerModal winner={winner} onClose={() => setShowWinnerModal(false)} />
+        <WinnerModal
+          winner={winner}
+          onClose={() => setShowWinnerModal(false)}
+          onRevealStart={() => setShowWinnerConfetti(true)}
+        />
       )}
 
       {/* 全屏平局 VS 模态框 */}
@@ -347,7 +377,7 @@ export default function ShowPage() {
 
       <div className="min-h-screen relative z-10 text-gray-800">
         {/* 全屏彩带效果 */}
-        {winner && (
+        {winner && showWinnerConfetti && (
           <Confetti
             width={typeof window !== "undefined" ? window.innerWidth : 0}
             height={typeof window !== "undefined" ? window.innerHeight : 0}
@@ -356,33 +386,7 @@ export default function ShowPage() {
             gravity={0.3}
             initialVelocityY={20}
             initialVelocityX={5}
-            colors={[
-              "#FFD700",
-              "#FFA500",
-              "#FF8C00",
-              "#FFB347",
-              "#F4A460",
-              "#DAA520",
-              "#B8860B",
-              "#CD853F",
-              "#DEB887",
-              "#F5DEB3",
-              "#FFF8DC",
-              "#FFE4B5",
-              "#FFEFD5",
-              "#FFFACD",
-              "#FFFFE0",
-              "#FFE135",
-              "#FFD700",
-              "#FFC107",
-              "#FFB300",
-              "#FFA000",
-              "#FF8F00",
-              "#FF6F00",
-              "#FF5722",
-              "#E65100",
-              "#BF360C",
-            ]}
+            colors={SPRING_CONFETTI_COLORS}
             style={{
               position: "fixed",
               top: 0,
@@ -413,18 +417,25 @@ export default function ShowPage() {
         <div className="min-h-screen flex items-center justify-center px-4 py-8">
           <div className="w-full max-w-6xl flex flex-col items-center gap-16">
             {/* 头部标题 */}
-            <h1 className="text-6xl font-bold text-red-600 drop-shadow-sm tracking-wide text-center [-webkit-text-stroke:2px_white] [paint-order:stroke_fill]">
-              BUCSSA 新春嘉年华 抽奖
+            <h1 className="text-6xl font-bold theme-title">
+              BUCSSA 新生见面会 抽奖
             </h1>
 
-            {/* 内容区 */}
-            <GameContent
-              gameState={gameState}
-              frontendTimeLeft={frontendTimeLeft}
-              winner={winner}
-              tie={tie}
-              updatedWinnerTie={updatedWinnerTie}
-            />
+            {loginCodeActive ? (
+              <LoginCodeDisplay
+                active={true}
+                loginCode={loginCode}
+                totalPlayers={totalPlayers}
+              />
+            ) : (
+              <GameContent
+                gameState={gameState}
+                frontendTimeLeft={frontendTimeLeft}
+                winner={winnerForGameContent}
+                tie={tie}
+                updatedWinnerTie={updatedWinnerTie}
+              />
+            )}
           </div>
         </div>
 

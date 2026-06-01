@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { signOut, useSession } from "next-auth/react";
 import { io, Socket } from "socket.io-client";
-import { GameState, MinorityQuestion } from "@/types";
+import { GameState } from "@/types";
 import { AlertBox } from "@/components/ui/alert-box";
 import AdminHeader from "@/components/game/admin/AdminHeader";
 import GameStatusPanel from "@/components/game/admin/GameStatusPanel";
@@ -97,6 +97,9 @@ export default function AdminPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [publishingCode, setPublishingCode] = useState(false);
+  const [closingCode, setClosingCode] = useState(false);
+  const [loginCodeStatus, setLoginCodeStatus] = useState<"idle" | "published">("idle");
 
   const [connected, setConnected] = useState(false);
   const [tie, setTie] = useState<string[] | null>(null);
@@ -199,13 +202,13 @@ export default function AdminPage() {
       setGameState(data);
     });
 
-    socket.on("tie", (data: any) => {
-      setTie(data.finalists);
+    socket.on("tie", (data: { finalists?: string[]; finalistsDisplay?: string[] }) => {
+      setTie(data.finalistsDisplay ?? data.finalists ?? null);
       setWinner(null);
     });
 
-    socket.on("winner", (data: any) => {
-      setWinner(data.winnerEmail);
+    socket.on("winner", (data: { winnerEmail?: string; winnerDisplay?: string }) => {
+      setWinner(data.winnerDisplay ?? data.winnerEmail ?? null);
       setTie(null);
     });
 
@@ -224,7 +227,6 @@ export default function AdminPage() {
     }
 
     const questionData = PRESET_QUESTIONS[questionIndex];
-    const isRepublish = sentQuestions.has(questionIndex);
     setLoading(true);
 
     try {
@@ -247,10 +249,66 @@ export default function AdminPage() {
       } else {
         console.error(data.error || "发布题目失败");
       }
-    } catch (error) {
+    } catch {
       console.error("网络错误，请稍后重试");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handlePublishLoginCode = async () => {
+    setPublishingCode(true);
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE}/api/admin/publish-login-code`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.user.accessToken}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setLoginCodeStatus("published");
+      } else {
+        console.error("发布登录码失败:", data.error);
+      }
+    } catch (error) {
+      console.error("发布登录码错误:", error);
+    } finally {
+      setPublishingCode(false);
+    }
+  };
+
+  const handleCloseLoginCode = async () => {
+    setClosingCode(true);
+    try {
+      const response = await fetch(
+        `${process.env.NEXT_PUBLIC_API_BASE}/api/admin/close-login-code`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${session?.user.accessToken}`,
+          },
+        }
+      );
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setLoginCodeStatus("idle");
+      } else {
+        console.error("关闭登录码失败:", data.error);
+      }
+    } catch (error) {
+      console.error("关闭登录码错误:", error);
+    } finally {
+      setClosingCode(false);
     }
   };
 
@@ -286,6 +344,7 @@ export default function AdminPage() {
           timeLeft: 0,
         });
         setSentQuestions(new Set());
+        setLoginCodeStatus("idle");
       } else {
         console.error("重置游戏失败:", data.error);
       }
@@ -307,6 +366,11 @@ export default function AdminPage() {
       <AdminHeader
         connected={connected}
         loading={loading}
+        loginCodeStatus={loginCodeStatus}
+        publishingCode={publishingCode}
+        closingCode={closingCode}
+        onPublishLoginCode={handlePublishLoginCode}
+        onCloseLoginCode={handleCloseLoginCode}
         onResetGame={handleResetGame}
         onShowLogoutConfirm={() => setShowLogoutConfirm(true)}
       />

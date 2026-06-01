@@ -26,7 +26,7 @@ export default function QuestionList({
   onSubmitQuestion,
 }: QuestionListProps) {
   return (
-    <div className="glass rounded-2xl p-5 animate-slide-up">
+    <div className="theme-admin-panel">
       <div className="text-center mb-5">
         <h3 className="text-xl font-bold text-white mb-2">题目列表</h3>
         <p className="text-gray-400 text-md">
@@ -46,7 +46,7 @@ export default function QuestionList({
           return (
             <div
               key={question.id}
-              className="p-3 rounded-lg border transition-all duration-200 relative bg-white/5 border-white/20 hover:border-white/40"
+              className="theme-admin-question-item"
             >
               <div className="flex items-center gap-2 mb-2">
                 <div
@@ -99,8 +99,8 @@ export default function QuestionList({
                   className={`w-full text-md transition-all duration-200 ${
                     canPublish
                       ? isSent
-                        ? "bg-gradient-to-r from-blue-500 to-cyan-500 hover:from-blue-600 hover:to-cyan-600 text-white hover-lift"
-                        : "bg-gradient-to-r from-green-500 to-emerald-500 hover:from-green-600 hover:to-emerald-600 text-white hover-lift"
+                        ? "theme-btn-action-info"
+                        : "theme-btn-action-success"
                       : "bg-gray-500/20 text-gray-500 cursor-not-allowed"
                   }`}
                 >

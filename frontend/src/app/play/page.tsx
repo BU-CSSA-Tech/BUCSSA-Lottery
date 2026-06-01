@@ -2,7 +2,6 @@
 
 import { useState, useEffect, useRef } from "react";
 import { useRouter } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import Confetti from "react-confetti";
 import BattleEffect from "@/components/ui/battle-effect";
 import { io, Socket } from "socket.io-client";
@@ -14,9 +13,9 @@ import {
   isTiePayload,
   isSocketErrorPayload,
 } from "@/types";
-import Image from "next/image";
 import PlayHeader from "@/components/game/play/PlayHeader";
 import GameStatusCard from "@/components/game/play/GameStatusCard";
+import { SPRING_CONFETTI_COLORS } from "@/lib/confetti-colors";
 
 export default function PlayPage() {
   const { data: session, status } = useSession();
@@ -57,7 +56,7 @@ export default function PlayPage() {
       router.push("/show");
       return;
     }
-  }, []);
+  }, [status, session, router]);
 
   useEffect(() => {
     if (status === "unauthenticated") {
@@ -103,8 +102,11 @@ export default function PlayPage() {
       setConnected(false);
     });
 
-    socket.on("redirect", (data: { url: string; message: string }) => {
-      handleLogout();
+    socket.on("redirect", () => {
+      if (socketRef.current) {
+        socketRef.current.disconnect();
+      }
+      void signOut({ callbackUrl: "/login" });
     });
 
     socket.on("game_state", (data: UserGameState) => {
@@ -186,7 +188,7 @@ export default function PlayPage() {
       console.log("disconnecting socket");
       socket.disconnect();
     };
-  }, [session]);
+  }, [session, status]);
 
   const handleSubmitAnswer = async (option: "A" | "B") => {
     if (userGameState.status === "eliminated" || selectedOption) return;
@@ -211,14 +213,14 @@ export default function PlayPage() {
       const data = await response.json();
 
       if (response.ok) {
-        `您选择了选项 ${option}，请等待结果...`;
+        console.log(`您选择了选项 ${option}，请等待结果...`);
       } else {
-        data.error || "提交答案失败";
+        console.error(data.error || "提交答案失败");
         setSelectedOption("");
       }
     } catch (error) {
       console.error("提交答案错误:", error);
-      ("网络错误，请稍后重试");
+      console.error("网络错误，请稍后重试");
       setSelectedOption("");
     }
   };
@@ -245,8 +247,8 @@ export default function PlayPage() {
     <div
       className="min-h-screen bg-cover bg-center bg-no-repeat relatives"
       style={{
-        backgroundImage: "url(/playbg.png)",
-        backgroundColor: "#c41e3a",
+        backgroundImage: "var(--theme-bg-image-play)",
+        backgroundColor: "var(--theme-bg-color-play)",
       }}
     >
       {/* 全屏彩带效果 */}
@@ -259,33 +261,7 @@ export default function PlayPage() {
           gravity={0.3}
           initialVelocityY={20}
           initialVelocityX={5}
-          colors={[
-            "#FFD700",
-            "#FFA500",
-            "#FF8C00",
-            "#FFB347",
-            "#F4A460",
-            "#DAA520",
-            "#B8860B",
-            "#CD853F",
-            "#DEB887",
-            "#F5DEB3",
-            "#FFF8DC",
-            "#FFE4B5",
-            "#FFEFD5",
-            "#FFFACD",
-            "#FFFFE0",
-            "#FFE135",
-            "#FFD700",
-            "#FFC107",
-            "#FFB300",
-            "#FFA000",
-            "#FF8F00",
-            "#FF6F00",
-            "#FF5722",
-            "#E65100",
-            "#BF360C",
-          ]}
+          colors={SPRING_CONFETTI_COLORS}
           style={{
             position: "fixed",
             top: 0,
@@ -299,7 +275,7 @@ export default function PlayPage() {
       )}
 
       {/* 开战特效 */}
-      <BattleEffect isActive={userGameState.status === "tie"} duration={3000} />
+      <BattleEffect isActive={userGameState.status === "tie"} />
 
       {/* Header */}
       <PlayHeader connected={connected} session={session} onLogout={handleLogout} />

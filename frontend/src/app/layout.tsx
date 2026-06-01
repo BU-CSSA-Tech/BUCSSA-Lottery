@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import Providers from '@/components/Providers'
+import { getThemeFromEnv } from '@/lib/theme'
 
 export const metadata: Metadata = {
   title: '少数派游戏系统',
@@ -12,9 +13,11 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const activeTheme = getThemeFromEnv();
+
   return (
-    <html lang="zh-CN">
-      <body className="font-alimama antialiased">
+    <html lang="zh-CN" data-theme={activeTheme}>
+      <body className="theme-font-body antialiased" data-theme={activeTheme}>
         <Providers>
           {children}
         </Providers>
