@@ -6,9 +6,9 @@ const fs = require("fs");
 require("dotenv").config();
 
 const CONFIG = {
-  apiBase: process.env.E2E_API_BASE || "http://localhost:4000",
-  wsTarget: process.env.E2E_WS_TARGET || "ws://localhost:4000",
-  loginCode: String(process.env.E2E_LOGIN_CODE || "906773").trim(),
+  apiBase: process.env.E2E_API_BASE || "https://lottery.bucssa.org",
+  wsTarget: process.env.E2E_WS_TARGET || "wss://lottery.bucssa.org",
+  loginCode: String(process.env.E2E_LOGIN_CODE || "177670").trim(),
   concurrentUsers: Number(process.env.E2E_USERS || 200),
   arrivalRate: Number(process.env.E2E_ARRIVAL_RATE || 20), // users/sec
   testDurationSec: Number(process.env.E2E_DURATION || 180),
