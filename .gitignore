@@ -31,9 +31,10 @@ backend/dist/
 */yarn-error.log*
 */.pnpm-debug.log*
 
-# env files (can opt-in for committing if needed)
-*.env
-*.env.local
+# env files (keep .env.example committable)
+.env
+.env.*
+!.env.example
 
 # vercel
 */.vercel
@@ -46,5 +47,6 @@ backend/dist/
 flood-test/gameState.json
 
 frontend/prisma/migrations
+frontend/src/generated/prisma
 
 */.npm-cache/
