@@ -78,10 +78,10 @@ export default function ShowPage() {
 
   // 音频初始化
   useEffect(() => {
-    bgmRef.current = new Audio("/bgm.mp3");
+    bgmRef.current = new Audio("/bgm-mario.mp3");
     bgmRef.current.loop = true;
     bgmRef.current.volume = 0.3;
-    doudizhuRef.current = new Audio("/doudizhu1.mp3");
+    doudizhuRef.current = new Audio("/bgm-mario.mp3");
     doudizhuRef.current.loop = true;
     doudizhuRef.current.volume = 0.5;
     gongRef.current = new Audio("/gong.mp3");

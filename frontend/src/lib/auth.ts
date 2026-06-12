@@ -105,7 +105,7 @@ export const authOptions: AuthOptions = {
   // No DB adapter: use JWT session + hardcoded role whitelist.
   session: {
     strategy: "jwt",
-    maxAge: 30 * 24 * 60 * 60, // 30 days
+    maxAge: 12 * 60 * 60, // 12 hours
   },
   callbacks: {
     async jwt({ token, user }) {
