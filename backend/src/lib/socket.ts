@@ -107,11 +107,13 @@ export function initializeSocketIO(httpServer: HTTPServer): SocketIOServer {
       socket.emit("game_state", playerState);
     }
 
+    if (isAdmin || isDisplay) {
+      await emitLoginCodeStatus(socket.id);
+    }
+
     if (isDisplay) {
       const remainingTime = gameManager.getCurrentTimeLeft();
       socket.emit('countdown_update', { timeLeft: remainingTime });
-
-      await emitLoginCodeStatus(socket.id);
 
       const winner = await redis.get(RedisKeys.gameWinner());
       const tie = await redis.sMembers(RedisKeys.gameTie());

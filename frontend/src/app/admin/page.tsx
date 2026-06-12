@@ -240,6 +240,18 @@ export default function AdminPage() {
       setSentQuestions(new Set());
     });
 
+    socket.on("login_code_published", () => {
+      setLoginCodeStatus("published");
+    });
+
+    socket.on("login_code_status", () => {
+      setLoginCodeStatus("published");
+    });
+
+    socket.on("login_code_closed", () => {
+      setLoginCodeStatus("idle");
+    });
+
     return () => {
       socket.disconnect();
     };
@@ -247,6 +259,10 @@ export default function AdminPage() {
 
   const handleSubmitQuestion = async (questionIndex: number) => {
     if (questionIndex >= PRESET_QUESTIONS.length) {
+      return;
+    }
+
+    if (loginCodeStatus === "published") {
       return;
     }
 
@@ -409,6 +425,7 @@ export default function AdminPage() {
           sentQuestions={sentQuestions}
           gameState={gameState}
           loading={loading}
+          loginCodePublished={loginCodeStatus === "published"}
           onSubmitQuestion={handleSubmitQuestion}
         />
 

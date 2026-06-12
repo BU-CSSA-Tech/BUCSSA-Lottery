@@ -15,6 +15,7 @@ interface QuestionListProps {
   sentQuestions: Set<number>;
   gameState: GameState;
   loading: boolean;
+  loginCodePublished: boolean;
   onSubmitQuestion: (index: number) => void;
 }
 
@@ -23,6 +24,7 @@ export default function QuestionList({
   sentQuestions,
   gameState,
   loading,
+  loginCodePublished,
   onSubmitQuestion,
 }: QuestionListProps) {
   return (
@@ -33,6 +35,11 @@ export default function QuestionList({
           共 {questions.length} 道题目，已发布 {sentQuestions.size}{" "}
           题
         </p>
+        {loginCodePublished && (
+          <p className="text-amber-400 text-sm mt-2">
+            登录码开放中，请先关闭登录码后再发布题目
+          </p>
+        )}
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-3  overflow-y-auto">
@@ -41,7 +48,7 @@ export default function QuestionList({
           const isCurrentlyPlaying = gameState?.status === "playing";
           const isGameEnded = gameState?.status === "ended";
           const canPublish =
-            !loading && !isCurrentlyPlaying && !isGameEnded;
+            !loading && !loginCodePublished && !isCurrentlyPlaying && !isGameEnded;
 
           return (
             <div

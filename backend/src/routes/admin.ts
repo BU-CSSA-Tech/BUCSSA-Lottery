@@ -1,6 +1,6 @@
 import express, { Request, Response } from 'express';
 import { getGameManager } from '../lib/game.js';
-import { clearLoginCode, publishLoginCode } from '../lib/login-code.js';
+import { clearLoginCode, getActiveLoginCode, publishLoginCode } from '../lib/login-code.js';
 import jwt from 'jsonwebtoken';
 import { JWTPayload, NextQuestionBody } from '../types/index.js';
 
@@ -40,6 +40,10 @@ router.post('/next-question', async (req: Request, res: Response) => {
 
     if ((await gameManager.getRoomState()).status === 'playing' || (await gameManager.getRoomState()).status === 'ended') {
       return res.status(400).json({ error: '当前有进行中的游戏轮次，请先结束再发布新题目' });
+    }
+
+    if (await getActiveLoginCode()) {
+      return res.status(400).json({ error: '请先关闭登录码后再发布题目' });
     }
 
     if (!question || !optionA || !optionB) {
