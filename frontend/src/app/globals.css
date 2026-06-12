@@ -223,9 +223,9 @@
     --theme-action-success-alt-hover-to: rgb(13, 148, 136);
     --theme-font-body: "zpix", sans-serif;
     --theme-font-display: "zpix", sans-serif;
-    --theme-bg-image-main: url("/playbg_cloud.png");
-    --theme-bg-image-play: url("/playbg_cloud.png");
-    --theme-bg-image-show: url("/showbg_bu.png");
+    --theme-bg-image-main: url("/playbg_cloud.webp");
+    --theme-bg-image-play: url("/playbg_cloud.webp");
+    --theme-bg-image-show: url("/showbg_bu.webp");
     --theme-bg-color-play: #c41e3a;
   }
 

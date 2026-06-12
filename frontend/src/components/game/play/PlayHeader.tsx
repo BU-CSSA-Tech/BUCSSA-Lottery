@@ -12,8 +12,18 @@ interface PlayHeaderProps {
   onLogout: () => void;
 }
 
+function formatHeaderPlayerLabel(name: string | null | undefined): string {
+  if (!name) return "";
+  const match = name.match(/#\d+/);
+  return match ? match[0] : name.replace(/^玩家\s*/, "");
+}
+
 export default function PlayHeader({ connected, session, onLogout }: PlayHeaderProps) {
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
+
+  const playerLabel =
+    formatHeaderPlayerLabel(session?.user?.name) ||
+    (session?.user?.email ? session.user.email.slice(0, 5) + "***" : "");
 
   return (
     <header className="sticky top-8 z-50 px-6 py-3">
@@ -26,8 +36,8 @@ export default function PlayHeader({ connected, session, onLogout }: PlayHeaderP
             ) : (
               <WifiOff className="w-5 h-5 text-red-500 shrink-0" />
             )}
-          <span className="text-sm text-gray-800 truncate">
-              {session?.user?.name || (session?.user?.email ? session.user.email.slice(0, 5) + "***" : "")}
+            <span className="text-sm text-gray-800 whitespace-nowrap font-semibold tabular-nums">
+              {playerLabel}
             </span>
           </div>
         </div>

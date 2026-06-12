@@ -132,6 +132,21 @@ export default function LoginPage() {
                 welcomeName={welcomeName}
                 onPlayerLogin={handlePlayerLogin}
               />
+
+              {!welcomeName && (
+                <div className="mt-6 text-center">
+                  <Link href="/staff-login">
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="text-white/70 hover:text-white"
+                    >
+                      管理员登录
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </Button>
+                  </Link>
+                </div>
+              )}
             {/* )} */}
           </motion.div>
 

@@ -90,7 +90,7 @@ export default function StaffLoginPage() {
 
           <div className="p-6 max-w-md mx-auto w-full">
             <div className="flex mb-6 items-center justify-center">
-              <div className="text-center text-2xl font-bold text-white">管理 / 投屏登录</div>
+              <div className="text-center text-2xl font-bold text-white">管理员登录</div>
             </div>
 
             <form
@@ -126,7 +126,7 @@ export default function StaffLoginPage() {
                 className="w-full"
                 disabled={loading || !staffEmail.trim() || !staffPassword}
               >
-                {loading ? "登录中..." : "管理 / 投屏登录"}
+                {loading ? "登录中..." : "管理员登录"}
               </Button>
             </form>
 
