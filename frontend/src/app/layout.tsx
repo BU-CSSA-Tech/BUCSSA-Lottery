@@ -1,10 +1,10 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import Providers from '@/components/Providers'
-import { getThemeFromEnv } from '@/lib/theme'
+import { getLotteryTitle, getThemeFromEnv } from '@/lib/theme'
 
 export const metadata: Metadata = {
-  title: '少数派游戏系统',
+  title: getLotteryTitle(),
   description: '基于 Next.js 的高并发少数派游戏系统，支持A/B选择少数派胜出',
 }
 

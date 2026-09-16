@@ -229,6 +229,16 @@
     --theme-bg-color-play: #c41e3a;
   }
 
+  [data-theme="mid-autumn"] {
+    --app-theme: mid-autumn;
+    --theme-font-body: "Ding Lie Zhu Hai", cursive;
+    --theme-font-display: "Ding Lie Zhu Hai", cursive;
+    --theme-bg-image-main: url("/playbgup.webp");
+    --theme-bg-image-play: url("/playbgup.webp");
+    --theme-bg-image-show: url("/bgup.webp");
+    --theme-bg-color-play: #c41e3a;
+  }
+
   html {
     height: 100%;
     overflow: hidden;

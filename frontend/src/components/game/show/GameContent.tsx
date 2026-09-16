@@ -6,6 +6,7 @@ import { GameState } from "@/types";
 import { formatTime } from "@/lib/utils";
 import AnimatedBarChart from "@/components/ui/animated-bar-chart";
 import Image from "next/image";
+import { getThemePack } from "@/lib/theme";
 
 interface GameContentProps {
   gameState: GameState;
@@ -22,6 +23,8 @@ export default function GameContent({
   tie,
   updatedWinnerTie,
 }: GameContentProps) {
+  const pack = getThemePack();
+
   return (
     <div className="w-full space-y-6">
       {/* 游戏统计栏 - 胶囊状横向排列 */}
@@ -137,9 +140,11 @@ export default function GameContent({
               </p>
             )}
           </div>
-          <div className="flex-shrink-0 w-36 h-36 md:w-44 md:h-44 flex items-center justify-center">
-            <Image src="/dog_small.png" alt="dog" width={176} height={176} className="object-contain" />
-          </div>
+          {pack.waitingDecor && (
+            <div className="flex-shrink-0 w-36 h-36 md:w-44 md:h-44 flex items-center justify-center">
+              <Image src={pack.waitingDecor} alt="dog" width={176} height={176} className="object-contain" />
+            </div>
+          )}
         </motion.div>
       )}
 
@@ -170,18 +175,26 @@ export default function GameContent({
                 恭喜一等奖获得者!
               </div>
               <div className="relative flex justify-center">
-                <Image
-                  src="/winbg-tube.png"
-                  alt=""
-                  width={700}
-                  height={350}
-                  className="max-w-full h-auto object-contain"
-                />
-                <div className="absolute inset-0 flex items-center justify-center">
+                {pack.winBg ? (
+                  <>
+                    <Image
+                      src={pack.winBg}
+                      alt=""
+                      width={700}
+                      height={350}
+                      className="max-w-full h-auto object-contain"
+                    />
+                    <div className="absolute inset-0 flex items-center justify-center">
+                      <div className="text-6xl font-bold text-center text-white">
+                        {winner}
+                      </div>
+                    </div>
+                  </>
+                ) : (
                   <div className="text-6xl font-bold text-center text-white">
                     {winner}
                   </div>
-                </div>
+                )}
               </div>
             </div>
           ) : tie ? (

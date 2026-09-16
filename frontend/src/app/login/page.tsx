@@ -8,16 +8,16 @@ import { useRouter } from "next/navigation";
 import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import BackgroundImage from "@/components/ui/BackgroundImage";
-// import RegionToggle, { type Region } from "@/components/game/login/RegionToggle";
-// import UsLoginPanel from "@/components/game/login/UsLoginPanel";
+import UsLoginPanel from "@/components/game/login/UsLoginPanel";
 import CnLoginPanel from "@/components/game/login/CnLoginPanel";
 import { getOrCreatePlayerId } from "@/lib/player-id";
+import { usesLoginCodeAuth } from "@/lib/theme";
 
 export default function LoginPage() {
   const { data: session, status } = useSession();
   const router = useRouter();
+  const loginWithCode = usesLoginCodeAuth();
 
-  // const [region, setRegion] = useState<Region>("us");
   const [code, setCode] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
@@ -35,7 +35,6 @@ export default function LoginPage() {
     }
   }, [session, status, router]);
 
-  /*
   const handleGoogleSignIn = async () => {
     await signIn("google");
   };
@@ -43,7 +42,6 @@ export default function LoginPage() {
   const handleAzureADSignIn = async () => {
     await signIn("azure-ad");
   };
-  */
 
   const handlePlayerLogin = async () => {
     setError("");
@@ -114,45 +112,46 @@ export default function LoginPage() {
               <div className="text-center text-2xl font-bold text-white">登 录</div>
             </div>
 
-            {/* 暂时隐藏美区 OAuth 登录
-            <RegionToggle region={region} onChange={setRegion} />
+            {loginWithCode ? (
+              <>
+                <CnLoginPanel
+                  code={code}
+                  onCodeChange={setCode}
+                  loading={loading}
+                  error={error}
+                  welcomeName={welcomeName}
+                  onPlayerLogin={handlePlayerLogin}
+                />
 
-            {region === "us" ? (
+                {!welcomeName && (
+                  <div className="mt-6 text-center">
+                    <Link href="/staff-login">
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        className="text-white/70 hover:text-white"
+                      >
+                        管理员登录
+                        <ArrowRight className="w-4 h-4 ml-2" />
+                      </Button>
+                    </Link>
+                  </div>
+                )}
+              </>
+            ) : (
               <UsLoginPanel
                 onGoogleSignIn={handleGoogleSignIn}
                 onAzureSignIn={handleAzureADSignIn}
               />
-            ) : (
-            */}
-              <CnLoginPanel
-                code={code}
-                onCodeChange={setCode}
-                loading={loading}
-                error={error}
-                welcomeName={welcomeName}
-                onPlayerLogin={handlePlayerLogin}
-              />
-
-              {!welcomeName && (
-                <div className="mt-6 text-center">
-                  <Link href="/staff-login">
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="text-white/70 hover:text-white"
-                    >
-                      管理员登录
-                      <ArrowRight className="w-4 h-4 ml-2" />
-                    </Button>
-                  </Link>
-                </div>
-              )}
-            {/* )} */}
+            )}
           </motion.div>
 
           <div className="theme-hint-card">
             <div className="text-gray-800 text-sm text-center">
-              <strong>提示：</strong>如果登录后被踢出来，可能是游戏已开始或者管理员未重置，请耐心等候哦！
+              <strong>提示：</strong>
+              {loginWithCode
+                ? "如果登录后被踢出来，可能是游戏已开始或者管理员未重置，请耐心等候哦！"
+                : "请使用 Google 或 Outlook 邮箱登录。如果登录后被踢出来，可能是游戏已开始或者管理员未重置，请耐心等候哦！"}
             </div>
           </div>
         </div>

@@ -15,6 +15,7 @@ import GameContent from "@/components/game/show/GameContent";
 import LoginCodeDisplay from "@/components/game/show/LoginCodeDisplay";
 import Confetti from "react-confetti";
 import { SPRING_CONFETTI_COLORS } from "@/lib/confetti-colors";
+import { createThemeAudio, getLotteryTitle, getThemePack, usesLoginCodeAuth } from "@/lib/theme";
 
 export default function ShowPage() {
   const { data: session, status } = useSession();
@@ -43,9 +44,9 @@ export default function ShowPage() {
   const socketRef = useRef<Socket | null>(null);
   const soundEnabledRef = useRef(false);
   const bgmRef = useRef<HTMLAudioElement | null>(null);
-  const doudizhuRef = useRef<HTMLAudioElement | null>(null);
+  const questionBgmRef = useRef<HTMLAudioElement | null>(null);
   const gongRef = useRef<HTMLAudioElement | null>(null);
-  const currentPhaseRef = useRef<"bgm" | "doudizhu" | "none">("bgm");
+  const currentPhaseRef = useRef<"bgm" | "question" | "none">("bgm");
 
   // 前端倒计时状态
   const [frontendTimeLeft, setFrontendTimeLeft] = useState<number>(0);
@@ -78,17 +79,13 @@ export default function ShowPage() {
 
   // 音频初始化
   useEffect(() => {
-    bgmRef.current = new Audio("/bgm-mario.mp3");
-    bgmRef.current.loop = true;
-    bgmRef.current.volume = 0.3;
-    doudizhuRef.current = new Audio("/bgm-mario.mp3");
-    doudizhuRef.current.loop = true;
-    doudizhuRef.current.volume = 0.5;
-    gongRef.current = new Audio("/gong.mp3");
-    gongRef.current.volume = 0.7;
+    const pack = getThemePack();
+    bgmRef.current = createThemeAudio(pack.bgm, { loop: true, volume: 0.3 });
+    questionBgmRef.current = createThemeAudio(pack.questionBgm, { loop: true, volume: 0.5 });
+    gongRef.current = createThemeAudio(pack.gong, { volume: 0.7 });
     return () => {
       bgmRef.current?.pause();
-      doudizhuRef.current?.pause();
+      questionBgmRef.current?.pause();
       gongRef.current?.pause();
     };
   }, []);
@@ -98,12 +95,12 @@ export default function ShowPage() {
     soundEnabledRef.current = soundEnabled;
     if (!soundEnabled) {
       bgmRef.current?.pause();
-      doudizhuRef.current?.pause();
+      questionBgmRef.current?.pause();
       gongRef.current?.pause();
     } else if (currentPhaseRef.current === "bgm") {
       bgmRef.current?.play().catch(() => {});
-    } else if (currentPhaseRef.current === "doudizhu") {
-      doudizhuRef.current?.play().catch(() => {});
+    } else if (currentPhaseRef.current === "question") {
+      questionBgmRef.current?.play().catch(() => {});
     }
   }, [soundEnabled]);
 
@@ -164,7 +161,7 @@ export default function ShowPage() {
       setTie(null);
       setLoginCode(null);
       setUpdatedWinnerTie(true);
-      doudizhuRef.current?.pause();
+      questionBgmRef.current?.pause();
       gongRef.current?.pause();
       currentPhaseRef.current = "bgm";
       if (soundEnabledRef.current) bgmRef.current?.play().catch(() => {});
@@ -190,10 +187,10 @@ export default function ShowPage() {
       setCountdownActive(true);
       bgmRef.current?.pause();
       gongRef.current?.pause();
-      currentPhaseRef.current = "doudizhu";
-      if (soundEnabledRef.current && doudizhuRef.current) {
-        doudizhuRef.current.currentTime = 0;
-        doudizhuRef.current.play().catch(() => {});
+      currentPhaseRef.current = "question";
+      if (soundEnabledRef.current && questionBgmRef.current) {
+        questionBgmRef.current.currentTime = 0;
+        questionBgmRef.current.play().catch(() => {});
       }
     });
 
@@ -202,7 +199,7 @@ export default function ShowPage() {
       setGameState((prev) => (prev.status === "ended" ? prev : data));
       setCountdownActive(false);
       setFrontendTimeLeft(0);
-      doudizhuRef.current?.pause();
+      questionBgmRef.current?.pause();
       currentPhaseRef.current = "none";
       if (soundEnabledRef.current && gongRef.current) {
         gongRef.current.currentTime = 0;
@@ -218,7 +215,7 @@ export default function ShowPage() {
         setFrontendTimeLeft(0);
       }
       setUpdatedWinnerTie(true);
-      doudizhuRef.current?.pause();
+      questionBgmRef.current?.pause();
       gongRef.current?.pause();
       currentPhaseRef.current = "none";
     });
@@ -228,7 +225,7 @@ export default function ShowPage() {
       setCountdownActive(false);
       setFrontendTimeLeft(0);
       setUpdatedWinnerTie(true);
-      doudizhuRef.current?.pause();
+      questionBgmRef.current?.pause();
       gongRef.current?.pause();
       currentPhaseRef.current = "none";
     });
@@ -418,10 +415,10 @@ export default function ShowPage() {
           <div className="w-full max-w-6xl flex flex-col items-center gap-16">
             {/* 头部标题 */}
             <h1 className="text-6xl font-bold theme-title">
-              BUCSSA 新生见面会 抽奖
+              {getLotteryTitle()}
             </h1>
 
-            {loginCodeActive ? (
+            {usesLoginCodeAuth() && loginCodeActive ? (
               <LoginCodeDisplay
                 active={true}
                 loginCode={loginCode}

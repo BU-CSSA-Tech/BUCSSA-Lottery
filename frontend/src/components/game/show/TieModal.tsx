@@ -3,6 +3,7 @@
 import { useEffect, useRef } from "react";
 import { motion } from "framer-motion";
 import { Swords } from "lucide-react";
+import { createThemeAudio, getThemePack } from "@/lib/theme";
 
 interface TieModalProps {
   tie: string[];
@@ -15,9 +16,10 @@ export default function TieModal({ tie, onClose }: TieModalProps) {
   const playCountRef = useRef(0);
 
   useEffect(() => {
-    const audio = new Audio("/zhandou.mp3");
+    const audio = createThemeAudio(getThemePack().tie, { volume: 1 });
+    if (!audio) return;
+
     playCountRef.current = 0;
-    audio.volume = 1.0;
 
     const playNext = () => {
       if (playCountRef.current >= TIE_SOUND_PLAYS) return;

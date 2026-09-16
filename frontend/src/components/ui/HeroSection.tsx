@@ -3,6 +3,7 @@ import ParticleBackground from "./ParticleBackground";
 import { Button } from "@/components/ui/button";
 import { GlassText } from "./glass-text";
 import Image from "next/image";
+import { getLotteryTitle } from "@/lib/theme";
 
 interface HeroSectionProps {
   currentPrize: string;
@@ -37,7 +38,7 @@ const HeroSection = ({
             variant="secondary"
             weight="light"
           >
-            BUCSSA 新生见面会 抽奖
+            {getLotteryTitle()}
           </GlassText>
           <Button variant="outline" size="xl" onClick={onStartGame}>
             开始答题, 豪取大奖吧！

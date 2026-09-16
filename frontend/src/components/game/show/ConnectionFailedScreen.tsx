@@ -8,7 +8,7 @@ export default function ConnectionFailedScreen() {
   return (
     <>
       <BackgroundImage
-        imageUrl="bgup.webp"
+        imageVariable="--theme-bg-image-main"
         overlayOpacity={0.05}
         centerMask={true}
         maskWidth={90}

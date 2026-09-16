@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { Wifi, WifiOff, RotateCcw, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { getLotteryTitle, usesLoginCodeAuth } from "@/lib/theme";
 
 interface AdminHeaderProps {
   connected: boolean;
@@ -27,6 +28,8 @@ export default function AdminHeader({
   onResetGame,
   onShowLogoutConfirm,
 }: AdminHeaderProps) {
+  const showLoginCodeControls = usesLoginCodeAuth();
+
   return (
     <header className="glass-dark border-b border-white/10 sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 py-3">
@@ -42,7 +45,7 @@ export default function AdminHeader({
             </div>
             <div>
               <h1 className="text-lg font-semibold text-white">
-                BUCSSA 新春嘉年华 抽奖 - 管理控制台
+                {getLotteryTitle()} - 管理控制台
               </h1>
               <div className="flex items-center gap-1">
                 {connected ? (
@@ -62,6 +65,7 @@ export default function AdminHeader({
           </div>
 
           <div className="flex gap-2 items-center">
+            {showLoginCodeControls && (
             <div className="flex flex-col items-end mr-2">
               <Button
                 onClick={onPublishLoginCode}
@@ -84,6 +88,7 @@ export default function AdminHeader({
                 <span className="text-xs text-emerald-400 mt-1">已发布，请查看投屏</span>
               )}
             </div>
+            )}
             <Button
               onClick={onResetGame}
               disabled={loading}

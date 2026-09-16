@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button";
 import { useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
+import { usesLoginCodeAuth } from "@/lib/theme";
 
 export default function TermPage() {
   const router = useRouter();
@@ -43,7 +44,7 @@ export default function TermPage() {
                 <div className="space-y-2">
                   <div className="font-semibold text-white">1. 服务说明</div>
                   <div className="text-sm pl-4">
-                    本平台提供在线实时抽奖与淘汰类游戏服务，用户可通过 Google 账号或者 Outlook 账号登录参与。
+                    本平台提供在线实时抽奖与淘汰类游戏服务，用户可通过{usesLoginCodeAuth() ? "现场登录码" : " Google 账号或者 Outlook 账号"}登录参与。
                   </div>
                 </div>
 

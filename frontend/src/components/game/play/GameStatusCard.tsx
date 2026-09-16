@@ -3,6 +3,7 @@
 import { Crown, CheckCircle } from "lucide-react";
 import { UserGameState } from "@/types";
 import Image from "next/image";
+import { getThemePack } from "@/lib/theme";
 
 interface GameStatusCardProps {
   userGameState: UserGameState;
@@ -17,17 +18,22 @@ export default function GameStatusCard({
   eliminatedReason,
   onSubmitAnswer,
 }: GameStatusCardProps) {
+  const pack = getThemePack();
+  const selectedImage = selectedOption === "A" ? pack.optionA : selectedOption === "B" ? pack.optionB : null;
+
   return (
     <main className="w-full h-auto px-8 py-12 items-center justify-center flex fixed top-[50vh] left-1/2 -translate-x-1/2 -translate-y-1/2 theme-panel-subtle">
       {userGameState.status === "waiting" && (
         <div className="text-center space-y-6">
-          <Image
-            src="/waitstar.gif"
-            alt="等待中"
-            width={100}
-            height={100}
-            className="mx-auto"
-          />
+          {pack.waitGif && (
+            <Image
+              src={pack.waitGif}
+              alt="等待中"
+              width={100}
+              height={100}
+              className="mx-auto"
+            />
+          )}
           <p className="text-gray-800 text-3xl font-bold tracking-wider">
             等待发布中...
           </p>
@@ -90,42 +96,33 @@ export default function GameStatusCard({
 
           {!selectedOption ? (
             <div className="flex flex-col items-center gap-3 justify-center">
-              <button
-                type="button"
+              <OptionButton
+                label="A"
+                imageSrc={pack.optionA}
                 onClick={() => onSubmitAnswer("A")}
-                className="relative w-24 h-24 md:w-56 md:h-56 transition-all duration-200 rounded-lg overflow-hidden"
-              >
-                <Image
-                  src="/optionA-pixel.png"
-                  alt="选项 A"
-                  fill
-                  className="object-contain"
-                />
-              </button>
-
-              <button
-                type="button"
+              />
+              <OptionButton
+                label="B"
+                imageSrc={pack.optionB}
                 onClick={() => onSubmitAnswer("B")}
-                className="relative w-24 h-24 md:w-56 md:h-56 transition-all duration-200 rounded-lg overflow-hidden"
-              >
-                <Image
-                  src="/optionB-pixel.png"
-                  alt="选项 B"
-                  fill
-                  className="object-contain"
-                />
-              </button>
+              />
             </div>
           ) : (
             <div className="flex flex-col items-center gap-4">
-              <div className="relative w-48 h-48 md:w-64 md:h-64">
-                <Image
-                  src={selectedOption === "A" ? "/optionA-pixel.png" : "/optionB-pixel.png"}
-                  alt={`选项 ${selectedOption}`}
-                  fill
-                  className="object-contain"
-                />
-              </div>
+              {selectedImage ? (
+                <div className="relative w-48 h-48 md:w-64 md:h-64">
+                  <Image
+                    src={selectedImage}
+                    alt={`选项 ${selectedOption}`}
+                    fill
+                    className="object-contain"
+                  />
+                </div>
+              ) : (
+                <div className="text-gray-800 text-5xl font-bold">
+                  {selectedOption}
+                </div>
+              )}
               <div className="flex items-center justify-center gap-2 text-gray-800 theme-toolbar-chip rounded-md p-2">
                 <CheckCircle className="w-5 h-5" />
                 <div className="font-medium text-gray-800">
@@ -137,5 +134,42 @@ export default function GameStatusCard({
         </div>
       )}
     </main>
+  );
+}
+
+function OptionButton({
+  label,
+  imageSrc,
+  onClick,
+}: {
+  label: "A" | "B";
+  imageSrc: string | null;
+  onClick: () => void;
+}) {
+  if (!imageSrc) {
+    return (
+      <button
+        type="button"
+        onClick={onClick}
+        className="w-24 h-24 md:w-56 md:h-24 rounded-lg theme-toolbar-chip text-gray-800 text-4xl font-bold"
+      >
+        {label}
+      </button>
+    );
+  }
+
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="relative w-24 h-24 md:w-56 md:h-56 transition-all duration-200 rounded-lg overflow-hidden"
+    >
+      <Image
+        src={imageSrc}
+        alt={`选项 ${label}`}
+        fill
+        className="object-contain"
+      />
+    </button>
   );
 }
