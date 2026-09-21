@@ -1,20 +1,20 @@
 @font-face {
   font-family: "Ding Lie Zhu Hai";
-  src: url("/dingliezhuhaifont.ttf") format("truetype");
+  src: url("/mid-autumn/dingliezhuhaifont.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
   font-family: "Alimama DongFang DaKai";
-  src: url("/Alimama_DongFangDaKai_Regular.ttf") format("truetype");
+  src: url("/spring/Alimama_DongFangDaKai_Regular.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
 }
 
 @font-face {
   font-family: "zpix";
-  src: url("/zpix.ttf") format("truetype");
+  src: url("/mario/zpix.ttf") format("truetype");
   font-weight: 400;
   font-style: normal;
 }
@@ -97,9 +97,9 @@
     --theme-action-success-alt-hover-to: rgb(13, 148, 136);
     --theme-font-body: "Alimama DongFang DaKai", sans-serif;
     --theme-font-display: "Alimama DongFang DaKai", sans-serif;
-    --theme-bg-image-main: url("/playbg.png");
-    --theme-bg-image-play: url("/playbg.png");
-    --theme-bg-image-show: url("/showbg.jpg");
+    --theme-bg-image-main: url("/spring/playbg.png");
+    --theme-bg-image-play: url("/spring/playbg.png");
+    --theme-bg-image-show: url("/spring/showbg.jpg");
     --theme-bg-color-play: #c41e3a;
 
     --background: 0 0% 100%;
@@ -164,9 +164,9 @@
     --theme-action-success-alt-hover-to: rgb(13, 148, 136);
     --theme-font-body: "Alimama DongFang DaKai", sans-serif;
     --theme-font-display: "Alimama DongFang DaKai", sans-serif;
-    --theme-bg-image-main: url("/playbg.png");
-    --theme-bg-image-play: url("/playbg.png");
-    --theme-bg-image-show: url("/showbg.jpg");
+    --theme-bg-image-main: url("/spring/playbg.png");
+    --theme-bg-image-play: url("/spring/playbg.png");
+    --theme-bg-image-show: url("/spring/showbg.jpg");
     --theme-bg-color-play: #c41e3a;
   }
 
@@ -223,9 +223,9 @@
     --theme-action-success-alt-hover-to: rgb(13, 148, 136);
     --theme-font-body: "zpix", sans-serif;
     --theme-font-display: "zpix", sans-serif;
-    --theme-bg-image-main: url("/playbg_cloud.webp");
-    --theme-bg-image-play: url("/playbg_cloud.webp");
-    --theme-bg-image-show: url("/showbg_bu.webp");
+    --theme-bg-image-main: url("/mario/playbg_cloud.webp");
+    --theme-bg-image-play: url("/mario/playbg_cloud.webp");
+    --theme-bg-image-show: url("/mario/showbg_bu.webp");
     --theme-bg-color-play: #c41e3a;
   }
 
@@ -233,9 +233,9 @@
     --app-theme: mid-autumn;
     --theme-font-body: "Ding Lie Zhu Hai", cursive;
     --theme-font-display: "Ding Lie Zhu Hai", cursive;
-    --theme-bg-image-main: url("/playbgup.webp");
-    --theme-bg-image-play: url("/playbgup.webp");
-    --theme-bg-image-show: url("/bgup.webp");
+    --theme-bg-image-main: url("/mid-autumn/playbgup.webp");
+    --theme-bg-image-play: url("/mid-autumn/playbgup.webp");
+    --theme-bg-image-show: url("/mid-autumn/bgup.webp");
     --theme-bg-color-play: #c41e3a;
   }
 

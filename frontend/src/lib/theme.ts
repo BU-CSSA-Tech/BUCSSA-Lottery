@@ -35,21 +35,21 @@ const THEME_ALIASES: Record<string, ThemeName> = {
 };
 
 const SHARED_SHOW_AUDIO = {
-  bgm: "/bgm.mp3",
-  questionBgm: "/doudizhu1.mp3",
-  gong: "/gong.mp3",
-  tie: "/zhandou.mp3",
+  bgm: "/spring/bgm.mp3",
+  questionBgm: "/spring/doudizhu1.mp3",
+  gong: "/spring/gong.mp3",
+  tie: "/spring/zhandou.mp3",
 } as const;
 
 const THEME_PACKS: Record<ThemeName, ThemePack> = {
   spring: {
     eventName: "新春嘉年华",
     authMode: "oauth",
-    optionA: "/aoption.png",
-    optionB: "/boption.png",
-    waitGif: "/waitma.gif",
-    winBg: "/winbg.png",
-    waitingDecor: "/dog_small.png",
+    optionA: "/spring/aoption.png",
+    optionB: "/spring/boption.png",
+    waitGif: "/spring/waitma.gif",
+    winBg: "/spring/winbg.png",
+    waitingDecor: "/spring/dog_small.png",
     revealImage: null,
     bgm: SHARED_SHOW_AUDIO.bgm,
     questionBgm: SHARED_SHOW_AUDIO.questionBgm,
@@ -60,16 +60,16 @@ const THEME_PACKS: Record<ThemeName, ThemePack> = {
   mario: {
     eventName: "新生见面会",
     authMode: "login-code",
-    optionA: "/optionA-pixel.png",
-    optionB: "/optionB-pixel.png",
-    waitGif: "/waitstar.gif",
-    winBg: "/winbg-tube.png",
-    waitingDecor: "/dog_small.png",
-    revealImage: "/question-mark.webp",
+    optionA: "/mario/optionA-pixel.png",
+    optionB: "/mario/optionB-pixel.png",
+    waitGif: "/mario/waitstar.gif",
+    winBg: "/mario/winbg-tube.png",
+    waitingDecor: "/spring/dog_small.png",
+    revealImage: "/mario/question-mark.webp",
     bgm: SHARED_SHOW_AUDIO.bgm,
     questionBgm: SHARED_SHOW_AUDIO.questionBgm,
     gong: SHARED_SHOW_AUDIO.gong,
-    winner: "/mario-stage-clear.mp3",
+    winner: "/mario/mario-stage-clear.mp3",
     tie: SHARED_SHOW_AUDIO.tie,
   },
   "mid-autumn": {
