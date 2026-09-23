@@ -30,13 +30,13 @@ export default function PlayHeader({ connected, session, onLogout }: PlayHeaderP
       <div className="grid grid-cols-3 items-center">
         {/* 左侧：网络状态 + 用户名 */}
         <div className="flex items-center justify-start min-w-0">
-          <div className="theme-toolbar-chip rounded-full px-3 py-2 max-w-full min-w-0">
+          <div className="theme-toolbar-chip inline-flex w-fit max-w-full min-w-0 rounded-full px-3 py-2">
             {connected ? (
             <Wifi className="w-5 h-5 text-green-600 shrink-0" />
             ) : (
               <WifiOff className="w-5 h-5 text-red-500 shrink-0" />
             )}
-            <span className="text-sm text-gray-800 whitespace-nowrap font-semibold tabular-nums">
+            <span className="text-sm text-gray-800 font-semibold tabular-nums truncate">
               {playerLabel}
             </span>
           </div>

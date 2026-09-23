@@ -19,6 +19,13 @@
   font-style: normal;
 }
 
+@font-face {
+  font-family: "Zhong Guo Feng";
+  src: url("/nailong/zhongguofeng.ttf") format("truetype");
+  font-weight: 400;
+  font-style: normal;
+}
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -239,6 +246,16 @@
     --theme-bg-color-play: #c41e3a;
   }
 
+  [data-theme="nailong"] {
+    --app-theme: nailong;
+    --theme-font-body: "Zhong Guo Feng", cursive;
+    --theme-font-display: "Zhong Guo Feng", cursive;
+    --theme-bg-image-main: url("/nailong/playbgup.webp");
+    --theme-bg-image-play: url("/nailong/playbgup.webp");
+    --theme-bg-image-show: url("/nailong/screen_bg.png");
+    --theme-bg-color-play: #c41e3a;
+  }
+
   html {
     height: 100%;
     overflow: hidden;
@@ -332,6 +349,87 @@
     @apply flex items-center gap-2 px-2 py-2 rounded-lg shadow-sm;
     background-color: var(--theme-toolbar-bg);
     border: 1px solid var(--theme-border-soft);
+  }
+
+  [data-theme="nailong"] .theme-option-btn {
+    @apply flex items-center justify-center rounded-xl shadow-sm transition-all duration-200 ease-out;
+    background-color: rgba(255, 255, 255, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.55);
+  }
+
+  [data-theme="nailong"] .theme-option-btn:hover {
+    background-color: rgba(255, 255, 255, 0.72);
+    box-shadow: 0 4px 14px rgba(255, 255, 255, 0.25);
+    transform: scale(1.02);
+  }
+
+  [data-theme="nailong"] .theme-option-btn:active {
+    background-color: rgba(255, 255, 255, 0.88);
+    transform: scale(0.97);
+  }
+
+  [data-theme="nailong"] .theme-option-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.65);
+  }
+
+  [data-theme="nailong"] .theme-show-option {
+    background-color: rgba(255, 255, 255, 0.28);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.45);
+  }
+
+  [data-theme="nailong"] .theme-show-option-letter {
+    color: rgb(120, 90, 20);
+    font-size: 4.5rem;
+    line-height: 1;
+    margin-right: 0.35em;
+  }
+
+  [data-theme="nailong"] .theme-show-countdown {
+    color: rgb(180, 130, 20);
+    border-color: rgba(218, 165, 32, 0.65);
+    background-color: rgba(255, 248, 220, 0.82);
+  }
+
+  [data-theme="nailong"] .theme-show-countdown-urgent {
+    color: rgb(146, 95, 10);
+    border-color: rgba(255, 193, 37, 0.85);
+    background-color: rgba(255, 236, 170, 0.92);
+    box-shadow: 0 0 24px rgba(255, 193, 37, 0.35);
+  }
+
+  [data-theme="nailong"] .theme-play-tie-title {
+    color: #fffef8;
+    -webkit-text-stroke: 3px #000;
+    paint-order: stroke fill;
+    text-shadow: 0 0 14px rgba(255, 255, 255, 0.55);
+  }
+
+  [data-theme="nailong"] .theme-play-tie-subtitle {
+    color: #fffaf5;
+    -webkit-text-stroke: 1.5px #000;
+    paint-order: stroke fill;
+  }
+
+  [data-theme="nailong"] .theme-nailong-tie-glow {
+    color: #fffef8;
+    -webkit-text-stroke: 4px #000;
+    paint-order: stroke fill;
+    text-shadow:
+      0 3px 6px rgba(255, 255, 255, 0.95),
+      0 8px 18px rgba(255, 255, 255, 0.65),
+      0 14px 32px rgba(255, 255, 255, 0.35);
+  }
+
+  [data-theme="nailong"] .theme-nailong-tie-glow-sm {
+    color: #fffef8;
+    -webkit-text-stroke: 3px #000;
+    paint-order: stroke fill;
+    text-shadow:
+      0 2px 5px rgba(255, 255, 255, 0.9),
+      0 6px 14px rgba(255, 255, 255, 0.55),
+      0 10px 24px rgba(255, 255, 255, 0.3);
   }
 
   .theme-icon-btn {
@@ -651,6 +749,117 @@
     }
     100% {
       transform: scale(1);
+    }
+  }
+
+  /* Nailong: bump every Tailwind text-* utility up one step */
+  html[data-theme="nailong"] .text-xs {
+    font-size: 0.875rem !important;
+    line-height: 1.25rem !important;
+  }
+
+  html[data-theme="nailong"] .text-sm {
+    font-size: 1rem !important;
+    line-height: 1.5rem !important;
+  }
+
+  html[data-theme="nailong"] .text-base {
+    font-size: 1.125rem !important;
+    line-height: 1.75rem !important;
+  }
+
+  html[data-theme="nailong"] .text-lg {
+    font-size: 1.25rem !important;
+    line-height: 1.75rem !important;
+  }
+
+  html[data-theme="nailong"] .text-xl {
+    font-size: 1.5rem !important;
+    line-height: 2rem !important;
+  }
+
+  html[data-theme="nailong"] .text-2xl {
+    font-size: 1.875rem !important;
+    line-height: 2.25rem !important;
+  }
+
+  html[data-theme="nailong"] .text-3xl {
+    font-size: 2.25rem !important;
+    line-height: 2.5rem !important;
+  }
+
+  html[data-theme="nailong"] .text-4xl {
+    font-size: 3rem !important;
+    line-height: 1 !important;
+  }
+
+  html[data-theme="nailong"] .text-5xl {
+    font-size: 3.75rem !important;
+    line-height: 1 !important;
+  }
+
+  html[data-theme="nailong"] .text-6xl {
+    font-size: 4.5rem !important;
+    line-height: 1 !important;
+  }
+
+  html[data-theme="nailong"] .text-7xl {
+    font-size: 6rem !important;
+    line-height: 1 !important;
+  }
+
+  html[data-theme="nailong"] .text-8xl {
+    font-size: 8rem !important;
+    line-height: 1 !important;
+  }
+
+  html[data-theme="nailong"] .text-9xl {
+    font-size: 9rem !important;
+    line-height: 1 !important;
+  }
+
+  html[data-theme="nailong"] .text-\[8rem\] {
+    font-size: 9rem !important;
+  }
+
+  @media (min-width: 640px) {
+    html[data-theme="nailong"] .sm\:text-2xl {
+      font-size: 1.875rem !important;
+      line-height: 2.25rem !important;
+    }
+  }
+
+  @media (min-width: 768px) {
+    html[data-theme="nailong"] .md\:text-2xl {
+      font-size: 1.875rem !important;
+      line-height: 2.25rem !important;
+    }
+
+    html[data-theme="nailong"] .md\:text-3xl {
+      font-size: 2.25rem !important;
+      line-height: 2.5rem !important;
+    }
+
+    html[data-theme="nailong"] .md\:text-4xl {
+      font-size: 3rem !important;
+      line-height: 1 !important;
+    }
+
+    html[data-theme="nailong"] .md\:text-8xl {
+      font-size: 8rem !important;
+      line-height: 1 !important;
+    }
+  }
+
+  @media (min-width: 1024px) {
+    html[data-theme="nailong"] .lg\:text-3xl {
+      font-size: 2.25rem !important;
+      line-height: 2.5rem !important;
+    }
+
+    html[data-theme="nailong"] .lg\:text-7xl {
+      font-size: 6rem !important;
+      line-height: 1 !important;
     }
   }
 }

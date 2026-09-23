@@ -2,6 +2,7 @@ export const THEMES = {
   spring: "spring",
   mario: "mario",
   "mid-autumn": "mid-autumn",
+  nailong: "nailong",
 } as const;
 
 export type ThemeName = (typeof THEMES)[keyof typeof THEMES];
@@ -32,6 +33,7 @@ const THEME_ALIASES: Record<string, ThemeName> = {
   "mid-autumn": THEMES["mid-autumn"],
   midAutumn: THEMES["mid-autumn"],
   mid_autumn: THEMES["mid-autumn"],
+  nailong: THEMES.nailong,
 };
 
 const SHARED_SHOW_AUDIO = {
@@ -73,7 +75,7 @@ const THEME_PACKS: Record<ThemeName, ThemePack> = {
     tie: SHARED_SHOW_AUDIO.tie,
   },
   "mid-autumn": {
-    eventName: "中秋晚会",
+    eventName: "中秋国庆晚会",
     authMode: "oauth",
     optionA: null,
     optionB: null,
@@ -86,6 +88,21 @@ const THEME_PACKS: Record<ThemeName, ThemePack> = {
     gong: null,
     winner: null,
     tie: null,
+  },
+  nailong: {
+    eventName: "中秋国庆晚会",
+    authMode: "oauth",
+    optionA: null,
+    optionB: null,
+    waitGif: null,
+    winBg: null,
+    waitingDecor: null,
+    revealImage: null,
+    bgm: "/nailong/nailongbgm.mp3",
+    questionBgm: "/nailong/nailongbgm.mp3",
+    gong: SHARED_SHOW_AUDIO.gong,
+    winner: "/nailong/naiwadaxiao.mp3",
+    tie: "/nailong/naiwadaxiao.mp3",
   },
 };
 

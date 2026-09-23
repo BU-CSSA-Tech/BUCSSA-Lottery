@@ -6,7 +6,7 @@ import { GameState } from "@/types";
 import { formatTime } from "@/lib/utils";
 import AnimatedBarChart from "@/components/ui/animated-bar-chart";
 import Image from "next/image";
-import { getThemePack } from "@/lib/theme";
+import { getThemeFromEnv, getThemePack } from "@/lib/theme";
 
 interface GameContentProps {
   gameState: GameState;
@@ -14,6 +14,7 @@ interface GameContentProps {
   winner: string | null;
   tie: string[] | null;
   updatedWinnerTie: boolean;
+  hideTiePanel?: boolean;
 }
 
 export default function GameContent({
@@ -22,8 +23,10 @@ export default function GameContent({
   winner,
   tie,
   updatedWinnerTie,
+  hideTiePanel = false,
 }: GameContentProps) {
   const pack = getThemePack();
+  const isNailong = getThemeFromEnv() === "nailong";
 
   return (
     <div className="w-full space-y-6">
@@ -79,22 +82,42 @@ export default function GameContent({
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
-            <div className="rounded-xl p-8 bg-green-50/90 border border-green-200/60">
+            <div
+              className={
+                isNailong
+                  ? "theme-show-option rounded-xl p-8"
+                  : "rounded-xl p-8 bg-green-50/90 border border-green-200/60"
+              }
+            >
               <div className="flex items-center gap-4 justify-center">
-                <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-green-100">
-                  <p className="font-bold text-4xl text-green-600">A</p>
-                </div>
+                {isNailong ? (
+                  <p className="theme-show-option-letter font-bold shrink-0">A</p>
+                ) : (
+                  <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-green-100">
+                    <p className="font-bold text-4xl text-green-600">A</p>
+                  </div>
+                )}
                 <p className="text-gray-800 text-3xl md:text-4xl font-medium">
                   {gameState.currentQuestion?.optionA}
                 </p>
               </div>
             </div>
 
-            <div className="rounded-xl p-8 bg-red-50/90 border border-red-200/60">
+            <div
+              className={
+                isNailong
+                  ? "theme-show-option rounded-xl p-8"
+                  : "rounded-xl p-8 bg-red-50/90 border border-red-200/60"
+              }
+            >
               <div className="flex items-center gap-4 justify-center">
-                <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-red-100">
-                  <p className="font-bold text-4xl text-red-600">B</p>
-                </div>
+                {isNailong ? (
+                  <p className="theme-show-option-letter font-bold shrink-0">B</p>
+                ) : (
+                  <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-red-100">
+                    <p className="font-bold text-4xl text-red-600">B</p>
+                  </div>
+                )}
                 <p className="text-gray-800 text-3xl md:text-4xl font-medium">
                   {gameState.currentQuestion?.optionB}
                 </p>
@@ -105,11 +128,17 @@ export default function GameContent({
           {/* 倒计时 */}
           <div className="text-center flex items-center justify-center">
             <div
-              className={`text-8xl font-bold rounded-full w-40 h-40 flex items-center justify-center border-4 ${
-                frontendTimeLeft <= 10
-                  ? "text-red-500 animate-pulse border-red-400/60 bg-red-50/80"
-                  : "text-amber-600 border-amber-400/60 bg-amber-50/80"
-              }`}
+              className={
+                isNailong
+                  ? `theme-show-countdown text-8xl font-bold rounded-full w-40 h-40 flex items-center justify-center border-4 ${
+                      frontendTimeLeft <= 10 ? "theme-show-countdown-urgent animate-pulse" : ""
+                    }`
+                  : `text-8xl font-bold rounded-full w-40 h-40 flex items-center justify-center border-4 ${
+                      frontendTimeLeft <= 10
+                        ? "text-red-500 animate-pulse border-red-400/60 bg-red-50/80"
+                        : "text-amber-600 border-amber-400/60 bg-amber-50/80"
+                    }`
+              }
             >
               {Math.max(0, frontendTimeLeft)}
             </div>
@@ -149,7 +178,7 @@ export default function GameContent({
       )}
 
       {/* 游戏结束 */}
-      {gameState.status === "ended" && (
+      {gameState.status === "ended" && !(hideTiePanel && tie && !winner) && (
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
@@ -169,8 +198,16 @@ export default function GameContent({
           {winner ? (
             <div className="space-y-8 max-w-6xl mx-auto px-16 py-8">
               <div
-                className="text-6xl text-white font-bold"
-                style={{ WebkitTextStroke: "4px #000", paintOrder: "stroke fill" }}
+                className={
+                  isNailong
+                    ? "text-6xl font-bold theme-title"
+                    : "text-6xl text-white font-bold"
+                }
+                style={
+                  isNailong
+                    ? undefined
+                    : { WebkitTextStroke: "4px #000", paintOrder: "stroke fill" }
+                }
               >
                 恭喜一等奖获得者!
               </div>
@@ -185,13 +222,35 @@ export default function GameContent({
                       className="max-w-full h-auto object-contain"
                     />
                     <div className="absolute inset-0 flex items-center justify-center">
-                      <div className="text-6xl font-bold text-center text-white">
+                      <div
+                        className={
+                          isNailong
+                            ? "text-6xl font-bold text-center text-black"
+                            : "text-6xl font-bold text-center text-white"
+                        }
+                        style={
+                          isNailong
+                            ? undefined
+                            : { WebkitTextStroke: "4px #000", paintOrder: "stroke fill" }
+                        }
+                      >
                         {winner}
                       </div>
                     </div>
                   </>
                 ) : (
-                  <div className="text-6xl font-bold text-center text-white">
+                  <div
+                    className={
+                      isNailong
+                        ? "text-6xl font-bold text-center text-black"
+                        : "text-6xl font-bold text-center text-white"
+                    }
+                    style={
+                      isNailong
+                        ? undefined
+                        : { WebkitTextStroke: "4px #000", paintOrder: "stroke fill" }
+                    }
+                  >
                     {winner}
                   </div>
                 )}
@@ -199,7 +258,13 @@ export default function GameContent({
             </div>
           ) : tie ? (
             <div className="space-y-16 max-w-6xl mx-auto p-16">
-              <div className="text-5xl text-red-700 font-normal mb-4">
+              <div
+                className={
+                  isNailong
+                    ? "text-5xl font-bold mb-4 theme-title whitespace-nowrap"
+                    : "text-5xl text-red-700 font-bold mb-4 whitespace-nowrap"
+                }
+              >
                 请两位选手上台PK, 竞争最终大奖!
               </div>
 
@@ -208,7 +273,9 @@ export default function GameContent({
                   <div className="text-3xl font-bold mb-4 text-center">
                     选手 1
                   </div>
-                  <div className="text-4xl font-light text-center overflow-x-auto">
+                  <div
+                    className={`${isNailong ? "text-2xl" : "text-4xl"} font-light text-center overflow-x-auto`}
+                  >
                     {tie[0]}
                   </div>
                 </div>
@@ -217,7 +284,9 @@ export default function GameContent({
                   <div className="text-3xl font-bold mb-4 text-center">
                     选手 2
                   </div>
-                  <div className="text-4xl font-light text-center overflow-x-auto">
+                  <div
+                    className={`${isNailong ? "text-2xl" : "text-4xl"} font-light text-center overflow-x-auto`}
+                  >
                     {tie[1]}
                   </div>
                 </div>

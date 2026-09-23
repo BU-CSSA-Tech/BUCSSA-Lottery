@@ -3,7 +3,7 @@
 import { Crown, CheckCircle } from "lucide-react";
 import { UserGameState } from "@/types";
 import Image from "next/image";
-import { getThemePack } from "@/lib/theme";
+import { getThemeFromEnv, getThemePack } from "@/lib/theme";
 
 interface GameStatusCardProps {
   userGameState: UserGameState;
@@ -19,10 +19,11 @@ export default function GameStatusCard({
   onSubmitAnswer,
 }: GameStatusCardProps) {
   const pack = getThemePack();
+  const isNailong = getThemeFromEnv() === "nailong";
   const selectedImage = selectedOption === "A" ? pack.optionA : selectedOption === "B" ? pack.optionB : null;
 
   return (
-    <main className="w-full h-auto px-8 py-12 items-center justify-center flex fixed top-[50vh] left-1/2 -translate-x-1/2 -translate-y-1/2 theme-panel-subtle">
+    <main className="fixed top-[50vh] left-4 right-4 -translate-y-1/2 flex h-auto items-center justify-center px-8 py-12 theme-panel-subtle">
       {userGameState.status === "waiting" && (
         <div className="text-center space-y-6">
           {pack.waitGif && (
@@ -78,10 +79,22 @@ export default function GameStatusCard({
 
       {userGameState.status === "tie" && (
         <div className="text-center space-y-8">
-          <p className="text-white text-4xl font-semibold tracking-wider">
+          <p
+            className={
+              isNailong
+                ? "theme-play-tie-title text-4xl font-bold tracking-wider"
+                : "text-white text-4xl font-semibold tracking-wider"
+            }
+          >
             平局! 战斗爽！
           </p>
-          <p className="text-white text-xl">
+          <p
+            className={
+              isNailong
+                ? "theme-play-tie-subtitle text-xl"
+                : "text-white text-xl"
+            }
+          >
             恭喜您进入决赛圈，请上台进行最后对决！
           </p>
         </div>
@@ -151,7 +164,7 @@ function OptionButton({
       <button
         type="button"
         onClick={onClick}
-        className="w-24 h-24 md:w-56 md:h-24 rounded-lg theme-toolbar-chip text-gray-800 text-4xl font-bold"
+        className="theme-option-btn w-24 h-24 md:w-56 md:h-24 text-gray-800 text-4xl font-bold"
       >
         {label}
       </button>

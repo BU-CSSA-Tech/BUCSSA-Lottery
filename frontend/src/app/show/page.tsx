@@ -15,9 +15,10 @@ import GameContent from "@/components/game/show/GameContent";
 import LoginCodeDisplay from "@/components/game/show/LoginCodeDisplay";
 import Confetti from "react-confetti";
 import { SPRING_CONFETTI_COLORS } from "@/lib/confetti-colors";
-import { createThemeAudio, getLotteryTitle, getThemePack, usesLoginCodeAuth } from "@/lib/theme";
+import { createThemeAudio, getLotteryTitle, getThemeFromEnv, getThemePack, usesLoginCodeAuth } from "@/lib/theme";
 
 export default function ShowPage() {
+  const isNailongTheme = getThemeFromEnv() === "nailong";
   const { data: session, status } = useSession();
   const router = useRouter();
   const [gameState, setGameState] = useState<GameState>({
@@ -33,7 +34,6 @@ export default function ShowPage() {
   const [winner, setWinner] = useState<string | null>(null);
   const [tie, setTie] = useState<string[] | null>(null);
   const [showWinnerModal, setShowWinnerModal] = useState<boolean>(false);
-  const [showWinnerConfetti, setShowWinnerConfetti] = useState<boolean>(false);
   const [showTieModal, setShowTieModal] = useState<boolean>(false);
   const [updatedWinnerTie, setUpdatedWinnerTie] = useState<boolean>(false);
   const [showQRCode, setShowQRCode] = useState(false);
@@ -287,14 +287,12 @@ export default function ShowPage() {
   useEffect(() => {
     if (winner) {
       setShowWinnerModal(true);
-      setShowWinnerConfetti(false);
       const timer = setTimeout(() => {
         setShowWinnerModal(false);
       }, 180000);
       return () => clearTimeout(timer);
     } else {
       setShowWinnerModal(false);
-      setShowWinnerConfetti(false);
     }
   }, [winner]);
 
@@ -363,7 +361,6 @@ export default function ShowPage() {
         <WinnerModal
           winner={winner}
           onClose={() => setShowWinnerModal(false)}
-          onRevealStart={() => setShowWinnerConfetti(true)}
         />
       )}
 
@@ -373,8 +370,8 @@ export default function ShowPage() {
       )}
 
       <div className="min-h-screen relative z-10 text-gray-800">
-        {/* 全屏彩带效果 */}
-        {winner && showWinnerConfetti && (
+        {/* 奶龙主题：全屏烟花 */}
+        {winner && isNailongTheme && (
           <Confetti
             width={typeof window !== "undefined" ? window.innerWidth : 0}
             height={typeof window !== "undefined" ? window.innerHeight : 0}
@@ -431,6 +428,7 @@ export default function ShowPage() {
                 winner={winnerForGameContent}
                 tie={tie}
                 updatedWinnerTie={updatedWinnerTie}
+                hideTiePanel={showTieModal}
               />
             )}
           </div>
