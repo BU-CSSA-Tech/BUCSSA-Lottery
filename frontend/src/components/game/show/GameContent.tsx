@@ -27,35 +27,43 @@ export default function GameContent({
 }: GameContentProps) {
   const pack = getThemePack();
   const isNailong = getThemeFromEnv() === "nailong";
+  const isQuestionActive =
+    gameState?.status === "playing" && !!gameState.currentQuestion;
 
   return (
-    <div className="w-full space-y-6">
+    <div
+      className={
+        isQuestionActive
+          ? "flex h-full min-h-0 w-full flex-1 flex-col gap-[3vh]"
+          : "flex w-full flex-col items-center gap-8"
+      }
+    >
       {/* 游戏统计栏 - 胶囊状横向排列 */}
       {gameState && (
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="flex flex-wrap justify-center gap-12 mb-12"
+          className="flex shrink-0 flex-wrap justify-center gap-3"
         >
-          <div className="theme-pill">
-            <Trophy className="w-6 h-6 text-amber-600 shrink-0" />
-            <span className="text-gray-800 font-semibold text-2xl">第 {gameState.round} 轮</span>
+          <div className="theme-pill !px-5 !py-[0.7vh]">
+            <Trophy className="h-[1.1em] w-[1.1em] text-amber-600 shrink-0" />
+            <span className="text-gray-800 font-semibold leading-none text-[clamp(0.95rem,1.8vh,1.35rem)]">第 {gameState.round} 轮</span>
           </div>
-          <div className="theme-pill">
-            <div className="w-4 h-4 rounded-full bg-green-500 shrink-0" />
-            <span className="text-gray-800 font-semibold text-2xl">存活: {gameState.survivorsCount}</span>
+          <div className="theme-pill !px-5 !py-[0.7vh]">
+            <div className="h-3 w-3 rounded-full bg-green-500 shrink-0" />
+            <span className="text-gray-800 font-semibold leading-none text-[clamp(0.95rem,1.8vh,1.35rem)]">存活: {gameState.survivorsCount}</span>
           </div>
-          <div className="theme-pill">
-            <UserX className="w-6 h-6 text-red-500 shrink-0" />
-            <span className="text-gray-800 font-semibold text-2xl">淘汰: {gameState.eliminatedCount}</span>
+          <div className="theme-pill !px-5 !py-[0.7vh]">
+            <UserX className="h-[1.1em] w-[1.1em] text-red-500 shrink-0" />
+            <span className="text-gray-800 font-semibold leading-none text-[clamp(0.95rem,1.8vh,1.35rem)]">淘汰: {gameState.eliminatedCount}</span>
           </div>
-          <div className="theme-pill">
-            <Users className="w-6 h-6 text-slate-600 shrink-0" />
-            <span className="text-gray-800 font-semibold text-2xl">总数: {(gameState.survivorsCount || 0) + (gameState.eliminatedCount || 0)}</span>
+          <div className="theme-pill !px-5 !py-[0.7vh]">
+            <Users className="h-[1.1em] w-[1.1em] text-slate-600 shrink-0" />
+            <span className="text-gray-800 font-semibold leading-none text-[clamp(0.95rem,1.8vh,1.35rem)]">总数: {(gameState.survivorsCount || 0) + (gameState.eliminatedCount || 0)}</span>
           </div>
-          <div className="theme-pill">
-            <Clock className="w-6 h-6 text-slate-600 shrink-0" />
-            <span className={`font-semibold text-2xl ${frontendTimeLeft <= 10 ? "text-red-500 animate-pulse" : "text-gray-800"}`}>
+          <div className="theme-pill !px-5 !py-[0.7vh]">
+            <Clock className="h-[1.1em] w-[1.1em] text-slate-600 shrink-0" />
+            <span className={`font-semibold leading-none text-[clamp(0.95rem,1.8vh,1.35rem)] ${frontendTimeLeft <= 10 ? "text-red-500 animate-pulse" : "text-gray-800"}`}>
               {formatTime(frontendTimeLeft)}
             </span>
           </div>
@@ -67,37 +75,37 @@ export default function GameContent({
         <motion.div
           initial={{ opacity: 0, scale: 0.95 }}
           animate={{ opacity: 1, scale: 1 }}
-          className="theme-panel p-8 space-y-8"
+          className="theme-panel flex min-h-0 w-full flex-1 flex-col justify-evenly px-8 py-[3vh]"
         >
-          <div className="text-center mb-8 flex flex-col items-center justify-center space-y-8">
-            <div className="flex items-center gap-4 bg-amber-100/80 rounded-full px-5 py-2">
-              <Trophy className="w-6 h-6 text-amber-700" />
-              <p className="text-gray-800 text-2xl font-semibold">
+          <div className="flex w-full shrink-0 flex-col items-center gap-[2.5vh] text-center">
+            <div className="flex items-center gap-4 rounded-full bg-amber-100/80 px-8 py-[1vh]">
+              <Trophy className="h-[1.2em] w-[1.2em] text-amber-700" />
+              <p className="font-semibold leading-none text-gray-800 text-[clamp(1.25rem,2.8vh,2rem)]">
                 第 {gameState.round} 题
               </p>
             </div>
-            <h2 className="text-6xl font-light text-gray-800">
+            <h2 className="w-full font-light leading-tight text-gray-800 text-[clamp(2.5rem,6.5vh,4.5rem)]">
               {gameState.currentQuestion.question}
             </h2>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="flex w-full shrink-0 flex-wrap items-center justify-center gap-6 md:gap-10">
             <div
               className={
                 isNailong
-                  ? "theme-show-option rounded-xl p-8"
-                  : "rounded-xl p-8 bg-green-50/90 border border-green-200/60"
+                  ? "theme-show-option w-fit max-w-2xl rounded-2xl px-8 py-[2vh]"
+                  : "w-fit max-w-2xl rounded-2xl border border-green-200/60 bg-green-50/90 px-8 py-[2vh]"
               }
             >
-              <div className="flex items-center gap-4 justify-center">
+              <div className="flex items-center justify-center gap-5">
                 {isNailong ? (
-                  <p className="theme-show-option-letter font-bold shrink-0">A</p>
+                  <p className="theme-show-option-letter shrink-0 font-bold !leading-none !text-[clamp(3rem,7vh,5rem)]">A</p>
                 ) : (
-                  <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-green-100">
-                    <p className="font-bold text-4xl text-green-600">A</p>
+                  <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-green-100 md:h-20 md:w-20">
+                    <p className="font-bold text-green-600 !leading-none !text-[clamp(2rem,4.5vh,3.5rem)]">A</p>
                   </div>
                 )}
-                <p className="text-gray-800 text-3xl md:text-4xl font-medium">
+                <p className="text-center font-medium leading-snug text-gray-800 text-[clamp(1.875rem,4vh,3rem)]">
                   {gameState.currentQuestion?.optionA}
                 </p>
               </div>
@@ -106,37 +114,36 @@ export default function GameContent({
             <div
               className={
                 isNailong
-                  ? "theme-show-option rounded-xl p-8"
-                  : "rounded-xl p-8 bg-red-50/90 border border-red-200/60"
+                  ? "theme-show-option w-fit max-w-2xl rounded-2xl px-8 py-[2vh]"
+                  : "w-fit max-w-2xl rounded-2xl border border-red-200/60 bg-red-50/90 px-8 py-[2vh]"
               }
             >
-              <div className="flex items-center gap-4 justify-center">
+              <div className="flex items-center justify-center gap-5">
                 {isNailong ? (
-                  <p className="theme-show-option-letter font-bold shrink-0">B</p>
+                  <p className="theme-show-option-letter shrink-0 font-bold !leading-none !text-[clamp(3rem,7vh,5rem)]">B</p>
                 ) : (
-                  <div className="w-12 h-12 rounded-lg flex items-center justify-center bg-red-100">
-                    <p className="font-bold text-4xl text-red-600">B</p>
+                  <div className="flex h-16 w-16 items-center justify-center rounded-lg bg-red-100 md:h-20 md:w-20">
+                    <p className="font-bold text-red-600 !leading-none !text-[clamp(2rem,4.5vh,3.5rem)]">B</p>
                   </div>
                 )}
-                <p className="text-gray-800 text-3xl md:text-4xl font-medium">
+                <p className="text-center font-medium leading-snug text-gray-800 text-[clamp(1.875rem,4vh,3rem)]">
                   {gameState.currentQuestion?.optionB}
                 </p>
               </div>
             </div>
           </div>
 
-          {/* 倒计时 */}
-          <div className="text-center flex items-center justify-center">
+          <div className="flex w-full shrink-0 items-center justify-center text-center">
             <div
               className={
                 isNailong
-                  ? `theme-show-countdown text-8xl font-bold rounded-full w-40 h-40 flex items-center justify-center border-4 ${
+                  ? `theme-show-countdown flex items-center justify-center rounded-full border-4 font-bold !leading-none !text-[clamp(2.5rem,6.5vh,4.5rem)] h-[clamp(5rem,13vh,7.5rem)] w-[clamp(5rem,13vh,7.5rem)] ${
                       frontendTimeLeft <= 10 ? "theme-show-countdown-urgent animate-pulse" : ""
                     }`
-                  : `text-8xl font-bold rounded-full w-40 h-40 flex items-center justify-center border-4 ${
+                  : `flex items-center justify-center rounded-full border-4 font-bold !leading-none !text-[clamp(2.5rem,6.5vh,4.5rem)] h-[clamp(5rem,13vh,7.5rem)] w-[clamp(5rem,13vh,7.5rem)] ${
                       frontendTimeLeft <= 10
-                        ? "text-red-500 animate-pulse border-red-400/60 bg-red-50/80"
-                        : "text-amber-600 border-amber-400/60 bg-amber-50/80"
+                        ? "animate-pulse border-red-400/60 bg-red-50/80 text-red-500"
+                        : "border-amber-400/60 bg-amber-50/80 text-amber-600"
                     }`
               }
             >
@@ -151,7 +158,7 @@ export default function GameContent({
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
-          className="theme-panel shadow-red-down px-2 py-12 flex items-center justify-center gap-16"
+          className="theme-panel shadow-red-down flex items-center justify-center gap-16 px-2 py-12"
         >
           <div className="flex flex-col items-center gap-4 justify-center">
             <div className="flex items-center gap-3">

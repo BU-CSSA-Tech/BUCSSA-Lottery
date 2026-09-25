@@ -99,7 +99,7 @@ const THEME_PACKS: Record<ThemeName, ThemePack> = {
     waitingDecor: null,
     revealImage: null,
     bgm: "/nailong/nailongbgm.mp3",
-    questionBgm: "/nailong/nailongbgm.mp3",
+    questionBgm: "/nailong/doudizhu1.mp3",
     gong: SHARED_SHOW_AUDIO.gong,
     winner: "/nailong/naiwadaxiao.mp3",
     tie: "/nailong/naiwadaxiao.mp3",
