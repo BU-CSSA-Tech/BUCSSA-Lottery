@@ -313,6 +313,8 @@ export default function ShowPage() {
   const totalPlayers =
     (gameState?.survivorsCount || 0) + (gameState?.eliminatedCount || 0);
   const winnerForGameContent = showWinnerModal ? null : winner;
+  const isQuestionActive =
+    gameState?.status === "playing" && !!gameState.currentQuestion;
 
   const handleToggleSound = () => setSoundEnabled((prev) => !prev);
 
@@ -369,7 +371,7 @@ export default function ShowPage() {
         <TieModal tie={tie} onClose={() => setShowTieModal(false)} />
       )}
 
-      <div className="min-h-screen relative z-10 text-gray-800">
+      <div className="fixed inset-0 z-10 overflow-hidden text-gray-800">
         {/* 奶龙主题：全屏烟花 */}
         {winner && isNailongTheme && (
           <Confetti
@@ -407,11 +409,29 @@ export default function ShowPage() {
           <QRCodeModal onClose={() => setShowQRCode(false)} />
         )}
 
-        {/* 主内容区 - 始终居中显示 */}
-        <div className="min-h-screen flex items-center justify-center px-4 py-8">
-          <div className="w-full max-w-6xl flex flex-col items-center gap-16">
+        {/* 主内容区：准备中用紧凑布局，答题中用大框布局 */}
+        <div
+          className={
+            isQuestionActive
+              ? "flex h-full min-h-0 flex-col items-center justify-center px-8 py-[2vh] lg:px-16"
+              : "flex h-full items-center justify-center px-4 py-8"
+          }
+        >
+          <div
+            className={
+              isQuestionActive
+                ? "flex h-[88vh] max-h-full w-full flex-col gap-[3vh]"
+                : "flex w-full max-w-6xl flex-col items-center gap-16"
+            }
+          >
             {/* 头部标题 */}
-            <h1 className="text-6xl font-bold theme-title">
+            <h1
+              className={
+                isQuestionActive
+                  ? "shrink-0 text-center text-6xl font-bold leading-none theme-title"
+                  : "text-center text-6xl font-bold theme-title"
+              }
+            >
               {getLotteryTitle()}
             </h1>
 
@@ -421,6 +441,17 @@ export default function ShowPage() {
                 loginCode={loginCode}
                 totalPlayers={totalPlayers}
               />
+            ) : isQuestionActive ? (
+              <div className="flex min-h-0 w-full flex-1 flex-col">
+                <GameContent
+                  gameState={gameState}
+                  frontendTimeLeft={frontendTimeLeft}
+                  winner={winnerForGameContent}
+                  tie={tie}
+                  updatedWinnerTie={updatedWinnerTie}
+                  hideTiePanel={showTieModal}
+                />
+              </div>
             ) : (
               <GameContent
                 gameState={gameState}
