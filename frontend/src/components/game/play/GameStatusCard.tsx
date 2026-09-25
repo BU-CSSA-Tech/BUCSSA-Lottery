@@ -164,7 +164,7 @@ function OptionButton({
       <button
         type="button"
         onClick={onClick}
-        className="theme-option-btn w-24 h-24 md:w-56 md:h-24 text-gray-800 text-4xl font-bold"
+        className="theme-option-btn w-48 h-32 md:w-72 md:h-36 text-gray-800 text-5xl font-bold"
       >
         {label}
       </button>

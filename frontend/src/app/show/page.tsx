@@ -17,6 +17,8 @@ import Confetti from "react-confetti";
 import { SPRING_CONFETTI_COLORS } from "@/lib/confetti-colors";
 import { createThemeAudio, getLotteryTitle, getThemeFromEnv, getThemePack, usesLoginCodeAuth } from "@/lib/theme";
 
+const SHOW_SOUND_STORAGE_KEY = "lottery-show-sound-enabled";
+
 export default function ShowPage() {
   const isNailongTheme = getThemeFromEnv() === "nailong";
   const { data: session, status } = useSession();
@@ -39,6 +41,7 @@ export default function ShowPage() {
   const [showQRCode, setShowQRCode] = useState(false);
   const [connectionFailed, setConnectionFailed] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(false);
+  const [soundReady, setSoundReady] = useState(false);
   const [loginCode, setLoginCode] = useState<LoginCodePayload | null>(null);
 
   const socketRef = useRef<Socket | null>(null);
@@ -47,6 +50,7 @@ export default function ShowPage() {
   const questionBgmRef = useRef<HTMLAudioElement | null>(null);
   const gongRef = useRef<HTMLAudioElement | null>(null);
   const currentPhaseRef = useRef<"bgm" | "question" | "none">("bgm");
+  const autoplayUnlockRef = useRef<(() => void) | null>(null);
 
   // 前端倒计时状态
   const [frontendTimeLeft, setFrontendTimeLeft] = useState<number>(0);
@@ -90,19 +94,69 @@ export default function ShowPage() {
     };
   }, []);
 
-  // 声音开关
+  const pauseShowAudio = () => {
+    bgmRef.current?.pause();
+    questionBgmRef.current?.pause();
+    gongRef.current?.pause();
+  };
+
+  const phaseAudio = () => {
+    if (currentPhaseRef.current === "question") return questionBgmRef.current;
+    if (currentPhaseRef.current === "bgm") return bgmRef.current;
+    return null;
+  };
+
+  const clearAutoplayUnlock = () => {
+    autoplayUnlockRef.current?.();
+    autoplayUnlockRef.current = null;
+  };
+
+  const startPhaseAudio = () => {
+    if (!soundEnabledRef.current || currentPhaseRef.current === "none") return;
+    if (currentPhaseRef.current === "bgm") questionBgmRef.current?.pause();
+    if (currentPhaseRef.current === "question") bgmRef.current?.pause();
+    const audio = phaseAudio();
+    if (!audio) return;
+    audio.play().then(() => {
+      clearAutoplayUnlock();
+    }).catch(() => {
+      if (autoplayUnlockRef.current) return;
+      const unlock = (event: Event) => {
+        const target = event.target;
+        if (target instanceof Element && target.closest("[data-sound-toggle]")) return;
+        clearAutoplayUnlock();
+        if (soundEnabledRef.current) startPhaseAudio();
+      };
+      autoplayUnlockRef.current = () => {
+        window.removeEventListener("pointerdown", unlock, true);
+        window.removeEventListener("keydown", unlock, true);
+      };
+      window.addEventListener("pointerdown", unlock, true);
+      window.addEventListener("keydown", unlock, true);
+    });
+  };
+
+  // 刷新后恢复上次的声音开关，避免每次重载都回到静音
   useEffect(() => {
+    const saved = localStorage.getItem(SHOW_SOUND_STORAGE_KEY) === "1";
+    soundEnabledRef.current = saved;
+    setSoundEnabled(saved);
+    setSoundReady(true);
+    return () => clearAutoplayUnlock();
+  }, []);
+
+  // 声音开关。刷新后的 play() 没有用户点击，浏览器会拒绝，等下一次点击再补播。
+  useEffect(() => {
+    if (!soundReady) return;
     soundEnabledRef.current = soundEnabled;
+    localStorage.setItem(SHOW_SOUND_STORAGE_KEY, soundEnabled ? "1" : "0");
     if (!soundEnabled) {
-      bgmRef.current?.pause();
-      questionBgmRef.current?.pause();
-      gongRef.current?.pause();
-    } else if (currentPhaseRef.current === "bgm") {
-      bgmRef.current?.play().catch(() => {});
-    } else if (currentPhaseRef.current === "question") {
-      questionBgmRef.current?.play().catch(() => {});
+      clearAutoplayUnlock();
+      pauseShowAudio();
+      return;
     }
-  }, [soundEnabled]);
+    startPhaseAudio();
+  }, [soundEnabled, soundReady]);
 
   // Socket.IO 连接
   useEffect(() => {
@@ -177,6 +231,17 @@ export default function ShowPage() {
         setWinner(data.winner);
         setTie(null);
       }
+      if (data.status === "playing" && data.currentQuestion) {
+        currentPhaseRef.current = "question";
+      } else if (data.status === "waiting") {
+        currentPhaseRef.current = "bgm";
+      } else if (data.status === "ended") {
+        currentPhaseRef.current = "none";
+        bgmRef.current?.pause();
+        questionBgmRef.current?.pause();
+        return;
+      }
+      startPhaseAudio();
     });
 
     socket.on("new_question", (data: GameState) => {
@@ -316,7 +381,23 @@ export default function ShowPage() {
   const isQuestionActive =
     gameState?.status === "playing" && !!gameState.currentQuestion;
 
-  const handleToggleSound = () => setSoundEnabled((prev) => !prev);
+  const handleToggleSound = () => {
+    const audio = phaseAudio();
+    // 开关显示为开，但刷新后的自动播放被浏览器拦住了。这次点击用来把声音播出来。
+    if (soundEnabled && currentPhaseRef.current !== "none" && audio?.paused !== false) {
+      clearAutoplayUnlock();
+      startPhaseAudio();
+      return;
+    }
+    const next = !soundEnabled;
+    soundEnabledRef.current = next;
+    setSoundEnabled(next);
+    if (next) startPhaseAudio();
+    else {
+      clearAutoplayUnlock();
+      pauseShowAudio();
+    }
+  };
 
   // 退出登录处理函数
   const handleLogout = async () => {
@@ -362,13 +443,18 @@ export default function ShowPage() {
       {showWinnerModal && winner && (
         <WinnerModal
           winner={winner}
+          soundEnabled={soundEnabled}
           onClose={() => setShowWinnerModal(false)}
         />
       )}
 
       {/* 全屏平局 VS 模态框 */}
       {showTieModal && tie && tie.length >= 2 && (
-        <TieModal tie={tie} onClose={() => setShowTieModal(false)} />
+        <TieModal
+          tie={tie}
+          soundEnabled={soundEnabled}
+          onClose={() => setShowTieModal(false)}
+        />
       )}
 
       <div className="fixed inset-0 z-10 overflow-hidden text-gray-800">
@@ -413,28 +499,20 @@ export default function ShowPage() {
         <div
           className={
             isQuestionActive
-              ? "flex h-full min-h-0 flex-col items-center justify-center px-8 py-[2vh] lg:px-16"
-              : "flex h-full items-center justify-center px-4 py-8"
+              ? "flex h-full min-h-0 w-full flex-col items-center justify-center gap-8 px-8 py-8 lg:px-16"
+              : "flex h-full w-full flex-col items-center justify-center gap-12 px-4 py-8"
           }
         >
+          <h1 className="w-full shrink-0 whitespace-nowrap text-center font-bold leading-none tracking-normal theme-title text-[clamp(2rem,4.6vw,6rem)]">
+            {getLotteryTitle()}
+          </h1>
           <div
             className={
               isQuestionActive
-                ? "flex h-[88vh] max-h-full w-full flex-col gap-[3vh]"
-                : "flex w-full max-w-6xl flex-col items-center gap-16"
+                ? "flex w-full max-w-[96rem] flex-col items-center"
+                : "flex w-full max-w-6xl flex-col items-center"
             }
           >
-            {/* 头部标题 */}
-            <h1
-              className={
-                isQuestionActive
-                  ? "shrink-0 text-center text-6xl font-bold leading-none theme-title"
-                  : "text-center text-6xl font-bold theme-title"
-              }
-            >
-              {getLotteryTitle()}
-            </h1>
-
             {usesLoginCodeAuth() && loginCodeActive ? (
               <LoginCodeDisplay
                 active={true}
@@ -442,7 +520,7 @@ export default function ShowPage() {
                 totalPlayers={totalPlayers}
               />
             ) : isQuestionActive ? (
-              <div className="flex min-h-0 w-full flex-1 flex-col">
+              <div className="flex w-full flex-col">
                 <GameContent
                   gameState={gameState}
                   frontendTimeLeft={frontendTimeLeft}

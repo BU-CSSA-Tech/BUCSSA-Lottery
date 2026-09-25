@@ -22,13 +22,14 @@ export default function ShowHeader({ socket, soundEnabled, onToggleSound, onShow
         )}
       </div>
       <button
+        data-sound-toggle
         onClick={onToggleSound}
         className={`p-2 rounded-lg transition-all border shadow-sm ${
           soundEnabled
             ? "bg-amber-100/75 border-amber-300/60 text-amber-700"
             : "theme-icon-btn"
         }`}
-        title={soundEnabled ? "暂停音乐" : "播放音乐"}
+        title={soundEnabled ? "关闭声音" : "打开声音"}
       >
         {soundEnabled ? <Volume2 className="w-5 h-5" /> : <VolumeX className="w-5 h-5" />}
       </button>

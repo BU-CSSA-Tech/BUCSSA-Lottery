@@ -7,13 +7,28 @@ import { createThemeAudio, getThemeFromEnv, getThemePack } from "@/lib/theme";
 
 interface TieModalProps {
   tie: string[];
+  soundEnabled: boolean;
   onClose: () => void;
 }
 
 const TIE_SOUND_PLAYS = 3;
 
-function useTieSound() {
+function EmailLines({ email }: { email: string }) {
+  const at = email.indexOf("@");
+  if (at <= 0) return <>{email}</>;
+
+  return (
+    <span className="block leading-tight">
+      <span className="block">{email.slice(0, at)}</span>
+      <span className="block">{email.slice(at)}</span>
+    </span>
+  );
+}
+
+function useTieSound(soundEnabled: boolean) {
   useEffect(() => {
+    if (!soundEnabled) return;
+
     const audio = createThemeAudio(getThemePack().tie, { volume: 1 });
     if (!audio) return;
 
@@ -36,7 +51,7 @@ function useTieSound() {
       audio.pause();
       audio.removeEventListener("ended", onEnded);
     };
-  }, []);
+  }, [soundEnabled]);
 }
 
 function NailongTieContent({ tie }: { tie: string[] }) {
@@ -59,8 +74,8 @@ function NailongTieContent({ tie }: { tie: string[] }) {
         animate={{ x: 0, opacity: 1 }}
         transition={{ delay: 0.3, duration: 0.8 }}
       >
-        <div className="theme-title text-5xl lg:text-6xl font-bold whitespace-nowrap">
-          {tie[0] || ""}
+        <div className="theme-title text-5xl lg:text-6xl font-bold">
+          <EmailLines email={tie[0] || ""} />
         </div>
         <div className="theme-title text-3xl font-semibold">
           选手 1
@@ -73,8 +88,8 @@ function NailongTieContent({ tie }: { tie: string[] }) {
         animate={{ x: 0, opacity: 1 }}
         transition={{ delay: 0.3, duration: 0.8 }}
       >
-        <div className="theme-title text-5xl lg:text-6xl font-bold whitespace-nowrap">
-          {tie[1] || ""}
+        <div className="theme-title text-5xl lg:text-6xl font-bold">
+          <EmailLines email={tie[1] || ""} />
         </div>
         <div className="theme-title text-3xl font-semibold">
           选手 2
@@ -109,7 +124,7 @@ function DefaultTieContent({ tie }: { tie: string[] }) {
         transition={{ delay: 0.3, duration: 0.8 }}
       >
         <motion.div
-          className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-red-500 to-red-600 whitespace-nowrap overflow-x-auto"
+          className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-red-400 via-red-500 to-red-600"
           animate={{
             textShadow: [
               "0 0 20px #ef4444",
@@ -123,7 +138,7 @@ function DefaultTieContent({ tie }: { tie: string[] }) {
             repeatType: "reverse",
           }}
         >
-          {tie[0] || ""}
+          <EmailLines email={tie[0] || ""} />
         </motion.div>
         <div className="text-3xl text-red-300 font-semibold">选手 1</div>
       </motion.div>
@@ -135,7 +150,7 @@ function DefaultTieContent({ tie }: { tie: string[] }) {
         transition={{ delay: 0.3, duration: 0.8 }}
       >
         <motion.div
-          className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 via-green-500 to-green-600 whitespace-nowrap overflow-x-auto"
+          className="text-6xl font-bold text-transparent bg-clip-text bg-gradient-to-r from-green-400 via-green-500 to-green-600"
           animate={{
             textShadow: [
               "0 0 20px #22c55e",
@@ -149,7 +164,7 @@ function DefaultTieContent({ tie }: { tie: string[] }) {
             repeatType: "reverse",
           }}
         >
-          {tie[1] || ""}
+          <EmailLines email={tie[1] || ""} />
         </motion.div>
         <div className="text-3xl text-green-300 font-semibold">选手 2</div>
       </motion.div>
@@ -157,9 +172,9 @@ function DefaultTieContent({ tie }: { tie: string[] }) {
   );
 }
 
-export default function TieModal({ tie, onClose }: TieModalProps) {
+export default function TieModal({ tie, soundEnabled, onClose }: TieModalProps) {
   const isNailong = getThemeFromEnv() === "nailong";
-  useTieSound();
+  useTieSound(soundEnabled);
 
   return (
     <div

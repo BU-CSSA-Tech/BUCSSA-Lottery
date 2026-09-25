@@ -140,28 +140,6 @@ const BattleEffect: React.FC<BattleEffectProps> = ({ isActive }) => {
         </motion.div>
       ))}
 
-      {/* 火炮轰炸背景 */}
-      <motion.div
-        className="absolute inset-0 bg-gradient-to-b from-red-900/30 via-orange-900/20 to-transparent"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{ duration: 0.3 }}
-      />
-
-      {/* 屏幕震动效果 */}
-      <motion.div
-        className="absolute inset-0 bg-red-500/10"
-        animate={{
-          x: [0, -2, 2, -1, 1, 0],
-          y: [0, -1, 1, -2, 2, 0]
-        }}
-        transition={{
-          duration: 0.5,
-          repeat: 3,
-          ease: "easeInOut"
-        }}
-      />
     </div>
   );
 };

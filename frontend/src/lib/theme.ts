@@ -96,7 +96,7 @@ const THEME_PACKS: Record<ThemeName, ThemePack> = {
     optionB: null,
     waitGif: null,
     winBg: null,
-    waitingDecor: null,
+    waitingDecor: "/mid-autumn/dog-eating-mooncake.png",
     revealImage: null,
     bgm: "/nailong/nailongbgm.mp3",
     questionBgm: "/nailong/doudizhu1.mp3",

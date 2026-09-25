@@ -48,6 +48,7 @@ export default function WinnerModalPreviewPage() {
       {showModal && (
         <WinnerModal
           winner={winnerName || "测试玩家"}
+          soundEnabled
           onClose={() => setShowModal(false)}
         />
       )}

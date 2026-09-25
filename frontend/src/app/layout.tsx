@@ -1,6 +1,7 @@
 import type { Metadata } from 'next'
 import './globals.css'
 import Providers from '@/components/Providers'
+import { Footer } from '@/components/ui/Footer'
 import { getLotteryTitle, getThemeFromEnv } from '@/lib/theme'
 
 export const metadata: Metadata = {
@@ -20,6 +21,7 @@ export default function RootLayout({
       <body className="theme-font-body antialiased" data-theme={activeTheme}>
         <Providers>
           {children}
+          <Footer />
         </Providers>
       </body>
     </html>

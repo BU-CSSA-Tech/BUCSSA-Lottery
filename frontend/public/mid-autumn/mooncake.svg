@@ -1,0 +1,93 @@
+<!-- Flat top-view mooncake for the show countdown -->
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200">
+  <defs>
+    <clipPath id="disc">
+      <circle cx="100" cy="100" r="96"/>
+    </clipPath>
+  </defs>
+  <circle cx="100" cy="100" r="98" fill="#e7ae4b"/>
+  <circle cx="100" cy="100" r="96" fill="#f6d48a"/>
+  <g clip-path="url(#disc)" fill="#f8d78a" opacity="0.95">
+    <circle cx="190.00" cy="100.00" r="7.2"/>
+    <circle cx="188.63" cy="115.63" r="7.2"/>
+    <circle cx="184.57" cy="130.78" r="7.2"/>
+    <circle cx="177.94" cy="145.00" r="7.2"/>
+    <circle cx="168.94" cy="157.85" r="7.2"/>
+    <circle cx="157.85" cy="168.94" r="7.2"/>
+    <circle cx="145.00" cy="177.94" r="7.2"/>
+    <circle cx="130.78" cy="184.57" r="7.2"/>
+    <circle cx="115.63" cy="188.63" r="7.2"/>
+    <circle cx="100.00" cy="190.00" r="7.2"/>
+    <circle cx="84.37" cy="188.63" r="7.2"/>
+    <circle cx="69.22" cy="184.57" r="7.2"/>
+    <circle cx="55.00" cy="177.94" r="7.2"/>
+    <circle cx="42.15" cy="168.94" r="7.2"/>
+    <circle cx="31.06" cy="157.85" r="7.2"/>
+    <circle cx="22.06" cy="145.00" r="7.2"/>
+    <circle cx="15.43" cy="130.78" r="7.2"/>
+    <circle cx="11.37" cy="115.63" r="7.2"/>
+    <circle cx="10.00" cy="100.00" r="7.2"/>
+    <circle cx="11.37" cy="84.37" r="7.2"/>
+    <circle cx="15.43" cy="69.22" r="7.2"/>
+    <circle cx="22.06" cy="55.00" r="7.2"/>
+    <circle cx="31.06" cy="42.15" r="7.2"/>
+    <circle cx="42.15" cy="31.06" r="7.2"/>
+    <circle cx="55.00" cy="22.06" r="7.2"/>
+    <circle cx="69.22" cy="15.43" r="7.2"/>
+    <circle cx="84.37" cy="11.37" r="7.2"/>
+    <circle cx="100.00" cy="10.00" r="7.2"/>
+    <circle cx="115.63" cy="11.37" r="7.2"/>
+    <circle cx="130.78" cy="15.43" r="7.2"/>
+    <circle cx="145.00" cy="22.06" r="7.2"/>
+    <circle cx="157.85" cy="31.06" r="7.2"/>
+    <circle cx="168.94" cy="42.15" r="7.2"/>
+    <circle cx="177.94" cy="55.00" r="7.2"/>
+    <circle cx="184.57" cy="69.22" r="7.2"/>
+    <circle cx="188.63" cy="84.37" r="7.2"/>
+  </g>
+  <circle cx="100" cy="100" r="78" fill="none" stroke="#d8923a" stroke-width="2.2"/>
+  <circle cx="100" cy="100" r="72" fill="none" stroke="#f8e2a8" stroke-width="1.4"/>
+  <g fill="#e0a045" transform="translate(100 100)">
+    <ellipse rx="11" ry="24" cy="-40" transform="rotate(0)"/>
+    <ellipse rx="11" ry="24" cy="-40" transform="rotate(45)"/>
+    <ellipse rx="11" ry="24" cy="-40" transform="rotate(90)"/>
+    <ellipse rx="11" ry="24" cy="-40" transform="rotate(135)"/>
+    <ellipse rx="11" ry="24" cy="-40" transform="rotate(180)"/>
+    <ellipse rx="11" ry="24" cy="-40" transform="rotate(225)"/>
+    <ellipse rx="11" ry="24" cy="-40" transform="rotate(270)"/>
+    <ellipse rx="11" ry="24" cy="-40" transform="rotate(315)"/>
+  </g>
+  <g fill="#f8dd9a" transform="translate(100 100)">
+    <ellipse rx="6.2" ry="16" cy="-40" transform="rotate(0)"/>
+    <ellipse rx="6.2" ry="16" cy="-40" transform="rotate(45)"/>
+    <ellipse rx="6.2" ry="16" cy="-40" transform="rotate(90)"/>
+    <ellipse rx="6.2" ry="16" cy="-40" transform="rotate(135)"/>
+    <ellipse rx="6.2" ry="16" cy="-40" transform="rotate(180)"/>
+    <ellipse rx="6.2" ry="16" cy="-40" transform="rotate(225)"/>
+    <ellipse rx="6.2" ry="16" cy="-40" transform="rotate(270)"/>
+    <ellipse rx="6.2" ry="16" cy="-40" transform="rotate(315)"/>
+  </g>
+  <g fill="#e7b25a" transform="translate(100 100)">
+    <ellipse rx="7" ry="14" cy="-20" transform="rotate(22.5)"/>
+    <ellipse rx="7" ry="14" cy="-20" transform="rotate(67.5)"/>
+    <ellipse rx="7" ry="14" cy="-20" transform="rotate(112.5)"/>
+    <ellipse rx="7" ry="14" cy="-20" transform="rotate(157.5)"/>
+    <ellipse rx="7" ry="14" cy="-20" transform="rotate(202.5)"/>
+    <ellipse rx="7" ry="14" cy="-20" transform="rotate(247.5)"/>
+    <ellipse rx="7" ry="14" cy="-20" transform="rotate(292.5)"/>
+    <ellipse rx="7" ry="14" cy="-20" transform="rotate(337.5)"/>
+  </g>
+  <g fill="#f3d48a" transform="translate(100 100)">
+    <circle cx="20.00" cy="0.00" r="2.3"/>
+    <circle cx="14.14" cy="14.14" r="2.3"/>
+    <circle cx="0.00" cy="20.00" r="2.3"/>
+    <circle cx="-14.14" cy="14.14" r="2.3"/>
+    <circle cx="-20.00" cy="0.00" r="2.3"/>
+    <circle cx="-14.14" cy="-14.14" r="2.3"/>
+    <circle cx="-0.00" cy="-20.00" r="2.3"/>
+    <circle cx="14.14" cy="-14.14" r="2.3"/>
+  </g>
+  <circle cx="100" cy="100" r="16" fill="#fff1cc"/>
+  <circle cx="100" cy="100" r="16" fill="none" stroke="#e0a045" stroke-width="1.6"/>
+  <circle cx="100" cy="100" r="5.5" fill="#e7b25a"/>
+</svg>

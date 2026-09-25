@@ -16,8 +16,12 @@ import {
 import PlayHeader from "@/components/game/play/PlayHeader";
 import GameStatusCard from "@/components/game/play/GameStatusCard";
 import { SPRING_CONFETTI_COLORS } from "@/lib/confetti-colors";
+import { getThemeFromEnv, getThemePack } from "@/lib/theme";
+import Image from "next/image";
 
 export default function PlayPage() {
+  const pack = getThemePack();
+  const isNailong = getThemeFromEnv() === "nailong";
   const { data: session, status } = useSession();
   const [userGameState, setUserGameState] = useState<UserGameState>({
     status: "waiting",
@@ -287,6 +291,18 @@ export default function PlayPage() {
         eliminatedReason={eliminatedReason}
         onSubmitAnswer={handleSubmitAnswer}
       />
+
+      {isNailong && pack.waitingDecor && (
+        <Image
+          src={pack.waitingDecor}
+          alt="小狗正在吃月饼"
+          width={300}
+          height={300}
+          priority
+          className="pointer-events-none fixed left-10 z-20 h-auto w-60 select-none sm:left-14 sm:w-72"
+          style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 2.5rem)" }}
+        />
+      )}
     </div>
   );
 }

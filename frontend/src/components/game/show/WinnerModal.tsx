@@ -6,6 +6,7 @@ import { createThemeAudio, getThemeFromEnv, getThemePack } from "@/lib/theme";
 
 interface WinnerModalProps {
   winner: string;
+  soundEnabled: boolean;
   onClose: () => void;
   onRevealStart?: () => void;
 }
@@ -157,7 +158,7 @@ function DefaultWinnerReveal({ winner }: { winner: string }) {
   );
 }
 
-export default function WinnerModal({ winner, onClose, onRevealStart }: WinnerModalProps) {
+export default function WinnerModal({ winner, soundEnabled, onClose, onRevealStart }: WinnerModalProps) {
   const pack = getThemePack();
   const isNailong = getThemeFromEnv() === "nailong";
   const audioRef = useRef<HTMLAudioElement | null>(null);
@@ -165,6 +166,8 @@ export default function WinnerModal({ winner, onClose, onRevealStart }: WinnerMo
   const revealTriggeredRef = useRef(false);
 
   useEffect(() => {
+    if (!soundEnabled) return;
+
     const audio = createThemeAudio(pack.winner, { volume: 1 });
     audio?.play().catch(() => {});
     audioRef.current = audio;
@@ -173,7 +176,7 @@ export default function WinnerModal({ winner, onClose, onRevealStart }: WinnerMo
       audio?.pause();
       audioRef.current = null;
     };
-  }, [pack.winner]);
+  }, [pack.winner, soundEnabled]);
 
   useEffect(() => {
     if (showQuestionMark || revealTriggeredRef.current) return;
