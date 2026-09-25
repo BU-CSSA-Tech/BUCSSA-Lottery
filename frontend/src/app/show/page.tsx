@@ -51,6 +51,9 @@ export default function ShowPage() {
   const gongRef = useRef<HTMLAudioElement | null>(null);
   const currentPhaseRef = useRef<"bgm" | "question" | "none">("bgm");
   const autoplayUnlockRef = useRef<(() => void) | null>(null);
+  const gongEndedRef = useRef<(() => void) | null>(null);
+  const gongSessionRef = useRef(0);
+  const bellLockRef = useRef(false);
 
   // 前端倒计时状态
   const [frontendTimeLeft, setFrontendTimeLeft] = useState<number>(0);
@@ -85,7 +88,14 @@ export default function ShowPage() {
   useEffect(() => {
     const pack = getThemePack();
     bgmRef.current = createThemeAudio(pack.bgm, { loop: true, volume: 0.3 });
-    questionBgmRef.current = createThemeAudio(pack.questionBgm, { loop: true, volume: 0.5 });
+    const question = createThemeAudio(pack.questionBgm, { loop: true, volume: 0.5 });
+    // 钟声锁住期间，任何把斗地主重新播出来的调用都立刻停掉
+    question?.addEventListener("play", () => {
+      if (!bellLockRef.current || !question) return;
+      question.volume = 0;
+      question.pause();
+    });
+    questionBgmRef.current = question;
     gongRef.current = createThemeAudio(pack.gong, { volume: 0.7 });
     return () => {
       bgmRef.current?.pause();
@@ -111,8 +121,81 @@ export default function ShowPage() {
     autoplayUnlockRef.current = null;
   };
 
+  const silenceQuestionBgm = () => {
+    bellLockRef.current = true;
+    const audio = questionBgmRef.current;
+    if (!audio) return;
+    audio.volume = 0;
+    audio.pause();
+  };
+
+  const resumeQuestionBgm = () => {
+    if (bellLockRef.current) return;
+    if (!soundEnabledRef.current || currentPhaseRef.current !== "question") return;
+    bgmRef.current?.pause();
+    const audio = questionBgmRef.current;
+    if (!audio) return;
+    audio.loop = true;
+    audio.volume = 0.5;
+    if (audio.paused) audio.play().catch(() => {});
+  };
+
+  const clearGongEnded = () => {
+    const gong = gongRef.current;
+    if (gong && gongEndedRef.current) {
+      gong.removeEventListener("ended", gongEndedRef.current);
+    }
+    gongEndedRef.current = null;
+  };
+
+  const releaseBell = () => {
+    gongSessionRef.current += 1;
+    bellLockRef.current = false;
+    clearGongEnded();
+    if (questionBgmRef.current) questionBgmRef.current.volume = 0.5;
+  };
+
+  // 钟声单独响。这段时间斗地主静音并暂停，钟声真正播完再从原进度接着放。
+  const playRoundGong = () => {
+    const gong = gongRef.current;
+    clearGongEnded();
+    const session = ++gongSessionRef.current;
+    if (!soundEnabledRef.current || !gong) {
+      bellLockRef.current = false;
+      resumeQuestionBgm();
+      return;
+    }
+    silenceQuestionBgm();
+    let gongStarted = false;
+    const onPlaying = () => {
+      if (gongSessionRef.current !== session) return;
+      gongStarted = true;
+      silenceQuestionBgm();
+    };
+    const onEnded = () => {
+      if (gongSessionRef.current !== session || !gongStarted) return;
+      gong.removeEventListener("playing", onPlaying);
+      gong.removeEventListener("ended", onEnded);
+      gongEndedRef.current = null;
+      bellLockRef.current = false;
+      resumeQuestionBgm();
+    };
+    gongEndedRef.current = onEnded;
+    gong.addEventListener("playing", onPlaying);
+    gong.addEventListener("ended", onEnded);
+    gong.currentTime = 0;
+    gong.play().catch(() => {
+      if (gongSessionRef.current !== session) return;
+      gong.removeEventListener("playing", onPlaying);
+      clearGongEnded();
+      bellLockRef.current = false;
+      resumeQuestionBgm();
+    });
+  };
+
   const startPhaseAudio = () => {
     if (!soundEnabledRef.current || currentPhaseRef.current === "none") return;
+    if (currentPhaseRef.current === "question" && bellLockRef.current) return;
     if (currentPhaseRef.current === "bgm") questionBgmRef.current?.pause();
     if (currentPhaseRef.current === "question") bgmRef.current?.pause();
     const audio = phaseAudio();
@@ -215,10 +298,19 @@ export default function ShowPage() {
       setTie(null);
       setLoginCode(null);
       setUpdatedWinnerTie(true);
+      // 重置后回到观众进场：只在这一段放奶龙，斗地主从头再计
+      releaseBell();
       questionBgmRef.current?.pause();
+      if (questionBgmRef.current) {
+        questionBgmRef.current.currentTime = 0;
+        questionBgmRef.current.volume = 0.5;
+      }
       gongRef.current?.pause();
       currentPhaseRef.current = "bgm";
-      if (soundEnabledRef.current) bgmRef.current?.play().catch(() => {});
+      if (soundEnabledRef.current && bgmRef.current) {
+        bgmRef.current.currentTime = 0;
+        bgmRef.current.play().catch(() => {});
+      }
     });
 
     socket.on("game_state", (data: GameState) => {
@@ -231,16 +323,15 @@ export default function ShowPage() {
         setWinner(data.winner);
         setTie(null);
       }
-      if (data.status === "playing" && data.currentQuestion) {
-        currentPhaseRef.current = "question";
-      } else if (data.status === "waiting") {
-        currentPhaseRef.current = "bgm";
-      } else if (data.status === "ended") {
+      if (data.status === "ended") {
         currentPhaseRef.current = "none";
         bgmRef.current?.pause();
         questionBgmRef.current?.pause();
         return;
       }
+      // 奶龙只给开场等观众。少数派一开始（含轮次间隙、中途重连）就一直用斗地主
+      const audienceWaiting = data.status === "waiting" && (data.round ?? 0) === 0;
+      currentPhaseRef.current = audienceWaiting ? "bgm" : "question";
       startPhaseAudio();
     });
 
@@ -250,12 +341,15 @@ export default function ShowPage() {
       setGameState((prev) => (prev.status === "ended" ? prev : data));
       setFrontendTimeLeft(data.timeLeft ?? 0);
       setCountdownActive(true);
+      releaseBell();
       bgmRef.current?.pause();
       gongRef.current?.pause();
       currentPhaseRef.current = "question";
       if (soundEnabledRef.current && questionBgmRef.current) {
-        questionBgmRef.current.currentTime = 0;
-        questionBgmRef.current.play().catch(() => {});
+        questionBgmRef.current.volume = 0.5;
+        if (questionBgmRef.current.paused) {
+          questionBgmRef.current.play().catch(() => {});
+        }
       }
     });
 
@@ -264,12 +358,16 @@ export default function ShowPage() {
       setGameState((prev) => (prev.status === "ended" ? prev : data));
       setCountdownActive(false);
       setFrontendTimeLeft(0);
-      questionBgmRef.current?.pause();
-      currentPhaseRef.current = "none";
-      if (soundEnabledRef.current && gongRef.current) {
-        gongRef.current.currentTime = 0;
-        gongRef.current.play().catch(() => {});
+      if (data.status === "ended") {
+        currentPhaseRef.current = "none";
+        releaseBell();
+        questionBgmRef.current?.pause();
+      } else {
+        currentPhaseRef.current = "question";
+        bgmRef.current?.pause();
+        silenceQuestionBgm();
       }
+      playRoundGong();
     });
 
     socket.on("tie", (data: hasTie) => {
