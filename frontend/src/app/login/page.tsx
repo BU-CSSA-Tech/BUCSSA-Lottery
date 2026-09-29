@@ -88,7 +88,7 @@ export default function LoginPage() {
         maskWidth={90}
       />
       <div className="min-h-screen relative z-10">
-        <div className="h-screen flex flex-col justify-between p-4">
+        <div className="flex h-screen flex-col justify-between px-4 pb-32 pt-4">
           <div className="items-start">
             <Link href="/">
               <Button

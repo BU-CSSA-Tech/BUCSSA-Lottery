@@ -21,7 +21,7 @@ const HeroSection = ({
       <ParticleBackground />
 
       {/* 主要内容区域 - 移动端优化布局 */}
-      <div className="relative z-10 flex min-h-screen flex-col items-center px-4 pb-16 pt-24 text-center sm:pb-20 sm:pt-28">
+      <div className="relative z-10 flex min-h-screen flex-col items-center px-4 pb-24 pt-24 text-center sm:pb-28 sm:pt-28">
         <div className="fixed top-8 left-1/2 -translate-x-1/2 block md:hidden sm:top-12">
           <Image src="/bucssalogo.png" alt="logo" width={150} height={150} className="h-auto w-20 sm:w-32" />
         </div>
@@ -52,7 +52,7 @@ const HeroSection = ({
 
         {/* 规则沉底，和中间内容留出间距 */}
         <motion.div
-          className="mt-12 w-full max-w-[16.5rem] md:max-w-xs mx-auto px-2 sm:mt-16"
+          className="mt-8 w-full max-w-[16.5rem] md:max-w-xs mx-auto px-2 sm:mt-10"
           initial={false}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.8 }}

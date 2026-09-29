@@ -11,9 +11,9 @@ export default function TermPage() {
   
   return (
     <div>
-      <div className="min-h-screen relative z-10">
+      <div className="relative z-10 h-[100dvh] overflow-y-auto overscroll-y-contain">
         {/* 返回首页按钮 */}
-        <div className="absolute top-4 left-4 z-20">
+        <div className="sticky top-0 z-20 px-4 pt-4">
           <Button
             onClick={() => router.push("/")}
             variant="ghost"
@@ -26,7 +26,7 @@ export default function TermPage() {
         </div>
 
         {/* 主要内容区域 */}
-        <div className="flex min-h-screen items-center justify-center px-4 py-20">
+        <div className="mx-auto w-full max-w-2xl px-4 pb-28 pt-6">
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
