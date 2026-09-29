@@ -299,7 +299,7 @@ export default function PlayPage() {
           width={300}
           height={300}
           priority
-          className="pointer-events-none fixed left-10 z-20 h-auto w-60 select-none sm:left-14 sm:w-72"
+          className="pointer-events-none fixed left-4 z-20 h-auto w-[7.5rem] select-none sm:left-8 sm:w-36"
           style={{ bottom: "calc(env(safe-area-inset-bottom, 0px) + 2.5rem)" }}
         />
       )}

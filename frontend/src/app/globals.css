@@ -832,9 +832,39 @@
   }
 
   @media (min-width: 640px) {
+    html[data-theme="nailong"] .sm\:text-base {
+      font-size: 1.125rem !important;
+      line-height: 1.75rem !important;
+    }
+
+    html[data-theme="nailong"] .sm\:text-lg {
+      font-size: 1.25rem !important;
+      line-height: 1.75rem !important;
+    }
+
+    html[data-theme="nailong"] .sm\:text-xl {
+      font-size: 1.5rem !important;
+      line-height: 2rem !important;
+    }
+
     html[data-theme="nailong"] .sm\:text-2xl {
       font-size: 1.875rem !important;
       line-height: 2.25rem !important;
+    }
+
+    html[data-theme="nailong"] .sm\:text-3xl {
+      font-size: 2.25rem !important;
+      line-height: 2.5rem !important;
+    }
+
+    html[data-theme="nailong"] .sm\:text-4xl {
+      font-size: 3rem !important;
+      line-height: 1 !important;
+    }
+
+    html[data-theme="nailong"] .sm\:text-5xl {
+      font-size: 3.75rem !important;
+      line-height: 1 !important;
     }
   }
 
@@ -851,6 +881,21 @@
 
     html[data-theme="nailong"] .md\:text-4xl {
       font-size: 3rem !important;
+      line-height: 1 !important;
+    }
+
+    html[data-theme="nailong"] .md\:text-5xl {
+      font-size: 3.75rem !important;
+      line-height: 1 !important;
+    }
+
+    html[data-theme="nailong"] .md\:text-6xl {
+      font-size: 4.5rem !important;
+      line-height: 1 !important;
+    }
+
+    html[data-theme="nailong"] .md\:text-7xl {
+      font-size: 6rem !important;
       line-height: 1 !important;
     }
 

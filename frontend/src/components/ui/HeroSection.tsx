@@ -3,7 +3,7 @@ import ParticleBackground from "./ParticleBackground";
 import { Button } from "@/components/ui/button";
 import { GlassText } from "./glass-text";
 import Image from "next/image";
-import { getLotteryTitle } from "@/lib/theme";
+import { getThemePack } from "@/lib/theme";
 
 interface HeroSectionProps {
   currentPrize: string;
@@ -21,34 +21,38 @@ const HeroSection = ({
       <ParticleBackground />
 
       {/* 主要内容区域 - 移动端优化布局 */}
-      <div className="relative z-10 flex min-h-screen flex-col items-center justify-center px-4 py-8 sm:py-12 text-center translate-y-4 sm:translate-y-8 space-y-24 md:space-y-24">
-        <div className="fixed top-12 left-1/2 -translate-x-1/2 block md:hidden">
-          <Image src="/bucssalogo.png" alt="logo" width={150} height={150} />
+      <div className="relative z-10 flex min-h-screen flex-col items-center px-4 pb-16 pt-24 text-center sm:pb-20 sm:pt-28">
+        <div className="fixed top-8 left-1/2 -translate-x-1/2 block md:hidden sm:top-12">
+          <Image src="/bucssalogo.png" alt="logo" width={150} height={150} className="h-auto w-16 sm:w-28" />
         </div>
 
-        {/* 操作按钮 - 移动端优化 */}
+        {/* 标题和开始按钮居中，和底部规则分开 */}
         <motion.div
-          className="w-full px-4 space-y-12 md:space-y-16"
+          className="flex w-full flex-1 flex-col items-center justify-center px-2"
           initial={false}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.6 }}
         >
           <GlassText
-            className="text-5xl md:text-8xl tracking-wide md:tracking-wider"
+            className="space-y-4 leading-tight sm:space-y-6"
             variant="secondary"
             weight="light"
           >
-            {getLotteryTitle()}
+            <span className="block text-3xl tracking-wide sm:text-6xl md:text-7xl">
+              BUCSSA
+            </span>
+            <span className="block text-3xl tracking-wide sm:text-6xl md:text-7xl">
+              {getThemePack().eventName}
+            </span>
           </GlassText>
-          <Button variant="outline" size="xl" onClick={onStartGame}>
+          <Button variant="outline" size="xl" className="mt-10 max-w-full whitespace-normal text-base leading-snug sm:mt-14 sm:text-xl md:text-3xl" onClick={onStartGame}>
             开始答题, 豪取大奖吧！
           </Button>
-          
         </motion.div>
 
-        {/* 规则栏目 - 移动端优化 */}
+        {/* 规则沉底，和中间内容留出间距 */}
         <motion.div
-          className="w-full max-w-xs md:max-w-sm mx-auto px-4"
+          className="mt-12 w-full max-w-xs md:max-w-sm mx-auto px-4 sm:mt-16"
           initial={false}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6, delay: 0.8 }}

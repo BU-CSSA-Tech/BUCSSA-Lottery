@@ -23,7 +23,7 @@ export default function GameStatusCard({
   const selectedImage = selectedOption === "A" ? pack.optionA : selectedOption === "B" ? pack.optionB : null;
 
   return (
-    <main className="fixed top-[50vh] left-4 right-4 -translate-y-1/2 flex h-auto items-center justify-center px-8 py-12 theme-panel-subtle">
+    <main className="fixed top-[50vh] left-3 right-3 -translate-y-1/2 flex h-auto items-center justify-center px-4 py-6 sm:left-4 sm:right-4 sm:px-8 sm:py-12 theme-panel-subtle">
       {userGameState.status === "waiting" && (
         <div className="text-center space-y-6">
           {pack.waitGif && (
@@ -35,21 +35,21 @@ export default function GameStatusCard({
               className="mx-auto"
             />
           )}
-          <p className="text-gray-800 text-3xl font-bold tracking-wider">
+          <p className="text-gray-800 text-xl sm:text-3xl font-bold tracking-wider">
             等待发布中...
           </p>
-          <p className="text-gray-600 text-lg">请耐心等待题目发布</p>
+          <p className="text-gray-600 text-base sm:text-lg">请耐心等待题目发布</p>
         </div>
       )}
 
       {/* User Status */}
       {userGameState.status === "eliminated" && (
         <div className="text-center space-y-4">
-          <p className="text-gray-800 text-3xl font-bold tracking-wider">
+          <p className="text-gray-800 text-xl sm:text-3xl font-bold tracking-wider">
             您已被淘汰!
           </p>
           {eliminatedReason && (
-            <p className="text-gray-600 text-lg font-semibold">
+            <p className="text-gray-600 text-base sm:text-lg font-semibold">
               原因：{eliminatedReason === "no_answer"
                 ? "您未在规定时间内选择"
                 : eliminatedReason === "majority_choice"
@@ -68,10 +68,10 @@ export default function GameStatusCard({
           <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <Crown className="w-8 h-8 text-red-500" />
           </div>
-          <p className="text-red-800 text-4xl font-semibold tracking-wider">
+          <p className="text-red-800 text-2xl sm:text-4xl font-semibold tracking-wider">
             恭喜您！
           </p>
-          <p className="text-red-700 text-lg">
+          <p className="text-red-700 text-base sm:text-lg">
             您是本轮游戏的冠军，请上台领奖！
           </p>
         </div>
@@ -82,8 +82,8 @@ export default function GameStatusCard({
           <p
             className={
               isNailong
-                ? "theme-play-tie-title text-4xl font-bold tracking-wider"
-                : "text-white text-4xl font-semibold tracking-wider"
+                ? "theme-play-tie-title text-2xl sm:text-4xl font-bold tracking-wider"
+                : "text-white text-2xl sm:text-4xl font-semibold tracking-wider"
             }
           >
             平局! 战斗爽！
@@ -91,8 +91,8 @@ export default function GameStatusCard({
           <p
             className={
               isNailong
-                ? "theme-play-tie-subtitle text-xl"
-                : "text-white text-xl"
+                ? "theme-play-tie-subtitle text-base sm:text-xl"
+                : "text-white text-base sm:text-xl"
             }
           >
             恭喜您进入决赛圈，请上台进行最后对决！
@@ -164,7 +164,7 @@ function OptionButton({
       <button
         type="button"
         onClick={onClick}
-        className="theme-option-btn w-48 h-32 md:w-72 md:h-36 text-gray-800 text-5xl font-bold"
+        className="theme-option-btn w-36 h-24 sm:w-48 sm:h-32 md:w-72 md:h-36 text-gray-800 text-4xl sm:text-5xl font-bold"
       >
         {label}
       </button>
